@@ -1,0 +1,7 @@
+#!/bin/sh
+JSLINT="/usr/local/bin/jslint"
+NODE="/usr/local/bin/node"
+PHPCS="/opt/pear/bin/phpcs"
+
+/bin/bash $(git rev-parse --show-toplevel)/script/lint --node $NODE --jslint $JSLINT --phpcs $PHPCS
+

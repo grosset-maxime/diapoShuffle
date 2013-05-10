@@ -1,0 +1,7 @@
+local.inc.php
+*.local.inc.php
+*.local.php
+config.inc.php
+*.config.inc.php
+*.config.php
+

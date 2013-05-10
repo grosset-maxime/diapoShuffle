@@ -1,0 +1,196 @@
+#!/bin/sh
+
+NODE=""
+JSLINT="jslint"
+PHPCS="phpcs"
+
+COLOR=auto
+
+function print_help () {
+    echo "Usage: $0 [OPTIONS] [FILES...]
+
+OPTIONS can be:
+    --help, -h: print this help and quit
+    --node <absolute_path_to_node>: absolute path to node
+    --jslint <absolute_path_to_jslint>: absolute path to jslint
+    --phpcs <absolute_path_to_phpcs>: absolute path to php code snifer
+    --color <true|false|auto>: colorize output (default: $COLOR)"
+}
+
+function print_text () {
+    local string=$1
+    local color=$2
+
+    if [ -t 1 ]; then
+        echo "`tput setaf $color`$string`tput op`"
+    else
+        echo $string
+    fi
+}
+
+IGNORE_LIBS_JS="\
+public\/js\/vendors\/jquery|\
+public\/js\/vendors\/jquery-ui"
+
+IGNORE_LIBS_PHP=""
+
+ROOT_DIR=$(git rev-parse --show-toplevel)
+
+JSLINT_OPTIONS="
+--anon       false
+--bitwise    true
+--browser    true
+--continue   true
+--debug      false
+--devel      false
+--eqeq       false
+--es5        false
+--evil       false
+--forin      true
+--indent     4
+--maxerr     10
+--maxlen     200
+--newcap     false
+--node       false
+--nomen      true
+--passfail   false
+--plusplus   true
+--properties false
+--regexp     true
+--rhino      false
+--undef      false
+--unparam    false
+--sloppy     false
+--stupid     true
+--sub        false
+--vars       false
+--extractjs  auto
+"
+
+PHPCS_OPTIONS="
+-n
+"
+
+# Print help if needed
+for arg in "$@"; do
+    if [ "$arg" = "--help" ] || [ "$arg" = "-h" ]; then
+        print_help;
+        exit 1;
+    fi
+done
+
+# Parse options
+files_js=()
+files_php=()
+argname=''
+
+for arg in "$@"; do
+    case "$arg" in
+    --node|--jslint|--phpcs|--color)
+        argname=$(echo "$arg" | sed s/^--// | tr '[:lower:]-' '[:upper:]_') ;;
+    *)
+        if [ -n "$argname" ]; then
+            declare $argname="$arg"
+            argname=''
+        elif [[ $arg =~ [./]((js)|(html)|(json))$ ]]; then
+            files_js+=("$arg")
+        elif [[ $arg =~ [./](php)$ ]]; then
+            files_php+=("$arg")
+        fi
+    esac
+done
+
+if [[ -n $argname ]]; then
+    print_text "Missing the option value for $argname" '1'
+    exit 1
+fi
+
+color_option=
+if [[ "$COLOR" == true ]] || ([[ "$COLOR" == auto ]] && [ -t 1 ]); then
+    color_option=--color
+fi
+
+# ==========
+# JS linting
+# ==========
+unstagedFiles=false
+cpt=0
+
+echo ''
+print_text 'Please wait during the JS linting ...' '4'
+
+if [[ ${#files_js[@]} == 0 ]]; then
+    for file in $(git diff-index --name-only --diff-filter=ACM --cached HEAD -- | grep -P '\.((js)|(html)|(json))$'); do
+        files_js+=("$file")
+    done
+    unstagedFiles=true
+fi
+
+if [[ ${#files_js[@]} -gt 0 ]]; then
+    for file in "${files_js[@]}"; do
+        if ! [[ $file =~ (/|^)($IGNORE_LIBS_JS)[-./] ]]; then
+            echo $file
+            if ! $NODE $JSLINT $JSLINT_OPTIONS $color_option $file; then
+                if [[ $unstagedFiles == true ]]; then
+                    echo ''
+                    print_text 'Please, fix these above errors before to commit again.' '1'
+                    git reset HEAD -- $file
+                else
+                    print_text 'Errors found, please fix these.' '1'    
+                fi
+                exit 1
+            fi
+            cpt+=1
+        fi
+    done
+fi
+
+if [[ $cpt == 0 ]]; then
+    print_text 'No JavaScript files to lint.' '4'
+else
+    print_text 'No JS lint error found.' '3'
+fi
+
+# ===========
+# PHP linting
+# ===========
+cpt=0
+unstagedFiles=false
+
+echo ''
+print_text 'Please wait during the PHP linting ...' '4'
+
+if [[ ${#files_php[@]} == 0 ]]; then
+    for file in $(git diff-index --name-only --diff-filter=ACM --cached HEAD -- | grep -P '\.php$'); do
+        files_php+=("$file")
+    done
+    unstagedFiles=true
+fi
+
+if [[ ${#files_php[@]} -gt 0 ]]; then
+    for file in "${files_php[@]}"; do
+        if ! [[ $file =~ (/|^)($IGNORE_LIBS_PHP)[-./] ]]; then
+            echo $file
+            if ! $PHPCS $PHPCS_OPTIONS $file; then
+                if [[ $unstagedFiles == true ]]; then
+                    print_text 'Please, fix these above errors before to commit again.' '1'
+                    git reset HEAD -- $file
+                else
+                    print_text 'Errors found, please fix these.' '1'    
+                fi
+                exit 1
+            fi
+        fi
+        cpt+=1
+    done
+fi
+
+if [[ $cpt == 0 ]]; then
+    print_text 'No PHP files to lint.' '4'
+else
+    print_text 'No PHP lint error found.' '3'
+fi
+
+echo ''
+
+exit 0
