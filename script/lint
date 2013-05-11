@@ -30,7 +30,8 @@ function print_text () {
 
 IGNORE_LIBS_JS="\
 public\/js\/vendors\/jquery|\
-public\/js\/vendors\/jquery-ui"
+public\/js\/vendors\/jquery-ui|\
+public\/js\/vendors\/curl"
 
 IGNORE_LIBS_PHP=""
 

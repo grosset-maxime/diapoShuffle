@@ -25,11 +25,14 @@
  */
  // =========================================
 
+// Compass reset
+// -------------
+@import 'compass/reset';
 
 // Compass mixins
 // --------------
-@import "compass/css3";
-@import "compass/css3/user-interface";
+@import 'compass/css3';
+@import 'compass/css3/user-interface';
 
 // Base
 // ----
@@ -37,4 +40,5 @@
 
 // Views
 // -----
+@import 'diapoShuffle'
 

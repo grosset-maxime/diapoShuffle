@@ -68,13 +68,13 @@ if (!empty($_config['app'])) {
 }
 
 
-$_r = !empty($_GET['r']) ? $_GET['r'] : 'status_403';
+$_r = !empty($_GET['r']) ? $_GET['r'] : 'diapoShuffle';
 $_r = !empty($_POST['r']) ? $_POST['r'] : $_r;
 
 // Check if the route exist
 if (!array_key_exists($_r, $_routes)) {
     $_r = 'status_404';
-    redirect('http://' . HTTP_HOST . '/public/index.php?r=' . $_r);
+    redirect('http://' . HTTP_HOST . '/index.php?r=' . $_r);
 } 
 
 // If the roote is a Script
@@ -94,25 +94,30 @@ if (!empty($_routes[$_r]['isScript'])) {
 } ?>
         </title>
 
+        <link rel="icon favicon" type="image/png" href="favicon.png"/>
+
         <!-- CSS //-->
-        <link rel="stylesheet" href="http://<?php echo HTTP_HOST; ?>/public/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen" />
+        <link rel="stylesheet" href="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen"/>
+        <link rel="stylesheet" href="http://<?php echo HTTP_HOST; ?>/css/screen.css" media="screen" type="text/css" title="default"/>
+        
+        <!-- <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery/jquery-2.0.0.min.js"></script>
+        <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery-ui/jquery-ui.js"></script> -->
 
-        <link rel="stylesheet" href="http://<?php echo HTTP_HOST; ?>/public/css/screen.css" media="screen" type="text/css" title="default"/>
-
-        <!-- jQuery //-->
-        <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/public/js/vendors/jquery/jquery-2.0.0.min.js"></script>
-        <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/public/js/vendors/jquery-ui/jquery-ui.js"></script>
+        <script type="text/javascript">
+        var curl = {
+            baseUrl: "/js",
+            paths: {
+                'jquery': 'vendors/jquery/jquery-2.0.0',
+                'jquery-ui': 'vendors/jquery-ui/jquery-ui'
+            }
+        };
+        </script>
+        <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/curl/curl.js"></script>
     </head>
     <body>
 <?php require_once ROOT_DIR . '/static/header.phtml'; ?>
         
-<?php
-if (true) {
-    include_once ROOT_DIR . '/modules/management/menu/menu.phtml';
-} else {
-    include_once ROOT_DIR . '/static/menu.phtml';    
-}
-?>
+<?php require_once ROOT_DIR . '/static/menu.phtml'; ?>
 
         <div class="content_container">
 <?php require_once ROOT_DIR . $_routes[$_r]['path']; ?>
