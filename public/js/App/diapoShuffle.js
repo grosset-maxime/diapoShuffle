@@ -65,7 +65,6 @@ curl([
 
         xhr.done(function (json) {
             var img;
-            console.log(json.pic.src);
 
             if (json.error) {
                 console.log('Error : ' + json.error.message || 'error');

@@ -31,7 +31,7 @@ function hasFolder($folder)
         if ($file->isDot()) {
             continue;
         }
-        //echo $file->getFilename();
+
         if ($file->isDir()) {
             $hasFolder = true;
             break;
@@ -56,10 +56,11 @@ function getRandomFile($folder)
     foreach ($dir as $file) {
         if ($file->isDot() || preg_match('/^[\.].*/i', $file->getFilename())
             || preg_match('/^(thumb)(s)?[\.](db)$/i', $file->getFilename())
+            || $file->isDir()
         ) {
             continue;
         }
-
+        
         if ($file->isFile()) {
             $listPic[] = $file->getFilename();
         }
@@ -155,14 +156,19 @@ function searchRandomPic($folder)
         searchRandomPic(getRandomFolder($folder));
     } else {
         $fileName = getRandomFile($folder);
-        $publicPathPic = substr($folder, strpos($folder, '/pic/'));
+        $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), '/pic/'));
     }
 }
 
 do {
     searchRandomPic($folder);
+
+    if ($fileName) {
+        break;
+    }
+
     $try++;
-} while (!$fileName || $try < $tryMax);
+} while (empty($fileName) || $try < $tryMax);
 
 
 if (!$fileName) {
@@ -170,7 +176,10 @@ if (!$fileName) {
     die;
 }
 
+$src = $publicPathPic . '/' . $fileName;
+$src = str_replace('\\', '/', $src);
+
 $jsonResult['success'] = true;
-$jsonResult['pic']['src'] = $publicPathPic . '/' . $fileName;
+$jsonResult['pic']['src'] = $src;
 print json_encode($jsonResult);
 exit;
