@@ -11,6 +11,7 @@
  * @link     No
  */
 session_start();
+ob_start(); // required for not sending header automaticaly
 
 /*global
     $_routes, $_config
@@ -18,7 +19,9 @@ session_start();
 
 define('ROOT_DIR', dirname(dirname(__FILE__)));
 define('HTTP_HOST', $_SERVER['HTTP_HOST']);
-define('USER_ID', !empty($_SESSION['id']) ? $_SESSION['id'] : 0);
+
+ini_set('log_errors', 'on');
+ini_set('error_log', ROOT_DIR . '/log/php/php_error.log');
 
 /**
  * Description :
@@ -108,8 +111,7 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
         <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen"/>
         <link rel="stylesheet" href="/css/screen.css" media="screen" type="text/css" title="default"/>
         
-        <!-- <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery/jquery-2.0.0.min.js"></script>
-        <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery-ui/jquery-ui.js"></script> -->
+        <script type="text/javascript" src="/js/vendors/jquery/jquery-2.0.0.js"></script>
 
         <script type="text/javascript">
         var curl = {

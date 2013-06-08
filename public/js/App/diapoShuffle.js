@@ -8,10 +8,10 @@ define([
     'use strict';
 
     var DiapoShuffle = {
-        container: null,
+        ctn: null,
         info: null,
         options: {
-            customFolder: ''
+            pathToCustomFolder: ''
         },
         view: null,
         interval: null
@@ -20,25 +20,32 @@ define([
     /**
     */
     DiapoShuffle.attachEvents = function () {
-        var container = DiapoShuffle.container,
-            options = DiapoShuffle.options;
+        var options = DiapoShuffle.options,
+            optionsCtn = options.ctn;
 
-        options.container.find('.start').click(DiapoShuffle.start);
-        options.container.find('.stop').click(DiapoShuffle.stop);
+        options.startBtn = optionsCtn.find('.btn_start_options')
+            .click(DiapoShuffle.start);
+        options.stopBtn = optionsCtn.find('.btn_stop_options')
+            .click(DiapoShuffle.stop);
+        options.pauseBtn = optionsCtn.find('.btn_pause_options')
+            .click(DiapoShuffle.pause);
     };
 
     /**
      */
     DiapoShuffle.init = function () {
-        var container = $('.diapo_shuffle'),
-            options = container.find('.options'),
-            info = container.find('.info'),
-            view = container.find('.view');
+        var ctn = $('.diapo_shuffle'),
+            optionsCtn = ctn.find('.ctn_options'),
+            options = DiapoShuffle.options,
+            info = ctn.find('.ctn_info'),
+            view = ctn.find('.ctn_view');
 
-        DiapoShuffle.container = container;
-        DiapoShuffle.options.container = options;
+        DiapoShuffle.ctn = ctn;
         DiapoShuffle.info = info;
         DiapoShuffle.view = view;
+
+        options.ctn = optionsCtn;
+        options.customFolder = optionsCtn.find('.text_custom_folder_options');
 
         DiapoShuffle.attachEvents();
     };
@@ -59,7 +66,7 @@ define([
             dataType: 'json',
             async: true,
             data: {
-                'customFolder': DiapoShuffle.options.customFolder
+                'customFolder': DiapoShuffle.options.pathToCustomFolder
             }
         });
 
@@ -98,20 +105,13 @@ define([
     /**
     */
     DiapoShuffle.start = function () {
-        var customFolder, message,
+        var message,
             options = DiapoShuffle.options,
             info = DiapoShuffle.info;
 
         info.empty();
 
-        customFolder = options.container.find('.custom_folder').val();
-        DiapoShuffle.options.customFolder = customFolder;
-
-        /*if (!folder) {
-            message = 'Folder is empty !';
-            info.html(message);
-            return false;
-        }*/
+        options.pathToCustomFolder = options.customFolder.val();
 
         if (DiapoShuffle.interval) {
             DiapoShuffle.stop();
@@ -130,6 +130,20 @@ define([
         info.empty();
 
         DiapoShuffle.clearInterval();
+    };
+
+    /**
+    */
+    DiapoShuffle.pause = function () {
+        var pauseBtn = DiapoShuffle.options.pauseBtn;
+
+        if (DiapoShuffle.interval) {
+            pauseBtn.val('resume');
+            DiapoShuffle.clearInterval();
+        } else {
+            pauseBtn.val('pause');
+            DiapoShuffle.start();
+        }
     };
 
     /**
