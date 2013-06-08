@@ -28,6 +28,7 @@ function hasFolder($folder)
     $hasFolder = false;
     $dir = new DirectoryIterator($folder);
     foreach ($dir as $file) {
+        set_time_limit(30);
         if ($file->isDot()) {
             continue;
         }
@@ -54,6 +55,7 @@ function getRandomFile($folder)
     $listPic = array();
     $dir = new DirectoryIterator($folder);
     foreach ($dir as $file) {
+        set_time_limit(30);
         if ($file->isDot() || preg_match('/^[\.].*/i', $file->getFilename())
             || preg_match('/^(thumb)(s)?[\.](db)$/i', $file->getFilename())
             || $file->isDir()
@@ -89,6 +91,7 @@ function getRandomFolder($folder)
     $listPic = array();
     $dir = new DirectoryIterator($folder);
     foreach ($dir as $file) {
+        set_time_limit(30);
         if ($file->isDot() || preg_match('/^[\.].*/i', $file->getFilename())
             || preg_match('/^(thumb)(s)?[\.](db)$/i', $file->getFilename())
         ) {

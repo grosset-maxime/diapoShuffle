@@ -1,8 +1,8 @@
 /*global
-    curl, console
+    define, console
 */
 
-curl([
+define([
     'jquery'
 ], function ($) {
     'use strict';
@@ -142,5 +142,5 @@ curl([
         clearInterval(DiapoShuffle.interval);
     };
 
-    DiapoShuffle.init();
+    return DiapoShuffle;
 });
