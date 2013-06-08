@@ -33,7 +33,7 @@ function hasFolder($folder)
             continue;
         }
 
-        if ($file->isDir()) {
+        if ($file->isDir() && !preg_match('/^[\.].*/i', $file->getFilename())) {
             $hasFolder = true;
             break;
         } else if ($file->isFile() && !preg_match('/^[\.].*/i', $file->getFilename())) {
@@ -88,7 +88,7 @@ function getRandomFile($folder)
  */
 function getRandomFolder($folder)
 {
-    $listPic = array();
+    $listFolder = array();
     $dir = new DirectoryIterator($folder);
     foreach ($dir as $file) {
         set_time_limit(30);
@@ -99,19 +99,19 @@ function getRandomFolder($folder)
         }
 
         if ($file->isDir()) { 
-            $listPic[] = $file->getPathname();
+            $listFolder[] = $file->getPathname();
         }
     }
 
     $min = 0;
-    $max = count($listPic) - 1;
+    $max = count($listFolder) - 1;
 
     if ($max < 0) {
         return null;
     }
 
     $nb = mt_rand($min, $max);
-    return $listPic[$nb];
+    return $listFolder[$nb];
 }
 
 $customFolder = !empty($_POST['customFolder']) ? $_POST['customFolder'] : '';
@@ -153,7 +153,7 @@ function searchRandomPic($folder)
     global $levelCurent, $levelMax, $fileName, $publicPathPic;
 
     $hasFolder = hasFolder($folder);
-    
+
     if ($hasFolder && $levelCurent < $levelMax) {
         $levelCurent++;
         searchRandomPic(getRandomFolder($folder));
