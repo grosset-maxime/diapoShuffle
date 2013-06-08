@@ -20,6 +20,11 @@ $_routes += array(
         'isView' => true,
         'path' => '/module/App/view/diapoShuffle_view.phtml',
         'title' => 'Diapo Shuffle',
+        'assets' => array(
+            'js' => array(
+                '/view/diapoShuffle'
+            ),
+        ),
     ),
 );
 

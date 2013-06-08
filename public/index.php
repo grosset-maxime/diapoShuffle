@@ -82,6 +82,14 @@ if (!empty($_routes[$_r]['isScript'])) {
     include_once ROOT_DIR . $_routes[$_r]['path'];
     exit;
 }
+
+$assetsRouteJs = '';
+
+if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
+    foreach ($_routes[$_r]['assets']['js'] as $key => $pathAsset) {
+        $assetsRouteJs .= '<script type="text/javascript" src="/js/' . $pathAsset . '.js"></script>';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -97,8 +105,8 @@ if (!empty($_routes[$_r]['isScript'])) {
         <link rel="icon favicon" type="image/png" href="favicon.png"/>
 
         <!-- CSS //-->
-        <link rel="stylesheet" href="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen"/>
-        <link rel="stylesheet" href="http://<?php echo HTTP_HOST; ?>/css/screen.css" media="screen" type="text/css" title="default"/>
+        <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen"/>
+        <link rel="stylesheet" href="/css/screen.css" media="screen" type="text/css" title="default"/>
         
         <!-- <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery/jquery-2.0.0.min.js"></script>
         <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/jquery-ui/jquery-ui.js"></script> -->
@@ -113,6 +121,8 @@ if (!empty($_routes[$_r]['isScript'])) {
         };
         </script>
         <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/curl/curl.js"></script>
+
+        <?php echo $assetsRouteJs; ?> 
     </head>
     <body>
 <?php require_once ROOT_DIR . '/static/header.phtml'; ?>

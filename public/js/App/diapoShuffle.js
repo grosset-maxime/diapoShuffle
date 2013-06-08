@@ -17,7 +17,7 @@ define([
         interval: null
     };
 
-    /*
+    /**
     */
     DiapoShuffle.attachEvents = function () {
         var container = DiapoShuffle.container,
@@ -43,7 +43,7 @@ define([
         DiapoShuffle.attachEvents();
     };
 
-    /*
+    /**
     */
     DiapoShuffle.getRandomPic = function () {
         var xhr, message,
@@ -95,7 +95,7 @@ define([
         });
     };
 
-    /*
+    /**
     */
     DiapoShuffle.start = function () {
         var customFolder, message,
@@ -113,10 +113,14 @@ define([
             return false;
         }*/
 
+        if (DiapoShuffle.interval) {
+            DiapoShuffle.stop();
+        }
+
         DiapoShuffle.setInterval();
     };
 
-    /*
+    /**
     */
     DiapoShuffle.stop = function () {
         var info = DiapoShuffle.info,
@@ -128,7 +132,7 @@ define([
         DiapoShuffle.clearInterval();
     };
 
-    /*
+    /**
     */
     DiapoShuffle.setInterval = function () {
         DiapoShuffle.interval = setInterval(function () {
@@ -136,10 +140,11 @@ define([
         }, 3000);
     };
 
-    /*
+    /**
     */
     DiapoShuffle.clearInterval = function () {
         clearInterval(DiapoShuffle.interval);
+        DiapoShuffle.interval = null;
     };
 
     return DiapoShuffle;
