@@ -29,6 +29,8 @@ define([
             .click(DiapoShuffle.stop);
         options.pauseBtn = optionsCtn.find('.btn_pause_options')
             .click(DiapoShuffle.pause);
+
+        DiapoShuffle.attachKeyboardShorcuts();
     };
 
     /**
@@ -159,6 +161,28 @@ define([
     DiapoShuffle.clearInterval = function () {
         clearInterval(DiapoShuffle.interval);
         DiapoShuffle.interval = null;
+    };
+
+    /**
+    */
+    DiapoShuffle.attachKeyboardShorcuts = function () {
+        $(document).bind('keydown', function (e) {
+            var keyPressed = e.which, doPreventDefault = false;
+            // console.log(keyPressed);
+            switch (keyPressed) {
+            case 27: // ESC
+                DiapoShuffle.stop();
+                break;
+            case 32: // SPACE
+                doPreventDefault = true;
+                DiapoShuffle.pause();
+                break;
+            }
+
+            if (doPreventDefault) {
+                e.preventDefault();
+            }
+        });
     };
 
     return DiapoShuffle;
