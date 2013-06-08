@@ -75,6 +75,25 @@ $diapo_shuffle_ctn_options_height: 50px;
             -ms-animation-delay: 0.78s;
             animation-delay: 0.78s;
         }
+    } // End .ctn_loading
+
+    .ctn_icon_pause {
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 550;
+        text-align: center;
+        width: 16px;
+        height: 16px;
+
+        .el_icon_pause {
+            width: 4px;
+            height: 14px;
+            margin: auto 2px;
+            background-color: rgba(240, 240, 240, 0.8);
+            @include inline-block();
+        }
     }
 
     .ctn_view {

@@ -37,7 +37,7 @@ define([
     DiapoShuffle.buildSkeleton = function (buildInCtn) {
         var mainCtn, infoCtn, inputCustomPathFolder, btnStartOptions,
             btnStopOptions, btnPauseOptions, viewCtn, ctnOptions,
-            loadingCtn,
+            loadingCtn, pauseIconCtn,
             optionsCtn = DiapoShuffle.optionsCtn;
 
         mainCtn = DiapoShuffle.mainCtn = $('<div>').attr({
@@ -89,6 +89,17 @@ define([
             })
         );
 
+        pauseIconCtn = DiapoShuffle.pauseIconCtn = $('<div>').attr({
+            'class': 'ctn_icon_pause'
+        }).append(
+            $('<span>').attr({
+                'class': 'el_icon_pause'
+            }),
+            $('<span>').attr({
+                'class': 'el_icon_pause'
+            })
+        );
+
         viewCtn = DiapoShuffle.viewCtn = $('<div>').attr({
             'class': 'ctn_view'
         });
@@ -101,7 +112,13 @@ define([
             btnPauseOptions
         );
 
-        mainCtn.append(infoCtn, ctnOptions, loadingCtn, viewCtn);
+        mainCtn.append(
+            infoCtn,
+            ctnOptions,
+            loadingCtn,
+            pauseIconCtn,
+            viewCtn
+        );
 
         if (buildInCtn) {
             buildInCtn.append(mainCtn);
@@ -214,13 +231,16 @@ define([
     /**
     */
     DiapoShuffle.pause = function () {
-        var pauseBtn = DiapoShuffle.optionsCtn.btnPauseOptions;
+        var pauseBtn = DiapoShuffle.optionsCtn.btnPauseOptions,
+            pauseIcon = DiapoShuffle.pauseIconCtn;
 
         if (DiapoShuffle.interval) {
             pauseBtn.val('resume');
+            pauseIcon.stop(true, true).fadeIn('fast');
             DiapoShuffle.clearInterval();
         } else {
             pauseBtn.val('pause');
+            pauseIcon.stop(true, true).fadeOut('fast');
             DiapoShuffle.start();
         }
     };
