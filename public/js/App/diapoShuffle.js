@@ -14,6 +14,10 @@ define([
             pathToCustomFolder: ''
         },
         view: null,
+        viewDimension: {
+            width: 0,
+            height: 0
+        },
         interval: null
     };
 
@@ -21,7 +25,8 @@ define([
     */
     DiapoShuffle.attachEvents = function () {
         var options = DiapoShuffle.options,
-            optionsCtn = options.ctn;
+            optionsCtn = options.ctn,
+            resizeTimeout;
 
         options.startBtn = optionsCtn.find('.btn_start_options')
             .click(DiapoShuffle.start);
@@ -31,6 +36,13 @@ define([
             .click(DiapoShuffle.pause);
 
         DiapoShuffle.attachKeyboardShorcuts();
+
+        $(window).resize(function () {
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
+            }
+            resizeTimeout = setTimeout(DiapoShuffle.setViewDimension, 500);
+        });
     };
 
     /**
@@ -50,6 +62,7 @@ define([
         options.customFolder = optionsCtn.find('.text_custom_folder_options');
 
         DiapoShuffle.attachEvents();
+        DiapoShuffle.setViewDimension();
     };
 
     /**
@@ -58,7 +71,7 @@ define([
         var xhr, message,
             info = DiapoShuffle.info,
             view = DiapoShuffle.view,
-            timeout = DiapoShuffle.timeout;
+            viewDimension = DiapoShuffle.viewDimension;
 
         DiapoShuffle.clearInterval();
 
@@ -90,8 +103,12 @@ define([
 
             if (json.success) {
                 img = $('<img>').attr({
+                    'class': 'random_pic',
                     'src': json.pic.src || '',
                     'alt': ''
+                }).css({
+                    'max-width': viewDimension.width,
+                    'max-height': viewDimension.height
                 });
                 view.html(img);
                 DiapoShuffle.setInterval();
@@ -107,11 +124,9 @@ define([
     /**
     */
     DiapoShuffle.start = function () {
-        var message,
-            options = DiapoShuffle.options,
-            info = DiapoShuffle.info;
+        var options = DiapoShuffle.options;
 
-        info.empty();
+        DiapoShuffle.info.empty();
 
         options.pathToCustomFolder = options.customFolder.val();
 
@@ -119,19 +134,18 @@ define([
             DiapoShuffle.stop();
         }
 
+        $('body').addClass('diapo_shuffle_view_mode');
         DiapoShuffle.getRandomPic();
     };
 
     /**
     */
     DiapoShuffle.stop = function () {
-        var info = DiapoShuffle.info,
-            view = DiapoShuffle.view;
-
-        view.empty();
-        info.empty();
+        DiapoShuffle.view.empty();
+        DiapoShuffle.info.empty();
 
         DiapoShuffle.clearInterval();
+        $('body').removeClass('diapo_shuffle_view_mode');
     };
 
     /**
@@ -167,7 +181,8 @@ define([
     */
     DiapoShuffle.attachKeyboardShorcuts = function () {
         $(document).bind('keydown', function (e) {
-            var keyPressed = e.which, doPreventDefault = false;
+            var keyPressed = e.which,
+                doPreventDefault = false;
             // console.log(keyPressed);
             switch (keyPressed) {
             case 27: // ESC
@@ -183,6 +198,16 @@ define([
                 e.preventDefault();
             }
         });
+    };
+
+    /**
+    */
+    DiapoShuffle.setViewDimension = function () {
+        var viewDimension = DiapoShuffle.viewDimension,
+            doc = $(document);
+
+        viewDimension.width = doc.width();
+        viewDimension.height = doc.height();
     };
 
     return DiapoShuffle;

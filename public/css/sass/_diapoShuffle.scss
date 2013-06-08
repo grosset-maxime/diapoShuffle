@@ -1,4 +1,46 @@
 
+$diapo_shuffle_ctn_options_height: 50px;
+
 .diapo_shuffle {
-    color: #333;
-}
+    color: #333;    
+
+    .ctn_options {
+        color: #eaeaea;
+        background-color: #222;
+        border-bottom: 1px solid #eee;
+        height: $diapo_shuffle_ctn_options_height;
+        line-height: $diapo_shuffle_ctn_options_height;
+        padding-left: 50px;
+
+        .diapo_shuffle_view_mode & {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 600;
+            background-color: rgba(50, 50, 50, 0.6);
+            border-bottom: 1px solid #888;
+            @include opacity(0);
+            @include transition(opacity 0.3s);
+
+            &:hover {
+                @include opacity(1);
+            }
+        }
+    } // End .ctn_options
+
+    .ctn_view {
+        display: none;
+
+        .diapo_shuffle_view_mode & {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 500;
+            background-color: #1d1d1d;
+        }
+    } // End .ctn_view
+} // End .diapo_shuffle
