@@ -131,8 +131,12 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
         
 <?php require_once ROOT_DIR . '/static/menu.phtml'; ?>
 
-        <div class="content_container">
-<?php require_once ROOT_DIR . $_routes[$_r]['path']; ?>
+        <div class="app_content_ctn">
+<?php
+if (!empty($_routes[$_r]['path'])) {
+    include_once ROOT_DIR . $_routes[$_r]['path'];
+}
+?>
         </div>
         
 <?php require_once ROOT_DIR . '/static/footer.phtml'; ?>

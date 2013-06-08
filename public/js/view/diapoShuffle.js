@@ -8,5 +8,8 @@ curl([
     'App/diapoShuffle'
 ], function ($, DiapoShuffle) {
     'use strict';
-    DiapoShuffle.init();
+
+    DiapoShuffle.init({
+        'buildInCtn': $('.app_content_ctn')
+    });
 });

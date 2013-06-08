@@ -10,7 +10,7 @@ define([
     var DiapoShuffle = {
         ctn: null,
         info: null,
-        options: {
+        optionsCtn: {
             pathToCustomFolder: ''
         },
         view: null,
@@ -22,18 +22,83 @@ define([
     };
 
     /**
+     */
+    DiapoShuffle.init = function (options) {
+        DiapoShuffle.options = options || {};
+
+        DiapoShuffle.buildSkeleton(options.buildInCtn);
+
+        DiapoShuffle.attachEvents();
+        DiapoShuffle.setViewDimension();
+    };
+
+    /**
+    */
+    DiapoShuffle.buildSkeleton = function (buildInCtn) {
+        var mainCtn, infoCtn, inputCustomPathFolder, btnStartOptions,
+            btnStopOptions, btnPauseOptions, viewCtn, ctnOptions,
+            optionsCtn = DiapoShuffle.optionsCtn;
+
+        mainCtn = DiapoShuffle.mainCtn = $('<div>').attr({
+            'class': 'diapo_shuffle'
+        });
+
+        infoCtn = DiapoShuffle.infoCtn = $('<div>').attr({
+            'class': 'ctn_info'
+        });
+
+        ctnOptions = $('<div>').attr({
+            'class': 'ctn_options'
+        });
+
+        inputCustomPathFolder = optionsCtn.customFolder = $('<input>').attr({
+            'class': 'text_custom_folder_options text_options',
+            'type': 'text'
+        });
+
+        btnStartOptions = optionsCtn.btnStartOptions = $('<input>').attr({
+            'class': 'btn_start_options btn_options',
+            'type': 'button',
+            'value': 'start'
+        }).click(DiapoShuffle.start);
+
+        btnStopOptions = optionsCtn.btnStopOptions = $('<input>').attr({
+            'class': 'btn_stop_options btn_options',
+            'type': 'button',
+            'value': 'stop'
+        }).click(DiapoShuffle.stop);
+
+        btnPauseOptions = optionsCtn.btnPauseOptions = $('<input>').attr({
+            'class': 'btn_pause_options btn_options',
+            'type': 'button',
+            'value': 'pause'
+        }).click(DiapoShuffle.pause);
+
+        viewCtn = DiapoShuffle.viewCtn = $('<div>').attr({
+            'class': 'ctn_view'
+        });
+
+        ctnOptions.append(
+            'Folder : ',
+            inputCustomPathFolder,
+            btnStartOptions,
+            btnStopOptions,
+            btnPauseOptions
+        );
+
+        mainCtn.append(infoCtn, ctnOptions, viewCtn);
+
+        if (buildInCtn) {
+            buildInCtn.append(mainCtn);
+        } else {
+            $('body').append(mainCtn);
+        }
+    };
+
+    /**
     */
     DiapoShuffle.attachEvents = function () {
-        var options = DiapoShuffle.options,
-            optionsCtn = options.ctn,
-            resizeTimeout;
-
-        options.startBtn = optionsCtn.find('.btn_start_options')
-            .click(DiapoShuffle.start);
-        options.stopBtn = optionsCtn.find('.btn_stop_options')
-            .click(DiapoShuffle.stop);
-        options.pauseBtn = optionsCtn.find('.btn_pause_options')
-            .click(DiapoShuffle.pause);
+        var resizeTimeout;
 
         DiapoShuffle.attachKeyboardShorcuts();
 
@@ -46,31 +111,11 @@ define([
     };
 
     /**
-     */
-    DiapoShuffle.init = function () {
-        var ctn = $('.diapo_shuffle'),
-            optionsCtn = ctn.find('.ctn_options'),
-            options = DiapoShuffle.options,
-            info = ctn.find('.ctn_info'),
-            view = ctn.find('.ctn_view');
-
-        DiapoShuffle.ctn = ctn;
-        DiapoShuffle.info = info;
-        DiapoShuffle.view = view;
-
-        options.ctn = optionsCtn;
-        options.customFolder = optionsCtn.find('.text_custom_folder_options');
-
-        DiapoShuffle.attachEvents();
-        DiapoShuffle.setViewDimension();
-    };
-
-    /**
     */
     DiapoShuffle.getRandomPic = function () {
         var xhr, message,
-            info = DiapoShuffle.info,
-            view = DiapoShuffle.view,
+            info = DiapoShuffle.infoCtn,
+            view = DiapoShuffle.viewCtn,
             viewDimension = DiapoShuffle.viewDimension;
 
         DiapoShuffle.clearInterval();
@@ -81,7 +126,7 @@ define([
             dataType: 'json',
             async: true,
             data: {
-                'customFolder': DiapoShuffle.options.pathToCustomFolder
+                'customFolder': DiapoShuffle.optionsCtn.pathToCustomFolder
             }
         });
 
@@ -124,11 +169,11 @@ define([
     /**
     */
     DiapoShuffle.start = function () {
-        var options = DiapoShuffle.options;
+        var optionsCtn = DiapoShuffle.optionsCtn;
 
-        DiapoShuffle.info.empty();
+        DiapoShuffle.infoCtn.empty();
 
-        options.pathToCustomFolder = options.customFolder.val();
+        optionsCtn.pathToCustomFolder = optionsCtn.customFolder.val();
 
         if (DiapoShuffle.interval) {
             DiapoShuffle.stop();
@@ -141,8 +186,8 @@ define([
     /**
     */
     DiapoShuffle.stop = function () {
-        DiapoShuffle.view.empty();
-        DiapoShuffle.info.empty();
+        DiapoShuffle.viewCtn.empty();
+        DiapoShuffle.infoCtn.empty();
 
         DiapoShuffle.clearInterval();
         $('body').removeClass('diapo_shuffle_view_mode');
@@ -151,7 +196,7 @@ define([
     /**
     */
     DiapoShuffle.pause = function () {
-        var pauseBtn = DiapoShuffle.options.pauseBtn;
+        var pauseBtn = DiapoShuffle.optionsCtn.btnPauseOptions;
 
         if (DiapoShuffle.interval) {
             pauseBtn.val('resume');
