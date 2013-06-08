@@ -37,6 +37,7 @@ define([
     DiapoShuffle.buildSkeleton = function (buildInCtn) {
         var mainCtn, infoCtn, inputCustomPathFolder, btnStartOptions,
             btnStopOptions, btnPauseOptions, viewCtn, ctnOptions,
+            loadingCtn,
             optionsCtn = DiapoShuffle.optionsCtn;
 
         mainCtn = DiapoShuffle.mainCtn = $('<div>').attr({
@@ -74,6 +75,20 @@ define([
             'value': 'pause'
         }).click(DiapoShuffle.pause);
 
+        loadingCtn = DiapoShuffle.loadingCtn = $('<div>').attr({
+            'class': 'ctn_loading'
+        }).append(
+            $('<span>').attr({
+                'class': 'el_loading_1 el_loading'
+            }),
+            $('<span>').attr({
+                'class': 'el_loading_2 el_loading'
+            }),
+            $('<span>').attr({
+                'class': 'el_loading_3 el_loading'
+            })
+        );
+
         viewCtn = DiapoShuffle.viewCtn = $('<div>').attr({
             'class': 'ctn_view'
         });
@@ -86,7 +101,7 @@ define([
             btnPauseOptions
         );
 
-        mainCtn.append(infoCtn, ctnOptions, viewCtn);
+        mainCtn.append(infoCtn, ctnOptions, loadingCtn, viewCtn);
 
         if (buildInCtn) {
             buildInCtn.append(mainCtn);
@@ -119,6 +134,7 @@ define([
             viewDimension = DiapoShuffle.viewDimension;
 
         DiapoShuffle.clearInterval();
+        DiapoShuffle.showLoading();
 
         xhr = $.ajax({
             url: '/?r=getRandomPic_s',
@@ -132,6 +148,8 @@ define([
 
         xhr.done(function (json) {
             var img;
+
+            DiapoShuffle.hideLoading();
 
             if (json.error) {
                 console.log('Error : ' + json.error.message || 'error');
@@ -253,6 +271,18 @@ define([
 
         viewDimension.width = doc.width();
         viewDimension.height = doc.height();
+    };
+
+    /**
+    */
+    DiapoShuffle.showLoading = function () {
+        DiapoShuffle.loadingCtn.stop().fadeIn('fast');
+    };
+
+    /**
+    */
+    DiapoShuffle.hideLoading = function () {
+        DiapoShuffle.loadingCtn.stop().fadeOut('fast');
     };
 
     return DiapoShuffle;
