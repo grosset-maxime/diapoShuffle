@@ -117,7 +117,7 @@ define([
             DiapoShuffle.stop();
         }
 
-        DiapoShuffle.setInterval();
+        DiapoShuffle.getRandomPic();
     };
 
     /**
