@@ -74,7 +74,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 /* line 7, sass/_diapoShuffle.scss */
 .diapo_shuffle .ctn_options {
   color: #eaeaea;
-  background-color: #222;
+  background-color: #444;
   border-bottom: 1px solid #eee;
   height: 50px;
   line-height: 50px;

@@ -224,6 +224,9 @@ define([
         DiapoShuffle.viewCtn.empty();
         DiapoShuffle.infoCtn.empty();
 
+        DiapoShuffle.pauseIconCtn.hide();
+        DiapoShuffle.loadingCtn.hide();
+
         DiapoShuffle.clearInterval();
         $('body').removeClass('diapo_shuffle_view_mode');
     };

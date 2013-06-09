@@ -122,7 +122,7 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
             }
         };
         </script>
-        <script type="text/javascript" src="http://<?php echo HTTP_HOST; ?>/js/vendors/curl/curl.js"></script>
+        <script type="text/javascript" src="/js/vendors/curl/curl.js"></script>
 
         <?php echo $assetsRouteJs; ?> 
     </head>
