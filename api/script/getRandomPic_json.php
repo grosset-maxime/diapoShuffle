@@ -114,33 +114,6 @@ function getRandomFolder($folder)
     return $listFolder[$nb];
 }
 
-$customFolder = !empty($_POST['customFolder']) ? $_POST['customFolder'] : '';
-
-$logError = array(
-    'mandatory_fields' => array(
-    ),
-    'optional_fields' => array(
-        'customFolder' => '= ' . $customFolder
-    ),
-);
-
-$jsonResult = array(
-    'success' => false,
-    'pic' => array(
-        'src' => '' 
-    ),
-);
-
-$folder = ROOT_DIR . '/public/pic/' . $customFolder;
-$fileName = '';
-$publicPathPic = '';
-$levelCurent = 0;
-$levelMax = 10;
-$try = 0;
-$tryMax = 5;
-
-$folderTemp = $folder;
-
 /**
  * searchRandomPic
  *
@@ -161,6 +134,40 @@ function searchRandomPic($folder)
         $fileName = getRandomFile($folder);
         $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), '/pic/'));
     }
+}
+
+$customFolder = !empty($_POST['customFolder']) ? $_POST['customFolder'] : '';
+
+$logError = array(
+    'mandatory_fields' => array(
+    ),
+    'optional_fields' => array(
+        'customFolder' => '= ' . $customFolder
+    ),
+);
+
+$jsonResult = array(
+    'success' => false,
+    'pic' => array(
+        'src' => '' 
+    ),
+);
+
+$baseAppPathFolder = ROOT_DIR . '/public/pic/';
+$folder = $baseAppPathFolder . $customFolder;
+$fileName = '';
+$publicPathPic = '';
+$levelCurent = 0;
+$levelMax = 20;
+$try = 0;
+$tryMax = 5;
+
+if ($customFolder && !file_exists($folder)) {
+    $jsonResult['error'] = $logError;
+    $jsonResult['error']['wrong_custom_folder'] = true;
+    $jsonResult['error']['message'] = 'Wrong custom folder, it doesn\'t exist.';
+    print json_encode($jsonResult);
+    die;
 }
 
 do {

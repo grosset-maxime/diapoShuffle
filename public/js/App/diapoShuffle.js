@@ -169,16 +169,22 @@ define([
         });
 
         xhr.done(function (json) {
-            var img;
+            var img, error;
 
             DiapoShuffle.hideLoading();
 
             if (json.error) {
-                console.log('Error : ' + json.error.message || 'error');
-                console.log(json.error);
+                error = json.error;
+                console.log('Error : ' + (error.message || 'no error message available'));
+                console.log(error);
 
-                if (json.error.mandatory_fields_missing) {
-                    info.html('mandatory fields are missing.');
+                DiapoShuffle.stop();
+
+                if (error.mandatory_fields_missing) {
+                    info.html('Mandatory fields are missing.');
+                } else if (error.wrong_custom_folder) {
+                    message = 'Wrong custom folder.';
+                    info.html(message);
                 } else {
                     message = 'Unknown error.';
                     info.html(message);
