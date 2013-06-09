@@ -192,10 +192,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   height: 100%;
   z-index: 500;
   background-color: #1d1d1d;
+  text-align: center;
 }
 
 @-moz-keyframes diapo_suffle_loading_anim {
-  /* line 116, sass/_diapoShuffle.scss */
+  /* line 117, sass/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -203,7 +204,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     -moz-transform: translateY(0);
   }
 
-  /* line 123, sass/_diapoShuffle.scss */
+  /* line 124, sass/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -213,7 +214,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @-webkit-keyframes diapo_suffle_loading_anim {
-  /* line 132, sass/_diapoShuffle.scss */
+  /* line 133, sass/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -221,7 +222,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     -webkit-transform: translateY(0);
   }
 
-  /* line 139, sass/_diapoShuffle.scss */
+  /* line 140, sass/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -231,7 +232,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @-ms-keyframes diapo_suffle_loading_anim {
-  /* line 148, sass/_diapoShuffle.scss */
+  /* line 149, sass/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -239,7 +240,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     -ms-transform: translateY(0);
   }
 
-  /* line 155, sass/_diapoShuffle.scss */
+  /* line 156, sass/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -249,7 +250,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @keyframes diapo_suffle_loading_anim {
-  /* line 164, sass/_diapoShuffle.scss */
+  /* line 165, sass/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -257,7 +258,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     transform: translateY(0);
   }
 
-  /* line 171, sass/_diapoShuffle.scss */
+  /* line 172, sass/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;

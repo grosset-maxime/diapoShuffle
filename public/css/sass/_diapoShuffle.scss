@@ -94,7 +94,7 @@ $diapo_shuffle_ctn_options_height: 50px;
             background-color: rgba(240, 240, 240, 0.8);
             @include inline-block();
         }
-    }
+    } // End .ctn_icon_pause
 
     .ctn_view {
         display: none;
@@ -108,6 +108,7 @@ $diapo_shuffle_ctn_options_height: 50px;
             height: 100%;
             z-index: 500;
             background-color: #1d1d1d;
+            text-align: center;
         }
     } // End .ctn_view
 } // End .diapo_shuffle
