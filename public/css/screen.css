@@ -67,11 +67,16 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
-/* line 4, sass/_diapoShuffle.scss */
+/* line 2, sass/base/_base.scss */
+body {
+  background-color: #cacaca;
+}
+
+/* line 4, sass/view/_diapoShuffle.scss */
 .diapo_shuffle {
   color: #333;
 }
-/* line 7, sass/_diapoShuffle.scss */
+/* line 7, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_options {
   color: #eaeaea;
   background-color: #444;
@@ -80,7 +85,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   line-height: 50px;
   padding-left: 50px;
 }
-/* line 15, sass/_diapoShuffle.scss */
+/* line 15, sass/view/_diapoShuffle.scss */
 .diapo_shuffle_view_mode .diapo_shuffle .ctn_options {
   position: fixed;
   top: 0;
@@ -96,12 +101,12 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   -o-transition: opacity 0.3s;
   transition: opacity 0.3s;
 }
-/* line 26, sass/_diapoShuffle.scss */
+/* line 26, sass/view/_diapoShuffle.scss */
 .diapo_shuffle_view_mode .diapo_shuffle .ctn_options:hover {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
-/* line 32, sass/_diapoShuffle.scss */
+/* line 32, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_loading {
   display: none;
   position: fixed;
@@ -112,7 +117,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   width: 32px;
   height: 20px;
 }
-/* line 42, sass/_diapoShuffle.scss */
+/* line 42, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_loading .el_loading {
   width: 4px;
   height: 4px;
@@ -133,28 +138,28 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   zoom: 1;
   *display: inline;
 }
-/* line 58, sass/_diapoShuffle.scss */
+/* line 58, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_loading .el_loading_1 {
   -moz-animation-delay: 0s;
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
   animation-delay: 0s;
 }
-/* line 65, sass/_diapoShuffle.scss */
+/* line 65, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_loading .el_loading_2 {
   -moz-animation-delay: 0.39s;
   -webkit-animation-delay: 0.39s;
   -ms-animation-delay: 0.39s;
   animation-delay: 0.39s;
 }
-/* line 72, sass/_diapoShuffle.scss */
+/* line 72, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_loading .el_loading_3 {
   -moz-animation-delay: 0.78s;
   -webkit-animation-delay: 0.78s;
   -ms-animation-delay: 0.78s;
   animation-delay: 0.78s;
 }
-/* line 80, sass/_diapoShuffle.scss */
+/* line 80, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_icon_pause {
   display: none;
   position: fixed;
@@ -165,7 +170,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   width: 16px;
   height: 16px;
 }
-/* line 90, sass/_diapoShuffle.scss */
+/* line 90, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_icon_pause .el_icon_pause {
   width: 4px;
   height: 14px;
@@ -178,11 +183,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   zoom: 1;
   *display: inline;
 }
-/* line 99, sass/_diapoShuffle.scss */
+/* line 99, sass/view/_diapoShuffle.scss */
 .diapo_shuffle .ctn_view {
   display: none;
 }
-/* line 102, sass/_diapoShuffle.scss */
+/* line 102, sass/view/_diapoShuffle.scss */
 .diapo_shuffle_view_mode .diapo_shuffle .ctn_view {
   display: block;
   position: fixed;
@@ -196,7 +201,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @-moz-keyframes diapo_suffle_loading_anim {
-  /* line 117, sass/_diapoShuffle.scss */
+  /* line 117, sass/view/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -204,7 +209,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     -moz-transform: translateY(0);
   }
 
-  /* line 124, sass/_diapoShuffle.scss */
+  /* line 124, sass/view/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -214,7 +219,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @-webkit-keyframes diapo_suffle_loading_anim {
-  /* line 133, sass/_diapoShuffle.scss */
+  /* line 133, sass/view/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -222,7 +227,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     -webkit-transform: translateY(0);
   }
 
-  /* line 140, sass/_diapoShuffle.scss */
+  /* line 140, sass/view/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -232,7 +237,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @-ms-keyframes diapo_suffle_loading_anim {
-  /* line 149, sass/_diapoShuffle.scss */
+  /* line 149, sass/view/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -240,7 +245,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     -ms-transform: translateY(0);
   }
 
-  /* line 156, sass/_diapoShuffle.scss */
+  /* line 156, sass/view/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -250,7 +255,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 @keyframes diapo_suffle_loading_anim {
-  /* line 165, sass/_diapoShuffle.scss */
+  /* line 165, sass/view/_diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -258,7 +263,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
     transform: translateY(0);
   }
 
-  /* line 172, sass/_diapoShuffle.scss */
+  /* line 172, sass/view/_diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;

@@ -36,9 +36,10 @@
 
 // Base
 // ----
-
+@import 'base/base';
+@import 'base/content';
 
 // Views
 // -----
-@import 'diapoShuffle'
+@import 'view/diapoShuffle';
 
