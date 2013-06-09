@@ -37,13 +37,19 @@ $diapo_shuffle_ctn_options_height: 50px;
             @include inline-block();
         }
 
+        .input_custom_folder_options {
+            width: 200px;
+            @include border-radius(4px);
+        }
+
         .input_interval_options {
             width: 15px;
             outline: none;
         }
 
-        .title_option {
+        .title_options {
             margin-right: 4px;
+            @include inline-block();
         }
     } // End .ctn_options
 

@@ -87,31 +87,40 @@ define([
             'class': 'el_ctn_options'
         }).append(
             $('<span>').attr({
-                'class': 'title_custom_folder_options title_option'
+                'class': 'title_custom_folder_options title_options'
             }).text('Folder :'),
             inputCustomPathFolder
         );
 
         // Btn start
-        btnStartOptions = optionsCtn.btnStartOptions = $('<input>').attr({
-            'class': 'btn_start_options btn_options el_ctn_options',
-            'type': 'button',
-            'value': 'start'
-        }).click(DiapoShuffle.start);
+        btnStartOptions = optionsCtn.btnStartOptions = $('<input>')
+            .attr({
+                'class': 'btn_start_options btn_options el_ctn_options',
+                'type': 'button',
+                'value': 'start'
+            })
+            .click(DiapoShuffle.start)
+            .button();
 
         // Btn stop
-        btnStopOptions = optionsCtn.btnStopOptions = $('<input>').attr({
-            'class': 'btn_stop_options btn_options el_ctn_options',
-            'type': 'button',
-            'value': 'stop'
-        }).click(DiapoShuffle.stop);
+        btnStopOptions = optionsCtn.btnStopOptions = $('<input>')
+            .attr({
+                'class': 'btn_stop_options btn_options el_ctn_options',
+                'type': 'button',
+                'value': 'stop'
+            })
+            .click(DiapoShuffle.stop)
+            .button();
 
         // Btn pause
-        btnPauseOptions = optionsCtn.btnPauseOptions = $('<input>').attr({
-            'class': 'btn_pause_options btn_options el_ctn_options',
-            'type': 'button',
-            'value': 'pause'
-        }).click(DiapoShuffle.pause);
+        btnPauseOptions = optionsCtn.btnPauseOptions = $('<input>')
+            .attr({
+                'class': 'btn_pause_options btn_options el_ctn_options',
+                'type': 'button',
+                'value': 'pause'
+            })
+            .click(DiapoShuffle.pause)
+            .button();
 
         // Input interval
         inputInterval = optionsCtn.interval = $('<input>').attr({
@@ -144,7 +153,7 @@ define([
             'class': 'el_ctn_options'
         }).append(
             $('<span>').attr({
-                'class': 'title_interval_options title_option'
+                'class': 'title_interval_options title_options'
             }).text('Interval (s) :'),
             inputInterval
         );
