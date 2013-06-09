@@ -11,7 +11,8 @@ define([
         ctn: null,
         info: null,
         optionsCtn: {
-            pathToCustomFolder: ''
+            pathToCustomFolder: '',
+            hasFocus: false
         },
         view: null,
         viewDimension: {
@@ -55,6 +56,10 @@ define([
         inputCustomPathFolder = optionsCtn.customFolder = $('<input>').attr({
             'class': 'text_custom_folder_options text_options',
             'type': 'text'
+        }).focus(function () {
+            DiapoShuffle.optionsCtn.hasFocus = true;
+        }).blur(function () {
+            DiapoShuffle.optionsCtn.hasFocus = false;
         });
 
         btnStartOptions = optionsCtn.btnStartOptions = $('<input>').attr({
@@ -275,8 +280,10 @@ define([
                 DiapoShuffle.stop();
                 break;
             case 32: // SPACE
-                doPreventDefault = true;
-                DiapoShuffle.pause();
+                if (!DiapoShuffle.optionsCtn.hasFocus) {
+                    doPreventDefault = true;
+                    DiapoShuffle.pause();
+                }
                 break;
             }
 
