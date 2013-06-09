@@ -60,6 +60,20 @@ define([
             DiapoShuffle.optionsCtn.hasFocus = true;
         }).blur(function () {
             DiapoShuffle.optionsCtn.hasFocus = false;
+        }).on('keyup', function (e) {
+            var keyPressed = e.which,
+                doPreventDefault = false;
+            // console.log(keyPressed);
+            switch (keyPressed) {
+            case 13: // Enter
+                doPreventDefault = true;
+                DiapoShuffle.start();
+                break;
+            }
+
+            if (doPreventDefault) {
+                e.preventDefault();
+            }
         });
 
         btnStartOptions = optionsCtn.btnStartOptions = $('<input>').attr({
@@ -277,7 +291,7 @@ define([
     /**
     */
     DiapoShuffle.attachKeyboardShorcuts = function () {
-        $(document).bind('keydown', function (e) {
+        $(document).on('keydown', function (e) {
             var keyPressed = e.which,
                 doPreventDefault = false;
             // console.log(keyPressed);
