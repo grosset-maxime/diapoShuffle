@@ -93,6 +93,14 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
         $assetsRouteJs .= '<script type="text/javascript" src="/js/' . $pathAsset . '.js"></script>';
     }
 }
+
+$assetsRouteCss = '';
+
+if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
+    foreach ($_routes[$_r]['assets']['css'] as $key => $pathAsset) {
+        $assetsRouteCss .= '<link rel="stylesheet" href="/css/' . $pathAsset . '.css" type="text/css"  media="screen"/>';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -111,6 +119,8 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
         <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen"/>
         <link rel="stylesheet" href="/css/screen.css" media="screen" type="text/css" title="default"/>
         
+        <?php echo $assetsRouteCss; ?>
+
         <script type="text/javascript" src="/js/vendors/jquery/jquery-2.0.0.js"></script>
 
         <script type="text/javascript">

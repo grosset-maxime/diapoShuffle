@@ -1,3 +1,6 @@
+// Compass mixins
+// --------------
+@import 'compass/css3';
 
 $diapo_shuffle_ctn_options_height: 50px;
 
@@ -26,6 +29,21 @@ $diapo_shuffle_ctn_options_height: 50px;
             &:hover {
                 @include opacity(1);
             }
+        }
+
+        .el_ctn_options {
+            margin: 0 8px;
+            line-height: 1em;
+            @include inline-block();
+        }
+
+        .input_interval_options {
+            width: 15px;
+            outline: none;
+        }
+
+        .title_option {
+            margin-right: 4px;
         }
     } // End .ctn_options
 

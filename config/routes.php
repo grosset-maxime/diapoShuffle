@@ -21,7 +21,10 @@ $_routes += array(
         'title' => 'Diapo Shuffle',
         'assets' => array(
             'js' => array(
-                '/view/diapoShuffle'
+                'view/diapoShuffle'
+            ),
+            'css' => array(
+                'view/diapoShuffle'
             ),
         ),
     ),
