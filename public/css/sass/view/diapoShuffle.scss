@@ -1,6 +1,7 @@
 // Compass mixins
 // --------------
 @import 'compass/css3';
+@import 'compass/css3/user-interface';
 
 $diapo_shuffle_ctn_options_height: 50px;
 
@@ -14,6 +15,7 @@ $diapo_shuffle_ctn_options_height: 50px;
         height: $diapo_shuffle_ctn_options_height;
         line-height: $diapo_shuffle_ctn_options_height;
         padding-left: 50px;
+        @include user-select(none);
 
         .diapo_shuffle_view_mode & {
             position: fixed;

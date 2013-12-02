@@ -98,7 +98,7 @@ $assetsRouteCss = '';
 
 if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
     foreach ($_routes[$_r]['assets']['css'] as $key => $pathAsset) {
-        $assetsRouteCss .= '<link rel="stylesheet" href="/css/' . $pathAsset . '.css" type="text/css"  media="screen"/>';
+        $assetsRouteCss .= '<link rel="stylesheet" href="/css/' . $pathAsset . '.css" type="text/css" media="screen"/>';
     }
 }
 ?>
@@ -116,7 +116,7 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
         <link rel="icon favicon" type="image/png" href="favicon.png"/>
 
         <!-- CSS //-->
-        <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css"  media="screen"/>
+        <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css" media="screen"/>
         <link rel="stylesheet" href="/css/screen.css" media="screen" type="text/css" title="default"/>
         
         <?php echo $assetsRouteCss; ?>
@@ -134,7 +134,7 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
         </script>
         <script type="text/javascript" src="/js/vendors/curl/curl.js"></script>
 
-        <?php echo $assetsRouteJs; ?> 
+        <?php echo $assetsRouteJs; ?>
     </head>
     <body>
 <?php require_once ROOT_DIR . '/static/header.phtml'; ?>

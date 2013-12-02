@@ -123,7 +123,7 @@ function getRandomFolder($folder)
  */
 function searchRandomPic($folder)
 {
-    global $levelCurent, $levelMax, $fileName, $publicPathPic;
+    global $levelCurent, $levelMax, $fileName, $publicPathPic, $absolutePathFolder;
 
     $hasFolder = hasFolder($folder);
 
@@ -132,6 +132,7 @@ function searchRandomPic($folder)
         searchRandomPic(getRandomFolder($folder));
     } else {
         $fileName = getRandomFile($folder);
+        $absolutePathFolder = $folder;
         $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), '/pic/'));
     }
 }
@@ -162,6 +163,8 @@ $levelMax = 20;
 $try = 0;
 $tryMax = 5;
 
+$absolutePathFolder = '';
+
 if ($customFolder && !file_exists($folder)) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['wrong_custom_folder'] = true;
@@ -189,7 +192,12 @@ if (!$fileName) {
 $src = $publicPathPic . '/' . $fileName;
 $src = str_replace('\\', '/', $src);
 
+list($width, $height) = getimagesize($absolutePathFolder . '/' . $fileName);
+
 $jsonResult['success'] = true;
 $jsonResult['pic']['src'] = $src;
+$jsonResult['pic']['width'] = $width;
+$jsonResult['pic']['height'] = $height;
+
 print json_encode($jsonResult);
 exit;

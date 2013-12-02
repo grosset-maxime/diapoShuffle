@@ -9,19 +9,18 @@ define([
     'use strict';
 
     var DiapoShuffle = {
-        ctn: null,
-        info: null,
         optionsCtn: {
             pathToCustomFolder: '',
             hasFocus: false
         },
-        view: null,
         viewDimension: {
             width: 0,
             height: 0
         },
         interval: 3,
-        idInterval: null
+        idInterval: null,
+        scale: false,
+        zoom: 1
     };
 
     /**
@@ -41,7 +40,7 @@ define([
         var mainCtn, infoCtn, inputCustomPathFolder, btnStartOptions,
             btnStopOptions, btnPauseOptions, viewCtn, ctnOptions,
             loadingCtn, pauseIconCtn, customFolderCtn, intervalCtn,
-            inputInterval,
+            inputInterval, inputScale, scaleCtn,
             optionsCtn = DiapoShuffle.optionsCtn;
 
         mainCtn = DiapoShuffle.mainCtn = $('<div>').attr({
@@ -59,38 +58,46 @@ define([
         });
 
         // Input custom folder
-        inputCustomPathFolder = optionsCtn.customFolder = $('<input>').attr({
-            'class': 'input_custom_folder_options input_text_options',
-            'type': 'text'
-        }).focus(function () {
-            DiapoShuffle.optionsCtn.hasFocus = true;
-        }).blur(function () {
-            DiapoShuffle.optionsCtn.hasFocus = false;
-        }).on('keyup', function (e) {
-            var keyPressed = e.which,
-                doPreventDefault = false;
-            // console.log(keyPressed);
-            switch (keyPressed) {
-            case 13: // Enter
-                doPreventDefault = true;
-                DiapoShuffle.start();
-                break;
-            }
+        inputCustomPathFolder = optionsCtn.customFolder = $('<input>')
+            .attr({
+                'class': 'input_custom_folder_options input_text_options',
+                'type': 'text'
+            }).focus(function () {
+                DiapoShuffle.optionsCtn.hasFocus = true;
+            }).blur(function () {
+                DiapoShuffle.optionsCtn.hasFocus = false;
+            }).on('keyup', function (e) {
+                var keyPressed = e.which,
+                    doPreventDefault = false;
+                // console.log(keyPressed);
+                switch (keyPressed) {
+                case 13: // Enter
+                    doPreventDefault = true;
+                    DiapoShuffle.start();
+                    break;
+                }
 
-            if (doPreventDefault) {
-                e.preventDefault();
-            }
-        });
+                if (doPreventDefault) {
+                    e.preventDefault();
+                }
+            });
 
         // Ctn custom folder
-        customFolderCtn = $('<div>').attr({
-            'class': 'el_ctn_options'
-        }).append(
-            $('<span>').attr({
-                'class': 'title_custom_folder_options title_options'
-            }).text('Folder :'),
-            inputCustomPathFolder
-        );
+        customFolderCtn = $('<div>')
+            .attr({
+                'class': 'el_ctn_options'
+            })
+            .append(
+                $('<label>')
+                    .attr({
+                        'class': 'title_custom_folder_options title_options'
+                    })
+                    .text('Folder :')
+                    .click(function () {
+                        inputCustomPathFolder.focus();
+                    }),
+                inputCustomPathFolder
+            );
 
         // Btn start
         btnStartOptions = optionsCtn.btnStartOptions = $('<input>')
@@ -123,16 +130,19 @@ define([
             .button();
 
         // Input interval
-        inputInterval = optionsCtn.interval = $('<input>').attr({
-            'class': 'input_interval_options input_text_options',
-            'value': DiapoShuffle.interval,
-            'maxlength': 2
-        })
+        inputInterval = optionsCtn.interval = $('<input>')
+            .attr({
+                'class': 'input_interval_options input_text_options',
+                'value': DiapoShuffle.interval,
+                'maxlength': 2
+            })
             .focus(function () {
                 DiapoShuffle.optionsCtn.hasFocus = true;
-            }).blur(function () {
+            })
+            .blur(function () {
                 DiapoShuffle.optionsCtn.hasFocus = false;
-            }).on('keyup', function (e) {
+            })
+            .on('keyup', function (e) {
                 var keyPressed = e.which,
                     doPreventDefault = false;
                 // console.log(keyPressed);
@@ -149,13 +159,42 @@ define([
             });
 
         // Ctn interval
-        intervalCtn = $('<div>').attr({
+        intervalCtn = $('<div>')
+            .attr({
+                'class': 'el_ctn_options'
+            })
+            .append(
+                $('<label>')
+                    .attr({
+                        'class': 'title_interval_options title_options'
+                    })
+                    .text('Interval (s) :')
+                    .click(function () {
+                        inputInterval.focus();
+                    }),
+                inputInterval
+            );
+
+        // Checkbox scale
+        inputScale = optionsCtn.scale = $('<input>')
+            .attr({
+                'class': 'input_interval_options input_text_options',
+                'type': 'checkbox'
+            });
+
+        // Ctn scale
+        scaleCtn = $('<div>').attr({
             'class': 'el_ctn_options'
         }).append(
-            $('<span>').attr({
-                'class': 'title_interval_options title_options'
-            }).text('Interval (s) :'),
-            inputInterval
+            inputScale,
+            $('<span>')
+                .attr({
+                    'class': 'title_scale_options title_options'
+                })
+                .text('Scale')
+                .click(function () {
+                    inputScale[0].checked = !inputScale[0].checked;
+                })
         );
 
         // Loading
@@ -198,7 +237,8 @@ define([
             btnStartOptions,
             btnStopOptions,
             btnPauseOptions,
-            intervalCtn
+            intervalCtn,
+            scaleCtn
         );
 
         mainCtn.append(
@@ -258,7 +298,8 @@ define([
         });
 
         xhr.done(function (json) {
-            var img, error;
+            var img, error, pic, widthPic, heightPic, widthView, heightView,
+                newWidth, newHeight;
 
             DiapoShuffle.hideLoading();
 
@@ -282,14 +323,50 @@ define([
             }
 
             if (json.success) {
+                pic = json.pic;
+                widthPic = pic.width;
+                heightPic = pic.height;
+                widthView = viewDimension.width;
+                heightView = viewDimension.height;
+
                 img = $('<img>').attr({
                     'class': 'random_pic',
-                    'src': json.pic.src || '',
+                    'src': pic.src || '',
                     'alt': ''
                 }).css({
-                    'max-width': viewDimension.width,
-                    'max-height': viewDimension.height
+                    'max-width': widthView,
+                    'max-height': heightView
                 });
+
+                if (DiapoShuffle.scale) {
+                    newWidth = widthPic * heightView / heightPic;
+                    newHeight = widthView * heightPic / widthPic;
+
+                    if (newWidth < widthView) {
+                        newWidth = widthView;
+                        newHeight = widthView * heightPic / widthPic;
+                        // debugger;
+                    } else if (widthPic < heightPic && widthPic < widthView) {
+                        newWidth = widthPic * heightView / heightPic;
+                        newHeight = heightView;
+                    } else if (widthPic === heightPic) {
+                        if (heightView < widthView) {
+                            newWidth = heightView;
+                            newHeight = heightView;
+                        } else {
+                            newWidth = widthView;
+                            newHeight = widthView;
+                        }
+                    }
+
+                    if (newWidth && newHeight) {
+                        img.css({
+                            'width': newWidth,
+                            'height': newHeight
+                        });
+                    }
+                }
+
                 view.html(img);
 
                 DiapoShuffle.setInterval();
@@ -317,6 +394,9 @@ define([
         // Get interval option
         interval = parseInt(inputInterval.val(), 10) || 3;
         inputInterval.spinner('value', interval);
+
+        // Get scale option
+        DiapoShuffle.scale = !!optionsCtn.scale[0].checked;
 
         if (DiapoShuffle.idInterval) {
             DiapoShuffle.stop();
