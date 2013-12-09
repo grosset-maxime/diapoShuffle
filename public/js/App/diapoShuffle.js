@@ -9,44 +9,86 @@ define([
     'use strict';
 
     var DiapoShuffle = {
+
+        /**
+         *
+         */
+        defaultOption: {
+            root: null
+        },
+
+        /**
+         *
+         */
+        options: {},
+
+        /**
+         *
+         */
         optionsCtn: {
             pathToCustomFolder: '',
             hasFocus: false
         },
+
+        /**
+         *
+         */
         viewDimension: {
             width: 0,
             height: 0
         },
+
+        /**
+         *
+         */
         interval: 3,
+
+        /**
+         *
+         */
         idInterval: null,
+
+        /**
+         *
+         */
         scale: false,
+
+        /**
+         *
+         */
         zoom: 1,
 
         /**
+         *
          */
         init: function (options) {
-            DiapoShuffle.options = options || {};
+            $.extend(true, this.options, this.defaultOptions, options || {});
 
-            DiapoShuffle.buildSkeleton(options.buildInCtn);
+            this.buildSkeleton();
 
-            DiapoShuffle.attachEvents();
-            DiapoShuffle.setViewDimension();
+            this.attachEvents();
+            this.setViewDimension();
         },
 
         /**
+         *
          */
-        buildSkeleton: function (buildInCtn) {
+        buildSkeleton: function () {
             var mainCtn, infoCtn, inputCustomPathFolder, btnStartOptions,
                 btnStopOptions, btnPauseOptions, viewCtn, ctnOptions,
                 loadingCtn, pauseIconCtn, customFolderCtn, intervalCtn,
                 inputInterval, inputScale, scaleCtn,
-                optionsCtn = DiapoShuffle.optionsCtn;
+                that = this,
+                els = {},
+                optionsCtn = that.optionsCtn;
 
-            mainCtn = DiapoShuffle.mainCtn = $('<div>', {
+            that.els = els;
+
+            mainCtn = $('<div>', {
                 'class': 'diapo_shuffle'
             });
 
-            infoCtn = DiapoShuffle.infoCtn = $('<div>', {
+            infoCtn = els.infoCtn = $('<div>', {
                 'class': 'ctn_info'
             });
 
@@ -61,9 +103,9 @@ define([
                 'class': 'input_custom_folder_options input_text_options',
                 type: 'text'
             }).focus(function () {
-                    DiapoShuffle.optionsCtn.hasFocus = true;
+                    that.optionsCtn.hasFocus = true;
             }).blur(function () {
-                DiapoShuffle.optionsCtn.hasFocus = false;
+                that.optionsCtn.hasFocus = false;
             }).on('keyup', function (e) {
                 var keyPressed = e.which,
                     doPreventDefault = false;
@@ -71,7 +113,7 @@ define([
                 switch (keyPressed) {
                 case 13: // Enter
                     doPreventDefault = true;
-                    DiapoShuffle.start();
+                    that.start();
                     break;
                 }
 
@@ -101,7 +143,7 @@ define([
                 type: 'button',
                 value: 'start'
             })
-                .click(DiapoShuffle.start)
+                .click(that.start.bind(that))
                 .button();
 
             // Btn stop
@@ -110,7 +152,7 @@ define([
                 type: 'button',
                 value: 'stop'
             })
-                .click(DiapoShuffle.stop)
+                .click(that.stop.bind(that))
                 .button();
 
             // Btn pause
@@ -119,20 +161,20 @@ define([
                 type: 'button',
                 value: 'pause'
             })
-                .click(DiapoShuffle.pause)
+                .click(that.pause.bind(that))
                 .button();
 
             // Input interval
             inputInterval = optionsCtn.interval = $('<input>', {
                 'class': 'input_interval_options input_text_options',
-                value: DiapoShuffle.interval,
+                value: that.interval,
                 maxlength: 2
             })
                 .focus(function () {
-                    DiapoShuffle.optionsCtn.hasFocus = true;
+                    that.optionsCtn.hasFocus = true;
                 })
                 .blur(function () {
-                    DiapoShuffle.optionsCtn.hasFocus = false;
+                    that.optionsCtn.hasFocus = false;
                 })
                 .on('keyup', function (e) {
                     var keyPressed = e.which,
@@ -141,7 +183,7 @@ define([
                     switch (keyPressed) {
                     case 13: // Enter
                         doPreventDefault = true;
-                        DiapoShuffle.start();
+                        that.start();
                         break;
                     }
 
@@ -187,7 +229,7 @@ define([
 
             // Loading
             // -------
-            loadingCtn = DiapoShuffle.loadingCtn = $('<div>', {
+            loadingCtn = that.loadingCtn = $('<div>', {
                 'class': 'ctn_loading'
             }).append(
                 $('<span>', {
@@ -203,7 +245,7 @@ define([
 
             // Pause icon
             // ----------
-            pauseIconCtn = DiapoShuffle.pauseIconCtn = $('<div>', {
+            pauseIconCtn = that.pauseIconCtn = $('<div>', {
                 'class': 'ctn_icon_pause'
             }).append(
                 $('<span>', {
@@ -216,7 +258,7 @@ define([
 
             // View
             // ----
-            viewCtn = DiapoShuffle.viewCtn = $('<div>', {
+            viewCtn = that.els.viewCtn = $('<div>', {
                 'class': 'ctn_view'
             });
 
@@ -237,8 +279,8 @@ define([
                 viewCtn
             );
 
-            if (buildInCtn) {
-                buildInCtn.append(mainCtn);
+            if (that.options.root) {
+                that.options.root.append(mainCtn);
             } else {
                 $(document.body).append(mainCtn);
             }
@@ -250,30 +292,34 @@ define([
         },
 
         /**
+         *
          */
         attachEvents: function () {
-            var resizeTimeout;
+            var resizeTimeout,
+                that = this;
 
-            DiapoShuffle.attachKeyboardShorcuts();
+            that.attachKeyboardShorcuts();
 
             $(window).resize(function () {
                 if (resizeTimeout) {
                     clearTimeout(resizeTimeout);
                 }
-                resizeTimeout = setTimeout(DiapoShuffle.setViewDimension, 500);
+                resizeTimeout = setTimeout(that.setViewDimension, 500);
             });
         },
 
         /**
+         *
          */
         getRandomPic: function () {
             var xhr, message,
-                info = DiapoShuffle.infoCtn,
-                view = DiapoShuffle.viewCtn,
-                viewDimension = DiapoShuffle.viewDimension;
+                that = this,
+                info = that.els.infoCtn,
+                view = that.els.viewCtn,
+                viewDimension = that.viewDimension;
 
-            DiapoShuffle.clearInterval();
-            DiapoShuffle.showLoading();
+            that.clearInterval();
+            that.showLoading();
 
             xhr = $.ajax({
                 url: '/?r=getRandomPic_s',
@@ -281,7 +327,7 @@ define([
                 dataType: 'json',
                 async: true,
                 data: {
-                    customFolder: DiapoShuffle.optionsCtn.pathToCustomFolder
+                    customFolder: that.optionsCtn.pathToCustomFolder
                 }
             });
 
@@ -289,14 +335,14 @@ define([
                 var img, error, pic, widthPic, heightPic, widthView, heightView,
                     newWidth, newHeight;
 
-                DiapoShuffle.hideLoading();
+                that.hideLoading();
 
                 if (json.error) {
                     error = json.error;
                     console.log('Error : ' + (error.message || 'no error message available'));
                     console.log(error);
 
-                    DiapoShuffle.stop();
+                    that.stop();
 
                     if (error.mandatory_fields_missing) {
                         info.html('Mandatory fields are missing.');
@@ -325,7 +371,7 @@ define([
                         'max-height': heightView
                     });
 
-                    if (DiapoShuffle.scale) {
+                    if (that.scale) {
                         newWidth = widthPic * heightView / heightPic;
                         newHeight = widthView * heightPic / widthPic;
 
@@ -356,7 +402,7 @@ define([
 
                     view.html(img);
 
-                    DiapoShuffle.setInterval();
+                    that.setInterval();
                 }
             });
 
@@ -367,13 +413,14 @@ define([
         },
 
         /**
+         *
          */
         start: function () {
-            var optionsCtn = DiapoShuffle.optionsCtn,
-                interval = DiapoShuffle.interval,
+            var optionsCtn = this.optionsCtn,
+                interval = this.interval,
                 inputInterval = optionsCtn.interval;
 
-            DiapoShuffle.infoCtn.empty();
+            this.els.infoCtn.empty();
 
             // Get custom folder option
             optionsCtn.pathToCustomFolder = optionsCtn.customFolder.val();
@@ -383,76 +430,85 @@ define([
             inputInterval.spinner('value', interval);
 
             // Get scale option
-            DiapoShuffle.scale = !!optionsCtn.scale[0].checked;
+            this.scale = !!optionsCtn.scale[0].checked;
 
-            if (DiapoShuffle.idInterval) {
-                DiapoShuffle.stop();
+            if (this.idInterval) {
+                this.stop();
             }
 
             $(document.body).addClass('diapo_shuffle_view_mode');
-            DiapoShuffle.getRandomPic();
+            this.getRandomPic();
         },
 
         /**
+         *
          */
         stop: function () {
-            DiapoShuffle.viewCtn.empty();
-            DiapoShuffle.infoCtn.empty();
+            this.els.viewCtn.empty();
+            this.els.infoCtn.empty();
 
-            DiapoShuffle.pauseIconCtn.hide();
-            DiapoShuffle.loadingCtn.hide();
+            this.pauseIconCtn.hide();
+            this.loadingCtn.hide();
 
-            DiapoShuffle.clearInterval();
+            this.clearInterval();
             $(document.body).removeClass('diapo_shuffle_view_mode');
         },
 
         /**
+         *
          */
         pause: function () {
-            var pauseBtn = DiapoShuffle.optionsCtn.btnPauseOptions,
-                pauseIcon = DiapoShuffle.pauseIconCtn;
+            var pauseBtn = this.optionsCtn.btnPauseOptions,
+                pauseIcon = this.pauseIconCtn;
 
-            if (DiapoShuffle.idInterval) {
+            if (this.idInterval) {
                 pauseBtn.val('resume');
                 pauseIcon.stop(true, true).fadeIn('fast');
-                DiapoShuffle.clearInterval();
+                this.clearInterval();
             } else {
                 pauseBtn.val('pause');
                 pauseIcon.stop(true, true).fadeOut('fast');
-                DiapoShuffle.start();
+                this.start();
             }
         },
 
         /**
+         *
          */
         setInterval: function () {
-            DiapoShuffle.idInterval = setInterval(function () {
-                DiapoShuffle.getRandomPic();
-            }, DiapoShuffle.interval * 1000);
+            var that = this;
+
+            that.idInterval = setInterval(function () {
+                that.getRandomPic();
+            }, that.interval * 1000);
         },
 
         /**
+         *
          */
         clearInterval: function () {
-            clearInterval(DiapoShuffle.idInterval);
-            DiapoShuffle.idInterval = null;
+            clearInterval(this.idInterval);
+            this.idInterval = null;
         },
 
         /**
+         *
          */
         attachKeyboardShorcuts: function () {
+            var that = this;
+
             $(document).on('keydown', function (e) {
                 var keyPressed = e.which,
                     doPreventDefault = false;
                 // console.log(keyPressed);
                 switch (keyPressed) {
                 case 27: // ESC
-                    DiapoShuffle.stop();
+                    that.stop();
                     break;
                 case 32: // SPACE
-                    if (!DiapoShuffle.optionsCtn.hasFocus) {
+                    if (!that.optionsCtn.hasFocus) {
                         doPreventDefault = true;
-                        DiapoShuffle.pause();
+                        that.pause();
                     }
                     break;
                 }
@@ -464,9 +520,10 @@ define([
         },
 
         /**
+         *
          */
         setViewDimension: function () {
-            var viewDimension = DiapoShuffle.viewDimension,
+            var viewDimension = this.viewDimension,
                 doc = $(document);
 
             viewDimension.width = doc.width();
@@ -474,15 +531,17 @@ define([
         },
 
         /**
+         *
          */
         showLoading: function () {
-            DiapoShuffle.loadingCtn.stop().fadeIn('fast');
+            this.loadingCtn.stop().fadeIn('fast');
         },
 
         /**
+         *
          */
         hideLoading: function () {
-            DiapoShuffle.loadingCtn.stop().fadeOut('fast');
+            this.loadingCtn.stop().fadeOut('fast');
         }
     };
 

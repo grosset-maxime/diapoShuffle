@@ -78,7 +78,7 @@ $_r = !empty($_POST['r']) ? $_POST['r'] : $_r;
 if (!array_key_exists($_r, $_routes)) {
     $_r = 'status_404';
     redirect('http://' . HTTP_HOST . '/index.php?r=' . $_r);
-} 
+}
 
 // If the roote is a Script
 if (!empty($_routes[$_r]['isScript'])) {
@@ -118,7 +118,7 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
         <!-- CSS //-->
         <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css" media="screen"/>
         <link rel="stylesheet" href="/css/screen.css" media="screen" type="text/css" title="default"/>
-        
+
         <?php echo $assetsRouteCss; ?>
 
         <script type="text/javascript" src="/js/vendors/jquery/jquery-2.0.0.js"></script>
@@ -138,17 +138,15 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
     </head>
     <body>
 <?php require_once ROOT_DIR . '/static/header.phtml'; ?>
-        
+
 <?php require_once ROOT_DIR . '/static/menu.phtml'; ?>
 
-        <div class="app_content_ctn">
 <?php
 if (!empty($_routes[$_r]['path'])) {
     include_once ROOT_DIR . $_routes[$_r]['path'];
 }
 ?>
-        </div>
-        
+
 <?php require_once ROOT_DIR . '/static/footer.phtml'; ?>
     </body>
 </html>

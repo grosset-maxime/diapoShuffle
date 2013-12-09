@@ -9,7 +9,13 @@ curl([
 ], function ($, DiapoShuffle) {
     'use strict';
 
-    DiapoShuffle.init({
-        'buildInCtn': $('.app_content_ctn')
-    });
+    function initView () {
+        var ctn = $('<div>').appendTo(document.body);
+
+        DiapoShuffle.init({
+            root: ctn
+        });
+    }
+
+    initView();
 });
