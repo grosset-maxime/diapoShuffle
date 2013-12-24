@@ -62,7 +62,7 @@ function getRandomFile($folder)
         ) {
             continue;
         }
-        
+
         if ($file->isFile()) {
             $listPic[] = $file->getFilename();
         }
@@ -98,7 +98,7 @@ function getRandomFolder($folder)
             continue;
         }
 
-        if ($file->isDir()) { 
+        if ($file->isDir()) {
             $listFolder[] = $file->getPathname();
         }
     }
@@ -150,7 +150,7 @@ $logError = array(
 $jsonResult = array(
     'success' => false,
     'pic' => array(
-        'src' => '' 
+        'src' => ''
     ),
 );
 
@@ -167,7 +167,7 @@ $absolutePathFolder = '';
 
 if ($customFolder && !file_exists($folder)) {
     $jsonResult['error'] = $logError;
-    $jsonResult['error']['wrong_custom_folder'] = true;
+    $jsonResult['error']['wrongCustomFolder'] = true;
     $jsonResult['error']['message'] = 'Wrong custom folder, it doesn\'t exist.';
     print json_encode($jsonResult);
     die;

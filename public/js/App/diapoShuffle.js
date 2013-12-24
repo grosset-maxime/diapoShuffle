@@ -1,3 +1,4 @@
+
 /*global
     define, console
 */
@@ -7,6 +8,7 @@ define([
     'js!jquery-ui'
 ], function ($) {
     'use strict';
+
 
     var DiapoShuffle = {
 
@@ -104,9 +106,12 @@ define([
                 type: 'text'
             }).focus(function () {
                     that.optionsCtn.hasFocus = true;
-            }).blur(function () {
-                that.optionsCtn.hasFocus = false;
-            }).on('keyup', function (e) {
+                })
+            .blur(function () {
+                    that.optionsCtn.hasFocus = false;
+                })
+            .on('keyup', function (e) {
+
                 var keyPressed = e.which,
                     doPreventDefault = false;
                 // console.log(keyPressed);
@@ -126,14 +131,13 @@ define([
             customFolderCtn = $('<div>', {
                 'class': 'el_ctn_options'
             })
-                .append(
-                    $('<label>', {
-                        'class': 'title_custom_folder_options title_options',
-                        text: 'Folder :'
-                    })
-                        .click(function () {
-                            inputCustomPathFolder.focus();
-                        }),
+                .append($('<label>', {
+                    'class': 'title_custom_folder_options title_options',
+                    text: 'Folder :'
+                })
+                    .click(function () {
+                        inputCustomPathFolder.focus();
+                    }),
                     inputCustomPathFolder
                 );
 
@@ -196,11 +200,10 @@ define([
             intervalCtn = $('<div>', {
                 'class': 'el_ctn_options'
             })
-                .append(
-                    $('<label>', {
-                        'class': 'title_interval_options title_options',
-                        text: 'Interval (s) :'
-                    })
+                .append($('<label>', {
+                    'class': 'title_interval_options title_options',
+                    text: 'Interval (s) :'
+                })
                         .click(function () {
                             inputInterval.focus();
                         }),
@@ -240,7 +243,7 @@ define([
                 }),
                 $('<span>', {
                         'class': 'el_loading_3 el_loading'
-                })
+                    })
             );
 
             // Pause icon
@@ -344,9 +347,9 @@ define([
 
                     that.stop();
 
-                    if (error.mandatory_fields_missing) {
+                    if (error.mandatoryFieldsMissing) {
                         info.html('Mandatory fields are missing.');
-                    } else if (error.wrong_custom_folder) {
+                    } else if (error.wrongCustomFolder) {
                         message = 'Wrong custom folder.';
                         info.html(message);
                     } else {
@@ -406,9 +409,10 @@ define([
                 }
             });
 
+
             xhr.fail(function (jqXHR, textStatus) {
-                console.log('error getRandomPic() : '
-                    + textStatus + ' / responseText : ' + jqXHR.responseText);
+                console.log('error getRandomPic() : ' +
+                    textStatus + ' / responseText : ' + jqXHR.responseText);
             });
         },
 
