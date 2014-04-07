@@ -353,7 +353,7 @@ define([
                         message = 'Wrong custom folder.';
                         info.html(message);
                     } else {
-                        message = 'Unknown error.';
+                        message = 'Error: ' + error.message || 'Unknown error.';
                         info.html(message);
                     }
                     return false;
@@ -431,7 +431,7 @@ define([
             optionsCtn.pathToCustomFolder = optionsCtn.customFolder.val();
 
             // Get interval option
-            interval = parseInt(inputInterval.val(), 10) || 3;
+            this.interval = interval = parseInt(inputInterval.val(), 10) || 3;
             inputInterval.spinner('value', interval);
 
             // Get scale option
