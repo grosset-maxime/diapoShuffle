@@ -307,7 +307,7 @@ define([
                 if (resizeTimeout) {
                     clearTimeout(resizeTimeout);
                 }
-                resizeTimeout = setTimeout(that.setViewDimension, 500);
+                resizeTimeout = setTimeout(that.setViewDimension.bind(that), 500);
             });
         },
 
