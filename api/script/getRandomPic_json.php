@@ -165,10 +165,20 @@ $tryMax = 5;
 
 $absolutePathFolder = '';
 
-if ($customFolder && !file_exists($folder)) {
+if (!file_exists($folder)) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['wrongCustomFolder'] = true;
     $jsonResult['error']['message'] = 'Wrong custom folder, it doesn\'t exist.';
+    print json_encode($jsonResult);
+    die;
+}
+
+$isEmptyFolder = (count(glob($folder . '/*')) === 0) ? true : false;
+
+if ($isEmptyFolder) {
+    $jsonResult['error'] = $logError;
+    $jsonResult['error']['noPic'] = true;
+    $jsonResult['error']['message'] = 'No picture to show!';
     print json_encode($jsonResult);
     die;
 }

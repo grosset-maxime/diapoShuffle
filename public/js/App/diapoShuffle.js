@@ -409,10 +409,11 @@ define([
                 }
             });
 
-
             xhr.fail(function (jqXHR, textStatus) {
                 console.log('error getRandomPic() : ' +
                     textStatus + ' / responseText : ' + jqXHR.responseText);
+
+                that.stop();
             });
         },
 
