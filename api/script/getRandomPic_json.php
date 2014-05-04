@@ -133,11 +133,17 @@ function searchRandomPic($folder)
     } else {
         $fileName = getRandomFile($folder);
         $absolutePathFolder = $folder;
-        $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), '/pic/'));
+
+        $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), '/pic'));
     }
 }
 
-$customFolder = !empty($_POST['customFolder']) ? $_POST['customFolder'] : '';
+
+// ====================
+// Start of the script.
+// ====================
+
+$customFolder = !empty(trim($_POST['customFolder'])) ? trim($_POST['customFolder']) : '/';
 
 $logError = array(
     'mandatory_fields' => array(
@@ -154,8 +160,10 @@ $jsonResult = array(
     ),
 );
 
-$baseAppPathFolder = ROOT_DIR . '/public/pic/';
-$folder = $baseAppPathFolder . $customFolder;
+
+// Init variables
+$baseAppPathFolder = ROOT_DIR . '/public/pic';
+$absolutePathFolder = '';
 $fileName = '';
 $publicPathPic = '';
 $levelCurent = 0;
@@ -163,7 +171,23 @@ $levelMax = 20;
 $try = 0;
 $tryMax = 5;
 
-$absolutePathFolder = '';
+
+// Manage '/' for begining end end of the customFolder.
+if ($customFolder) {
+    $lenghtCustoFolder = strlen($customFolder);
+    $firstCharCustomFolder = $customFolder[0];
+
+    // Begin of customFolder
+    if ($firstCharCustomFolder !== '/' && $firstCharCustomFolder !== '\\') {
+        $customFolder = '/' . $customFolder;
+    }
+
+    // End of customFolder
+    if ($customFolder[$lenghtCustoFolder - 1] !== '/' && $customFolder[$lenghtCustoFolder - 1] !== '\\') {
+        $customFolder .= '/';
+    }
+}
+$folder = $baseAppPathFolder . $customFolder;
 
 if (!file_exists($folder)) {
     $jsonResult['error'] = $logError;
@@ -199,7 +223,7 @@ if (!$fileName) {
     die;
 }
 
-$src = $publicPathPic . '/' . $fileName;
+$src = $publicPathPic . $fileName;
 $src = str_replace('\\', '/', $src);
 
 list($width, $height) = getimagesize($absolutePathFolder . '/' . $fileName);
