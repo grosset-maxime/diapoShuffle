@@ -6,7 +6,7 @@
 $diapo_shuffle_ctn_options_height: 50px;
 
 .diapo_shuffle {
-    color: #333;    
+    color: #333;
 
     .ctn_options {
         color: #eaeaea;
@@ -137,6 +137,31 @@ $diapo_shuffle_ctn_options_height: 50px;
             text-align: center;
         }
     } // End .ctn_view
+
+    .ctn_info {
+        display: none;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        z-index: 1000;
+        color: #333;
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 5px;
+        @include border-radius(5px);
+
+        .diapo_shuffle_view_mode & {
+            display: block;
+        }
+
+        .custom_folder_path {
+            font-size: small;
+            margin-right: 4px;
+        }
+
+        .random_public_path {
+            font-weight: bold;
+        }
+    }
 } // End .diapo_shuffle
 
 @-moz-keyframes diapo_suffle_loading_anim {

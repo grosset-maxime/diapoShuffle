@@ -163,9 +163,38 @@
   background-color: #1d1d1d;
   text-align: center;
 }
+/* line 141, ../sass/view/diapoShuffle.scss */
+.diapo_shuffle .ctn_info {
+  display: none;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  z-index: 1000;
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+/* line 152, ../sass/view/diapoShuffle.scss */
+.diapo_shuffle_view_mode .diapo_shuffle .ctn_info {
+  display: block;
+}
+/* line 156, ../sass/view/diapoShuffle.scss */
+.diapo_shuffle .ctn_info .custom_folder_path {
+  font-size: small;
+  margin-right: 4px;
+}
+/* line 161, ../sass/view/diapoShuffle.scss */
+.diapo_shuffle .ctn_info .random_public_path {
+  font-weight: bold;
+}
 
 @-moz-keyframes diapo_suffle_loading_anim {
-  /* line 143, ../sass/view/diapoShuffle.scss */
+  /* line 168, ../sass/view/diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -173,7 +202,7 @@
     -moz-transform: translateY(0);
   }
 
-  /* line 150, ../sass/view/diapoShuffle.scss */
+  /* line 175, ../sass/view/diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -183,7 +212,7 @@
 }
 
 @-webkit-keyframes diapo_suffle_loading_anim {
-  /* line 159, ../sass/view/diapoShuffle.scss */
+  /* line 184, ../sass/view/diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -191,7 +220,7 @@
     -webkit-transform: translateY(0);
   }
 
-  /* line 166, ../sass/view/diapoShuffle.scss */
+  /* line 191, ../sass/view/diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -201,7 +230,7 @@
 }
 
 @-ms-keyframes diapo_suffle_loading_anim {
-  /* line 175, ../sass/view/diapoShuffle.scss */
+  /* line 200, ../sass/view/diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -209,7 +238,7 @@
     -ms-transform: translateY(0);
   }
 
-  /* line 182, ../sass/view/diapoShuffle.scss */
+  /* line 207, ../sass/view/diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;
@@ -219,7 +248,7 @@
 }
 
 @keyframes diapo_suffle_loading_anim {
-  /* line 191, ../sass/view/diapoShuffle.scss */
+  /* line 216, ../sass/view/diapoShuffle.scss */
   0% {
     width: 4px;
     height: 4px;
@@ -227,7 +256,7 @@
     transform: translateY(0);
   }
 
-  /* line 198, ../sass/view/diapoShuffle.scss */
+  /* line 223, ../sass/view/diapoShuffle.scss */
   100% {
     width: 10px;
     height: 10px;

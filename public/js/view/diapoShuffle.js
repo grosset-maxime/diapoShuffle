@@ -316,8 +316,9 @@ define([
         getRandomPic: function () {
             var xhr, message,
                 that = this,
-                info = that.els.infoCtn,
-                view = that.els.viewCtn,
+                els = that.els,
+                info = els.infoCtn,
+                view = els.viewCtn,
                 viewDimension = that.viewDimension;
 
             that.clearInterval();
@@ -335,7 +336,8 @@ define([
 
             xhr.done(function (json) {
                 var img, error, pic, widthPic, heightPic, widthView, heightView,
-                    newWidth, newHeight;
+                    newWidth, newHeight, customFolderPath, randomPublicPath,
+                    infoCtn = els.infoCtn;
 
                 that.hideLoading();
 
@@ -402,6 +404,19 @@ define([
                         }
                     }
 
+                    customFolderPath = $('<span>', {
+                        'class': 'custom_folder_path',
+                        html: pic.customFolderPath
+                    });
+
+                    randomPublicPath = $('<span>', {
+                        'class': 'random_public_path',
+                        html: pic.randomPublicPath
+                    });
+
+                    infoCtn.html(
+                        $('<div>').append(customFolderPath, randomPublicPath)
+                    );
                     view.html(img);
 
                     that.setInterval();
