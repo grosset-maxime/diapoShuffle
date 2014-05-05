@@ -2,16 +2,18 @@
     curl
 */
 
-curl([
+curl(
+[
     'jquery',
-    'view/diapoShuffle'
-], function ($, DiapoShuffle) {
+    'App/Views/MainView'
+],
+function ($, MainView) {
     'use strict';
 
     function initView () {
         var ctn = $('<div>').appendTo(document.body);
 
-        DiapoShuffle.init({
+        MainView.init({
             root: ctn
         });
     }

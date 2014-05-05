@@ -9,7 +9,7 @@
   border-bottom: 1px solid #eee;
   height: 50px;
   line-height: 50px;
-  padding-left: 50px;
+  padding-left: 10px;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -48,7 +48,7 @@
 }
 /* line 42, ../sass/view/diapoShuffle.scss */
 .diapo_shuffle .ctn_options .input_custom_folder_options {
-  width: 200px;
+  width: 100px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -ms-border-radius: 4px;

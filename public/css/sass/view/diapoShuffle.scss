@@ -14,7 +14,7 @@ $diapo_shuffle_ctn_options_height: 50px;
         border-bottom: 1px solid #eee;
         height: $diapo_shuffle_ctn_options_height;
         line-height: $diapo_shuffle_ctn_options_height;
-        padding-left: 50px;
+        padding-left: 10px;
         @include user-select(none);
 
         .diapo_shuffle_view_mode & {
@@ -40,7 +40,7 @@ $diapo_shuffle_ctn_options_height: 50px;
         }
 
         .input_custom_folder_options {
-            width: 200px;
+            width: 100px;
             @include border-radius(4px);
         }
 
