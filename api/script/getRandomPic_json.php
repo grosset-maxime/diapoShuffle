@@ -143,7 +143,8 @@ function searchRandomPic($folder)
 // Start of the script.
 // ====================
 
-$customFolder = !empty(trim($_POST['customFolder'])) ? trim($_POST['customFolder']) : '/';
+$customFolder = trim($_POST['customFolder']) ? trim($_POST['customFolder']) : '';
+$customFolder = !empty($customFolder) ? $customFolder : '/';
 
 $logError = array(
     'mandatory_fields' => array(
@@ -232,6 +233,7 @@ if ($publicPathPic[$lenghtpublicPathPic - 1] !== '/' && $publicPathPic[$lenghtpu
 
 $src = $publicPathPic . $fileName;
 $src = str_replace('\\', '/', $src);
+$customFolder = str_replace('\\', '/', $customFolder);
 
 list($width, $height) = getimagesize($absolutePathFolder . '/' . $fileName);
 
