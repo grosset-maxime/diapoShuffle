@@ -27,8 +27,10 @@ function hasFolder($folder)
 {
     $hasFolder = false;
     $dir = new DirectoryIterator($folder);
+
     foreach ($dir as $file) {
         set_time_limit(30);
+
         if ($file->isDot()) {
             continue;
         }
@@ -54,18 +56,20 @@ function getRandomFile($folder)
 {
     $listPic = array();
     $dir = new DirectoryIterator($folder);
+
     foreach ($dir as $file) {
         set_time_limit(30);
-        if ($file->isDot() || preg_match('/^[\.].*/i', $file->getFilename())
+
+        if ($file->isDot()
+            || preg_match('/^[\.].*/i', $file->getFilename())
             || preg_match('/^(thumb)(s)?[\.](db)$/i', $file->getFilename())
             || $file->isDir()
+            || !$file->isFile()
         ) {
             continue;
         }
 
-        if ($file->isFile()) {
-            $listPic[] = $file->getFilename();
-        }
+        $listPic[] = $file->getFilename();
     }
 
     $min = 0;
@@ -90,17 +94,22 @@ function getRandomFolder($folder)
 {
     $listFolder = array();
     $dir = new DirectoryIterator($folder);
+
     foreach ($dir as $file) {
         set_time_limit(30);
-        if ($file->isDot() || preg_match('/^[\.].*/i', $file->getFilename())
-            || preg_match('/^(thumb)(s)?[\.](db)$/i', $file->getFilename())
+        $folderPath = $file->getPathname();
+        $fileName = $file->getFilename();
+
+        if ($file->isDot()
+            || preg_match('/^[\.].*/i', $fileName)
+            || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
+            || !$file->isDir()
+            || count(glob($folderPath . '/*')) === 0
         ) {
             continue;
         }
 
-        if ($file->isDir()) {
-            $listFolder[] = $file->getPathname();
-        }
+        $listFolder[] = $folderPath;
     }
 
     $min = 0;
@@ -200,7 +209,7 @@ if (!file_exists($folder)) {
     die;
 }
 
-$isEmptyFolder = (count(glob($folder . '/*')) === 0) ? true : false;
+$isEmptyFolder = (count(glob($folder . '*')) === 0) ? true : false;
 
 if ($isEmptyFolder) {
     $jsonResult['error'] = $logError;
