@@ -176,6 +176,7 @@ $tryMax = 5;
 
 // Manage '/' for begining end end of the customFolder.
 if ($customFolder) {
+    $customFolder = str_replace('\\', '/', $customFolder);
     $lenghtCustoFolder = strlen($customFolder);
     $firstCharCustomFolder = $customFolder[0];
 
@@ -234,6 +235,7 @@ if ($publicPathPic[$lenghtpublicPathPic - 1] !== '/' && $publicPathPic[$lenghtpu
 $src = $publicPathPic . $fileName;
 $src = str_replace('\\', '/', $src);
 $customFolder = str_replace('\\', '/', $customFolder);
+$publicPathPic = str_replace('\\', '/', $publicPathPic);
 
 list($width, $height) = getimagesize($absolutePathFolder . '/' . $fileName);
 
