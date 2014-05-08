@@ -24,7 +24,6 @@ $_routes += array(
                 'App/start'
             ),
             'css' => array(
-                'view/diapoShuffle'
             ),
         ),
     ),

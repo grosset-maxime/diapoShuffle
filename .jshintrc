@@ -11,7 +11,7 @@
         "indent"       : 4,
         "latedef"      : true,
         "maxdepth"     : 6,
-        "maxparams"    : 3,
+        "maxparams"    : 0,
         "maxlen"       : 200,
         "newcap"       : true,
         "noarg"        : true,

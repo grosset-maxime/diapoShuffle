@@ -1,0 +1,52 @@
+// ==================
+// App Options View
+// ==================
+
+$viewHeight: 50px;
+
+.ds_options_view {
+    color: #eaeaea;
+    background-color: #444;
+    border-bottom: 1px solid #eee;
+    height: $viewHeight;
+    line-height: $viewHeight;
+    padding-left: 10px;
+    @include user-select(none);
+
+    .diapo_shuffle_view_mode & {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 600;
+        background-color: rgba(50, 50, 50, 0.6);
+        border-bottom: 1px solid #888;
+        @include opacity(0);
+        @include transition(opacity 0.3s);
+
+        &:hover {
+            @include opacity(1);
+        }
+    }
+
+    .el_ctn {
+        margin: 0 8px;
+        line-height: 1em;
+        @include inline-block();
+    }
+
+    .input_custom_folder {
+        width: 100px;
+        @include border-radius(4px);
+    }
+
+    .input_interval {
+        width: 15px;
+        outline: none;
+    }
+
+    .title {
+        margin-right: 4px;
+        @include inline-block();
+    }
+} // End .ds_options_view

@@ -6,10 +6,12 @@ define(
 [
     'jquery',
     'App/Views/OptionsView',
-    'App/Actions/Action',
+    'App/Views/InfosView',
+    'App/Views/PlayView',
+    'App/Actions/GetRandomPicAction',
     'js!jquery-ui'
 ],
-function ($, OptionsView, Action) {
+function ($, OptionsView, InfosView, PlayView, GetRandomPicAction) {
     'use strict';
 
     /**
@@ -19,24 +21,16 @@ function ($, OptionsView, Action) {
             root: null
         },
         options = {},
-        els = {},
-        viewDimension = {
-            width: 0,
-            height: 0
-        };
+        els = {};
 
     /**
      *
      */
     function buildSkeleton () {
-        var mainCtn, infoCtn, viewCtn, loadingCtn, pauseIconCtn;
+        var mainCtn, loadingCtn, pauseIconCtn;
 
         mainCtn = els.mainCtn = $('<div>', {
             'class': 'diapo_shuffle'
-        });
-
-        infoCtn = els.infoCtn = $('<div>', {
-            'class': 'ctn_info'
         });
 
         // Loading
@@ -68,17 +62,9 @@ function ($, OptionsView, Action) {
             })
         );
 
-        // View
-        // ----
-        viewCtn = els.viewCtn = $('<div>', {
-            'class': 'ctn_view'
-        });
-
         mainCtn.append(
-            infoCtn,
             loadingCtn,
-            pauseIconCtn,
-            viewCtn
+            pauseIconCtn
         );
 
         options.root.append(mainCtn);
@@ -96,7 +82,10 @@ function ($, OptionsView, Action) {
             if (resizeTimeout) {
                 clearTimeout(resizeTimeout);
             }
-            resizeTimeout = setTimeout(setViewDimension, 500);
+
+            resizeTimeout = setTimeout(function () {
+                PlayView.getViewDimension(true);
+            }, 500);
         });
     } // End function attachEvents()
 
@@ -110,12 +99,12 @@ function ($, OptionsView, Action) {
             // console.log(keyPressed);
             switch (keyPressed) {
             case 27: // ESC
-                Action.stop();
+                GetRandomPicAction.stop();
                 break;
             case 32: // SPACE
                 if (!OptionsView.hasFocus()) {
                     doPreventDefault = true;
-                    Action.pause();
+                    GetRandomPicAction.pause();
                 }
                 break;
             }
@@ -129,34 +118,24 @@ function ($, OptionsView, Action) {
     /**
      *
      */
-    function setViewDimension () {
-        var doc = $(document);
-
-        viewDimension.width = doc.width();
-        viewDimension.height = doc.height();
-    } // End function setViewDimension()
-
-    /**
-     *
-     */
     function showLoading () {
-        els.loadingCtn.stop().fadeIn('fast');
+        els.loadingCtn.show();
     } // End function showLoading()
 
     /**
      *
      */
     function hideLoading () {
-        els.loadingCtn.stop().fadeOut('fast');
+        els.loadingCtn.hide();
     } // End function hideLoading()
 
     /**
      *
      */
     function onBeforeStart () {
-        els.infoCtn.empty();
+        InfosView.hide();
 
-        Action.setOptions({
+        GetRandomPicAction.setOptions({
             interval: OptionsView.getTimeInterval(),
             customFolder: OptionsView.getCustomFolder() || ''
         });
@@ -166,8 +145,8 @@ function ($, OptionsView, Action) {
      *
      */
     function onBeforeStop () {
-        els.viewCtn.empty();
-        els.infoCtn.empty();
+        PlayView.hide();
+        InfosView.hide();
 
         els.pauseIconCtn.hide();
         els.loadingCtn.hide();
@@ -178,9 +157,7 @@ function ($, OptionsView, Action) {
      */
     function onBeforePause () {
         OptionsView.toggleStatePauseBtn();
-        els.pauseIconCtn
-            .stop(true, true)
-            .fadeIn('fast');
+        els.pauseIconCtn.show();
     } // End function onBeforePause()
 
     /**
@@ -189,9 +166,7 @@ function ($, OptionsView, Action) {
     function onBeforeResume () {
         OptionsView.toggleStatePauseBtn();
 
-        els.pauseIconCtn
-            .stop(true, true)
-            .fadeOut('fast');
+        els.pauseIconCtn.hide();
     } // End function onBeforeResume()
 
     /**
@@ -205,69 +180,15 @@ function ($, OptionsView, Action) {
      *
      */
     function onGetRandom (json) {
-        var scale, img, pic, widthPic, heightPic, widthView, heightView,
-            newWidth, newHeight, customFolderPath, randomPublicPath;
+        var pic;
 
         hideLoading();
 
         if (json.success) {
             pic = json.pic;
-            widthPic = pic.width;
-            heightPic = pic.height;
-            widthView = viewDimension.width;
-            heightView = viewDimension.height;
 
-            img = $('<img>', {
-                'class': 'random_pic',
-                src: pic.src || ''
-            }).css({
-                'max-width': widthView,
-                'max-height': heightView
-            });
-
-            if (scale) {
-                newWidth = widthPic * heightView / heightPic;
-                newHeight = widthView * heightPic / widthPic;
-
-                if (newWidth < widthView) {
-                    newWidth = widthView;
-                    newHeight = widthView * heightPic / widthPic;
-                    // debugger;
-                } else if (widthPic < heightPic && widthPic < widthView) {
-                    newWidth = widthPic * heightView / heightPic;
-                    newHeight = heightView;
-                } else if (widthPic === heightPic) {
-                    if (heightView < widthView) {
-                        newWidth = heightView;
-                        newHeight = heightView;
-                    } else {
-                        newWidth = widthView;
-                        newHeight = widthView;
-                    }
-                }
-
-                if (newWidth && newHeight) {
-                    img.css({
-                        width: newWidth,
-                        height: newHeight
-                    });
-                }
-            }
-
-            customFolderPath = $('<span>', {
-                'class': 'custom_folder_path',
-                html: pic.customFolderPath
-            });
-
-            randomPublicPath = $('<span>', {
-                'class': 'random_public_path',
-                html: pic.randomPublicPath
-            });
-
-            els.infoCtn.html(
-                $('<div>').append(customFolderPath, randomPublicPath)
-            );
-            els.viewCtn.html(img);
+            InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
+            PlayView.setPic(pic);
         }
     } // End function onGetRandom()
 
@@ -276,6 +197,8 @@ function ($, OptionsView, Action) {
          *
          */
         init: function (opts) {
+            var mainCtn;
+
             $.extend(true, options, defaultOptions, opts || {});
 
             if (!options.root) {
@@ -283,14 +206,21 @@ function ($, OptionsView, Action) {
             }
 
             buildSkeleton();
+            mainCtn = els.mainCtn;
+
             OptionsView.init({
-                root: els.mainCtn
+                root: mainCtn
             });
 
-            attachEvents();
-            setViewDimension();
+            InfosView.init({
+                root: mainCtn
+            });
 
-            Action.init({
+            PlayView.init({
+                root:mainCtn
+            });
+
+            GetRandomPicAction.init({
                 events: {
                     onBeforeStart: onBeforeStart,
                     onBeforeStop: onBeforeStop,
@@ -300,6 +230,8 @@ function ($, OptionsView, Action) {
                     onGetRandom: onGetRandom
                 }
             });
+
+            attachEvents();
         }
     };
 

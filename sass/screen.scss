@@ -39,3 +39,17 @@
 @import 'base/base';
 @import 'base/content';
 
+// App Animations
+// --------------
+@import 'App/Animations/MainViewAnim';
+
+// App Views
+// ---------
+.diapo_shuffle {
+    color: #333;
+
+    @import 'App/Views/MainView';
+    @import 'App/Views/OptionsView';
+    @import 'App/Views/InfosView';
+    @import 'App/Views/PlayView';
+}

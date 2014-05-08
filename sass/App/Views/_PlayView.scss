@@ -1,0 +1,19 @@
+// ==================
+// App Options View
+// ==================
+
+.ds_play_view {
+    display: none;
+
+    .diapo_shuffle_view_mode & {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 500;
+        background-color: #1d1d1d;
+        text-align: center;
+    }
+}

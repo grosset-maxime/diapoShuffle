@@ -5,13 +5,13 @@
 define(
 [
     'jquery',
-    'App/Actions/Action'
+    'App/Actions/GetRandomPicAction'
 ],
-function ($, Action) {
+function ($, GetRandomPicAction) {
     'use strict';
 
-    var DEFAULT_INTERVAL = Action.DEFAULT_INTERVAL,
-        DEFAULT_CUSTOM_FOLDER = Action.DEFAULT_CUSTOM_FOLDER;
+    var DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
+        DEFAULT_CUSTOM_FOLDER = GetRandomPicAction.DEFAULT_CUSTOM_FOLDER;
 
     var defaultOptions = {
             root: null
@@ -29,13 +29,13 @@ function ($, Action) {
             btnStart, btnStop, btnPause, inputInterval,
             intervalCtn, inputScale, scaleCtn;
 
-        mainCtn = $('<div>', {
-            'class': 'ctn_options'
+        mainCtn = els.mainCtn =$('<div>', {
+            'class': 'ds_options_view'
         });
 
         // Input custom folder
         inputCustomPathFolder = els.inputCustomFolder = $('<input>', {
-            'class': 'input_custom_folder_options input_text_options',
+            'class': 'input_custom_folder input_text',
             type: 'text',
             value: DEFAULT_CUSTOM_FOLDER,
         }).focus(function () {
@@ -52,7 +52,7 @@ function ($, Action) {
             switch (keyPressed) {
             case 13: // Enter
                 doPreventDefault = true;
-                Action.start();
+                GetRandomPicAction.start();
                 break;
             }
 
@@ -63,10 +63,10 @@ function ($, Action) {
 
         // Ctn custom folder
         customFolderCtn = $('<div>', {
-            'class': 'el_ctn_options'
+            'class': 'el_ctn'
         })
             .append($('<label>', {
-                'class': 'title_custom_folder_options title_options',
+                'class': 'title',
                 text: 'Folder :'
             })
                 .click(function () {
@@ -77,34 +77,34 @@ function ($, Action) {
 
         // Btn start
         btnStart = els.btnStart = $('<input>', {
-            'class': 'btn_start_options btn_options el_ctn_options',
+            'class': 'btn el_ctn',
             type: 'button',
             value: 'start'
         })
-            .click(Action.start)
+            .click(GetRandomPicAction.start)
             .button();
 
         // Btn stop
         btnStop = els.btnStop = $('<input>', {
-            'class': 'btn_stop_options btn_options el_ctn_options',
+            'class': 'btn el_ctn',
             type: 'button',
             value: 'stop'
         })
-            .click(Action.stop)
+            .click(GetRandomPicAction.stop)
             .button();
 
         // Btn pause
         btnPause = els.btnPause = $('<input>', {
-            'class': 'btn_pause_options btn_options el_ctn_options',
+            'class': 'btn el_ctn',
             type: 'button',
             value: 'pause'
         })
-            .click(Action.pause)
+            .click(GetRandomPicAction.pause)
             .button();
 
         // Input interval
         inputInterval = els.inputInterval = $('<input>', {
-            'class': 'input_interval_options input_text_options',
+            'class': 'input_interval input_text',
             value: DEFAULT_INTERVAL,
             maxlength: 2
         })
@@ -121,7 +121,7 @@ function ($, Action) {
                 switch (keyPressed) {
                 case 13: // Enter
                     doPreventDefault = true;
-                    Action.start();
+                    GetRandomPicAction.start();
                     break;
                 }
 
@@ -132,10 +132,10 @@ function ($, Action) {
 
         // Ctn interval
         intervalCtn = $('<div>', {
-            'class': 'el_ctn_options'
+            'class': 'el_ctn'
         })
             .append($('<label>', {
-                'class': 'title_interval_options title_options',
+                'class': 'title',
                 text: 'Interval (s) :'
             })
                     .click(function () {
@@ -146,17 +146,17 @@ function ($, Action) {
 
         // Checkbox scale
         inputScale = els.inputScale = $('<input>', {
-            'class': 'input_interval_options input_text_options',
+            'class': 'input_text',
             type: 'checkbox'
         });
 
         // Ctn scale
         scaleCtn = $('<div>', {
-            'class': 'el_ctn_options'
+            'class': 'el_ctn'
         }).append(
             inputScale,
             $('<span>', {
-                'class': 'title_scale_options title_options',
+                'class': 'title',
                 text: 'Scale'
             })
                 .click(function () {
