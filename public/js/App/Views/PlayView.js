@@ -50,40 +50,27 @@ function ($, OptionsView) {
      *
      */
     function scalePic (picInfos, picEl) {
-        var newWidth, newHeight,
+        var cssObj, dw, dh,
             widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             widthView = viewDimension.width,
             heightView = viewDimension.height;
 
-        newWidth = widthPic * heightView / heightPic;
-        newHeight = widthView * heightPic / widthPic;
-
-        if (newWidth < widthView) {
-            newWidth = widthView;
-            newHeight = widthView * heightPic / widthPic;
-            // debugger;
-        } else if (widthPic < heightPic && widthPic < widthView) {
-            newWidth = widthPic * heightView / heightPic;
-            newHeight = heightView;
-        } else if (widthPic === heightPic) {
-            if (heightView < widthView) {
-                newWidth = heightView;
-                newHeight = heightView;
-            } else {
-                newWidth = widthView;
-                newHeight = widthView;
-            }
+        if (widthPic >= widthView || heightPic >= heightView) {
+            return;
         }
 
-        if (newWidth && newHeight) {
-            picEl.css({
-                width: newWidth,
-                height: newHeight
-            });
+        dw = widthView / widthPic;
+        dh = heightView / heightPic;
+
+        if (dh >= dw) {
+            cssObj = {'min-width': widthView};
+        } else {
+            cssObj = {'min-height': heightView};
         }
 
-        return picEl;
+        picEl.css(cssObj);
+
     } // End function scalePic()
 
     var View = {
@@ -117,7 +104,7 @@ function ($, OptionsView) {
             });
 
             if (OptionsView.isScaleOn()) {
-                img = scalePic(pic, img);
+                scalePic(pic, img);
             }
 
             els.mainCtn.html(img);
