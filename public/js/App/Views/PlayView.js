@@ -70,8 +70,30 @@ function ($, OptionsView) {
         }
 
         picEl.css(cssObj);
-
     } // End function scalePic()
+
+    /**
+     *
+     */
+    function zoomPic (picInfos, picEl) {
+        var widthPic = picInfos.width || 0,
+            heightPic = picInfos.height || 0,
+            zoom = OptionsView.getZoom(),
+            newWidth = widthPic * zoom,
+            newHeight = heightPic * zoom,
+            widthView = viewDimension.width,
+            heightView = viewDimension.height;
+
+        if (newWidth >= widthView || newHeight >= heightView) {
+            scalePic(picInfos, picEl);
+            return;
+        }
+
+        picEl.css({
+            width: newWidth,
+            height: newHeight
+        });
+    } // End function zoomPic()
 
     var View = {
         /**
@@ -105,6 +127,8 @@ function ($, OptionsView) {
 
             if (OptionsView.isScaleOn()) {
                 scalePic(pic, img);
+            } else if (OptionsView.getZoom() > 1) {
+                zoomPic(pic, img);
             }
 
             els.mainCtn.html(img);

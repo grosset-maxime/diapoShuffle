@@ -11,7 +11,8 @@ function ($, GetRandomPicAction) {
     'use strict';
 
     var DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
-        DEFAULT_CUSTOM_FOLDER = GetRandomPicAction.DEFAULT_CUSTOM_FOLDER;
+        DEFAULT_CUSTOM_FOLDER = GetRandomPicAction.DEFAULT_CUSTOM_FOLDER,
+        DEFAULT_ZOOM = 1;
 
     var defaultOptions = {
             root: null
@@ -27,7 +28,28 @@ function ($, GetRandomPicAction) {
     function buildSkeleton () {
         var mainCtn, inputCustomPathFolder, customFolderCtn,
             btnStart, btnStop, btnPause, inputInterval,
-            intervalCtn, inputScale, scaleCtn;
+            intervalCtn, inputScale, scaleCtn, zoomCtn,
+            inputZoom;
+
+        /**
+         *
+         */
+        function keyUpInput (e) {
+            var keyPressed = e.which,
+                doPreventDefault = false;
+            // console.log(keyPressed);
+            switch (keyPressed) {
+            case 13: // Enter
+                doPreventDefault = true;
+                GetRandomPicAction.start();
+                break;
+            }
+
+            if (doPreventDefault) {
+                e.preventDefault();
+            }
+        } // End function keyUpInput()
+
 
         mainCtn = els.mainCtn =$('<div>', {
             'class': 'ds_options_view'
@@ -44,22 +66,7 @@ function ($, GetRandomPicAction) {
         .blur(function () {
                 hasFocus = false;
             })
-        .on('keyup', function (e) {
-
-            var keyPressed = e.which,
-                doPreventDefault = false;
-            // console.log(keyPressed);
-            switch (keyPressed) {
-            case 13: // Enter
-                doPreventDefault = true;
-                GetRandomPicAction.start();
-                break;
-            }
-
-            if (doPreventDefault) {
-                e.preventDefault();
-            }
-        });
+        .on('keyup', keyUpInput);
 
         // Ctn custom folder
         customFolderCtn = $('<div>', {
@@ -104,9 +111,10 @@ function ($, GetRandomPicAction) {
 
         // Input interval
         inputInterval = els.inputInterval = $('<input>', {
-            'class': 'input_interval input_text',
+            'class': 'input_interval input_spinner',
             value: DEFAULT_INTERVAL,
-            maxlength: 2
+            maxlength: 2,
+            numberFormat: 'n'
         })
             .focus(function () {
                 hasFocus = true;
@@ -114,21 +122,7 @@ function ($, GetRandomPicAction) {
             .blur(function () {
                 hasFocus = false;
             })
-            .on('keyup', function (e) {
-                var keyPressed = e.which,
-                    doPreventDefault = false;
-                // console.log(keyPressed);
-                switch (keyPressed) {
-                case 13: // Enter
-                    doPreventDefault = true;
-                    GetRandomPicAction.start();
-                    break;
-                }
-
-                if (doPreventDefault) {
-                    e.preventDefault();
-                }
-            });
+            .on('keyup', keyUpInput);
 
         // Ctn interval
         intervalCtn = $('<div>', {
@@ -164,12 +158,43 @@ function ($, GetRandomPicAction) {
                 })
         );
 
+        // Spinner Zoom
+        inputZoom = els.inputZoom = $('<input>', {
+            'class': 'input_zoom input_spinner',
+            value: DEFAULT_ZOOM,
+            step: 0.1,
+            maxlength: 2,
+            numberFormat: 'n'
+        })
+            .focus(function () {
+                hasFocus = true;
+            })
+            .blur(function () {
+                hasFocus = false;
+            })
+            .on('keyup', keyUpInput);
+
+        // Ctn Zoom
+        zoomCtn = $('<div>', {
+            'class': 'el_ctn'
+        })
+            .append($('<label>', {
+                'class': 'title',
+                text: 'Zoom :'
+            })
+                    .click(function () {
+                        inputZoom.focus();
+                    }),
+                inputZoom
+            );
+
         mainCtn.append(
             customFolderCtn,
             btnStart,
             btnStop,
             btnPause,
             intervalCtn,
+            zoomCtn,
             scaleCtn
         );
 
@@ -178,6 +203,11 @@ function ($, GetRandomPicAction) {
         inputInterval.spinner({
             min: 1,
             max: 60
+        });
+
+        inputZoom.spinner({
+            min: 1,
+            max: 99
         });
     } // End function buildSkeleton()
 
@@ -207,12 +237,24 @@ function ($, GetRandomPicAction) {
          */
         getTimeInterval: function () {
             var inputInterval = els.inputInterval,
-                interval = parseInt(inputInterval.val(), 10) || DEFAULT_INTERVAL;
+                interval = inputInterval.spinner('value') || DEFAULT_INTERVAL;
 
             inputInterval.spinner('value', interval);
 
             return interval;
         }, // End function getTimeInterval()
+
+        /**
+         *
+         */
+        getZoom: function () {
+            var inputZoom = els.inputZoom,
+                zoom = inputZoom.spinner('value') || DEFAULT_ZOOM;
+
+            inputZoom.spinner('value', zoom);
+
+            return zoom;
+        }, // End function getZoom()
 
         /**
          *

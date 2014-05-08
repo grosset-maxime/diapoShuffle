@@ -259,7 +259,12 @@ body {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
-/* line 32, ../../sass/App/Views/_OptionsView.scss */
+/* line 33, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .btn,
+.diapo_shuffle .ds_options_view .input_spinner {
+  outline: none;
+}
+/* line 37, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .el_ctn {
   margin: 0 8px;
   line-height: 1em;
@@ -270,7 +275,7 @@ body {
   zoom: 1;
   *display: inline;
 }
-/* line 38, ../../sass/App/Views/_OptionsView.scss */
+/* line 43, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_custom_folder {
   width: 100px;
   -webkit-border-radius: 4px;
@@ -279,12 +284,12 @@ body {
   -o-border-radius: 4px;
   border-radius: 4px;
 }
-/* line 43, ../../sass/App/Views/_OptionsView.scss */
-.diapo_shuffle .ds_options_view .input_interval {
-  width: 15px;
-  outline: none;
+/* line 49, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .input_interval,
+.diapo_shuffle .ds_options_view .input_zoom {
+  width: 20px;
 }
-/* line 48, ../../sass/App/Views/_OptionsView.scss */
+/* line 53, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title {
   margin-right: 4px;
   display: -moz-inline-stack;

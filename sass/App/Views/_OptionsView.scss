@@ -29,6 +29,11 @@ $viewHeight: 50px;
         }
     }
 
+    .btn,
+    .input_spinner {
+        outline: none;
+    }
+
     .el_ctn {
         margin: 0 8px;
         line-height: 1em;
@@ -40,9 +45,9 @@ $viewHeight: 50px;
         @include border-radius(4px);
     }
 
-    .input_interval {
-        width: 15px;
-        outline: none;
+    .input_interval,
+    .input_zoom {
+        width: 20px;
     }
 
     .title {
