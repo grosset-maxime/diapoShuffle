@@ -26,7 +26,12 @@
 function hasFolder($folder)
 {
     $hasFolder = false;
-    $dir = new DirectoryIterator($folder);
+    $isEmptyFolder = true;
+    try {
+        $dir = new DirectoryIterator($folder);
+    } catch (Exception $e) {
+        throw new Exception('Folder doesn\'t exist: ' . $folder);
+    }
 
     foreach ($dir as $file) {
         set_time_limit(30);
@@ -37,11 +42,18 @@ function hasFolder($folder)
 
         if ($file->isDir() && !preg_match('/^[\.].*/i', $file->getFilename())) {
             $hasFolder = true;
+            $isEmptyFolder = false;
             break;
         } else if ($file->isFile() && !preg_match('/^[\.].*/i', $file->getFilename())) {
+            $isEmptyFolder = false;
             break;
         }
     }
+
+    if ($isEmptyFolder) {
+        throw new Exception('The folder is empty : ' . $folder);
+    }
+
     return $hasFolder;
 }
 
@@ -104,7 +116,6 @@ function getRandomFolder($folder)
             || preg_match('/^[\.].*/i', $fileName)
             || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
             || !$file->isDir()
-            || count(glob($folderPath . '/*')) === 0
         ) {
             continue;
         }
@@ -134,7 +145,14 @@ function searchRandomPic($folder)
 {
     global $levelCurent, $levelMax, $fileName, $publicPathPic, $absolutePathFolder, $BASE_FOLDER;
 
-    $hasFolder = hasFolder($folder);
+    try {
+        $hasFolder = hasFolder($folder);
+    } catch (Exception $e) {
+        if ($levelCurent === 0) {
+            throw new Exception('Root folder is empty: ' . $folder);
+        }
+        return;
+    }
 
     if ($hasFolder && $levelCurent < $levelMax) {
         $levelCurent++;
@@ -201,36 +219,47 @@ if ($customFolder) {
 }
 $folder = $baseAppPathFolder . $customFolder;
 
-if (!file_exists($folder)) {
+
+
+try {
+    if (!file_exists($folder)) {
+        throw new Exception('Folder doesn\'t exist: ' . $folder);
+    }
+
+    $dir = new DirectoryIterator($folder);
+} catch (Exception $e) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['wrongCustomFolder'] = true;
     $jsonResult['error']['message'] = 'Wrong custom folder, it doesn\'t exist.';
-    print json_encode($jsonResult);
-    die;
-}
-
-$isEmptyFolder = (count(glob($folder . '*')) === 0) ? true : false;
-
-if ($isEmptyFolder) {
-    $jsonResult['error'] = $logError;
-    $jsonResult['error']['noPic'] = true;
-    $jsonResult['error']['message'] = 'No picture to show!';
+    $jsonResult['error']['errorMessage'] = $e->getMessage();
     print json_encode($jsonResult);
     die;
 }
 
 do {
-    searchRandomPic($folder);
+    try {
+        searchRandomPic($folder);
+    } catch (Exception $e) {
+        $jsonResult['error'] = $logError;
+        $jsonResult['error']['noPic'] = true;
+        $jsonResult['error']['message'] = 'No picture to show!';
+        $jsonResult['error']['errorMessage'] = $e->getMessage();
+        print json_encode($jsonResult);
+        die;
+    }
 
     if ($fileName) {
         break;
     }
 
     $try++;
-} while (empty($fileName) || $try < $tryMax);
+} while (empty($fileName) && $try < $tryMax);
 
-
+// If no pic found after nb try.
 if (!$fileName) {
+    $jsonResult['error'] = $logError;
+    $jsonResult['error']['noPic'] = true;
+    $jsonResult['error']['message'] = 'No picture to show!';
     print json_encode($jsonResult);
     die;
 }

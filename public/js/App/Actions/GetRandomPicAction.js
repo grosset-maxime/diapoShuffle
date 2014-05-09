@@ -134,8 +134,8 @@ function ($) {
         xhr.done(function (json) {
             var error;
 
-            if (json.error) {
-                error = json.error;
+            if (json.error || !json.success) {
+                error = json.error || {};
                 console.log('Error : ' + (error.message || 'no error message available'));
                 console.log(error);
 
@@ -150,7 +150,7 @@ function ($) {
                 //     message = 'Error: ' + error.message || 'Unknown error.';
                 //     // info.html(message);
                 // }
-                return false;
+                return;
             }
 
             if ($.isFunction(onGetRandom)) {

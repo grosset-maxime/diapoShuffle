@@ -43,7 +43,7 @@
         "laxbreak"     : false,
         "laxcomma"     : false,
         "loopfunc"     : false,
-        "maxerr"       : 20,
+        "maxerr"       : 100,
         "multistr"     : false,
         "notypeof"     : false,
         "proto"        : false,

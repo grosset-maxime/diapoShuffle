@@ -48,6 +48,7 @@ function redirect ($url)
 //require_once ROOT_DIR . '/connexionBdd.inc.php';  // Connexion a la base de donnee MySQL
 
 require_once ROOT_DIR . '/config/routes.php';
+require_once ROOT_DIR . '/config/assets.php';
 
 // Get global config
 // -----------------
@@ -80,12 +81,32 @@ if (!array_key_exists($_r, $_routes)) {
     redirect('http://' . HTTP_HOST . '/index.php?r=' . $_r);
 }
 
-// If the roote is a Script
+// If the route is a Script
 if (!empty($_routes[$_r]['isScript'])) {
     include_once ROOT_DIR . $_routes[$_r]['path'];
     exit;
 }
 
+// Manage assets (js and css)
+// --------------------------
+$assetsJs = '';
+
+if (!empty($_assets['js'])) {
+    foreach ($_assets['js'] as $key => $pathAsset) {
+        $assetsJs .= '<script type="text/javascript" src="/js/' . $pathAsset . '.js"></script>';
+    }
+}
+
+$assetsCss = '';
+
+if (!empty($_assets['css'])) {
+    foreach ($_assets['css'] as $key => $pathAsset) {
+        $assetsCss .= '<link rel="stylesheet" href="/css/' . $pathAsset . '.css" type="text/css" media="screen"/>';
+    }
+}
+
+// Manage route assets (js and css)
+// --------------------------------
 $assetsRouteJs = '';
 
 if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['js'])) {
@@ -116,25 +137,25 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
         <link rel="icon favicon" type="image/png" href="favicon.png"/>
 
         <!-- CSS //-->
-        <link rel="stylesheet" href="/js/vendors/jquery-ui/jquery-ui.css" type="text/css" media="screen"/>
-        <link rel="stylesheet" href="/css/screen.css" media="screen" type="text/css" title="default"/>
+        <?php echo $assetsCss; ?>
 
         <?php echo $assetsRouteCss; ?>
 
-        <script type="text/javascript" src="/js/vendors/jquery/jquery-2.0.0.js"></script>
-
+        <!-- JS //-->
         <script type="text/javascript">
         var curl = {
             baseUrl: "/js",
             paths: {
-                'jquery': 'vendors/jquery/jquery-2.0.0',
-                'jquery-ui': 'vendors/jquery-ui/jquery-ui'
+                'jquery': '<?php echo $_jQueryPath ?>',
+                'jquery-ui': '<?php echo $_jQueryUIPath; ?>'
             }
         };
         </script>
-        <script type="text/javascript" src="/js/vendors/curl/curl.js"></script>
+
+        <?php echo $assetsJs; ?>
 
         <?php echo $assetsRouteJs; ?>
+
     </head>
     <body>
 <?php require_once ROOT_DIR . '/static/header.phtml'; ?>
