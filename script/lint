@@ -91,6 +91,7 @@ fi
 if [[ ${#files_js[@]} -gt 0 ]]; then
     for file in "${files_js[@]}"; do
         if ! [[ $file =~ (/|^)($IGNORE_LIBS_JS)[-./] ]]; then
+            echo $file
             if ! $NODE $JSHINT $file; then
                 if [[ $unstagedFiles == true ]]; then
                     echo ''
