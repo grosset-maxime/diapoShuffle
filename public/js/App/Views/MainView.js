@@ -223,6 +223,14 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
             buildSkeleton();
             mainCtn = els.mainCtn;
 
+            HeaderView.init({
+                root: mainCtn
+            });
+
+            FooterView.init({
+                root: mainCtn
+            });
+
             OptionsView.init({
                 root: mainCtn
             });
