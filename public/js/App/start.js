@@ -5,9 +5,14 @@
 curl(
 [
     'jquery',
-    'App/Views/MainView'
+
+    // PM
+    'PM/Core',
+
+    // App
+    'App/Views/MainView',
 ],
-function ($, MainView) {
+function ($, PM, MainView) {
     'use strict';
 
     function initView () {
@@ -15,6 +20,8 @@ function ($, MainView) {
             root: $(document.body)
         });
     }
+
+    PM.setDebug(true);
 
     initView();
 });

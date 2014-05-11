@@ -19,8 +19,7 @@ function ($, GetRandomPicAction) {
         },
         options = {},
         els = {},
-        hasFocus = false,
-        isPaused = false;
+        hasFocus = false;
 
     /**
      *
@@ -278,14 +277,13 @@ function ($, GetRandomPicAction) {
         /**
          *
          */
-        toggleStatePauseBtn: function () {
-            var btnPause = els.btnPause;
+        toggleStatePauseBtn: function (force) {
+            var btnPause = els.btnPause,
+                isPaused = GetRandomPicAction.isPausing();
 
-            if (isPaused) {
+            if ((isPaused && !force) || force === 'resume') {
                 btnPause.val('resume');
-                isPaused = false;
-            } else {
-                isPaused = true;
+            } else if ((!isPaused && !force) || force === 'pause') {
                 btnPause.val('pause');
             }
         } // End function toggleStatePauseBtn()

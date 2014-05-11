@@ -39,9 +39,20 @@
 @import 'base/base';
 @import 'base/content';
 
+// PM Cmp
+// ------
+@import 'CSS:../public/css/vendors/PM/Cmp/Notify';
+
 // App Animations
 // --------------
 @import 'App/Animations/MainViewAnim';
+
+// App Global
+// ----------
+body {
+    background-color: #cacaca;
+}
+// End App Global
 
 // App Views
 // ---------

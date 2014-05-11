@@ -104,7 +104,12 @@ function ($, OptionsView, InfosView, PlayView, GetRandomPicAction) {
             case 32: // SPACE
                 if (!OptionsView.hasFocus()) {
                     doPreventDefault = true;
-                    GetRandomPicAction.pause();
+
+                    if (GetRandomPicAction.isPlaying()) {
+                        GetRandomPicAction.pause();
+                    } else {
+                        GetRandomPicAction.start();
+                    }
                 }
                 break;
             }
@@ -139,23 +144,28 @@ function ($, OptionsView, InfosView, PlayView, GetRandomPicAction) {
             interval: OptionsView.getTimeInterval(),
             customFolder: OptionsView.getCustomFolder() || ''
         });
+
+        OptionsView.toggleStatePauseBtn('pause');
+        els.pauseIconCtn.hide();
     } // End function onBeforeStart()
 
     /**
      *
      */
-    function onBeforeStop () {
+    function onStop () {
         PlayView.hide();
         InfosView.hide();
 
         els.pauseIconCtn.hide();
         els.loadingCtn.hide();
+
+        OptionsView.toggleStatePauseBtn('pause');
     } // End function onBeforeStop(),
 
     /**
      *
      */
-    function onBeforePause () {
+    function onPause () {
         OptionsView.toggleStatePauseBtn();
         els.pauseIconCtn.show();
     } // End function onBeforePause()
@@ -163,7 +173,7 @@ function ($, OptionsView, InfosView, PlayView, GetRandomPicAction) {
     /**
      *
      */
-    function onBeforeResume () {
+    function onResume () {
         OptionsView.toggleStatePauseBtn();
 
         els.pauseIconCtn.hide();
@@ -223,9 +233,9 @@ function ($, OptionsView, InfosView, PlayView, GetRandomPicAction) {
             GetRandomPicAction.init({
                 events: {
                     onBeforeStart: onBeforeStart,
-                    onBeforeStop: onBeforeStop,
-                    onBeforePause: onBeforePause,
-                    onBeforeResume: onBeforeResume,
+                    onStop: onStop,
+                    onPause: onPause,
+                    onResume: onResume,
                     onBeforeGetRandom: onBeforeGetRandom,
                     onGetRandom: onGetRandom
                 }

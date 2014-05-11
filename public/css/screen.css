@@ -67,9 +67,65 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   display: block;
 }
 
-/* line 2, ../../sass/base/_base.scss */
-body {
-  background-color: #cacaca;
+/* line 1, ../../sass/base/_base.scss */
+div {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 10, ../../../sass/Cmp/Notify.scss */
+/* line 2, vendors/PM/Cmp/Notify.css */
+.pm_notify_cmp {
+  display: none;
+  width: 400px;
+  position: absolute;
+  text-align: center;
+  padding: 24px;
+  z-index: 1000;
+  border-radius: 3px;
+  left: calc(50% - 200px);
+  top: 25px;
+  box-shadow: 3px 3px 5px -2px #555;
+  border: 1px solid #333;
+}
+
+/* line 23, ../../../sass/Cmp/Notify.scss */
+/* line 16, vendors/PM/Cmp/Notify.css */
+.pm_notify_cmp.error {
+  background-color: rgba(205, 51, 51, 0.95);
+}
+
+/* line 27, ../../../sass/Cmp/Notify.scss */
+/* line 20, vendors/PM/Cmp/Notify.css */
+.pm_notify_cmp.info {
+  background-color: rgba(0, 191, 255, 0.95);
+}
+
+/* line 31, ../../../sass/Cmp/Notify.scss */
+/* line 24, vendors/PM/Cmp/Notify.css */
+.pm_notify_cmp.warning {
+  background-color: rgba(255, 97, 3, 0.95);
+}
+
+/* line 35, ../../../sass/Cmp/Notify.scss */
+/* line 28, vendors/PM/Cmp/Notify.css */
+.pm_notify_cmp .close {
+  position: absolute;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  top: 0;
+  right: 0px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+/* line 46, ../../../sass/Cmp/Notify.scss */
+/* line 40, vendors/PM/Cmp/Notify.css */
+.pm_notify_cmp .close:hover {
+  opacity: 1;
 }
 
 @-moz-keyframes ds_loading_anim {
@@ -144,7 +200,12 @@ body {
   }
 }
 
-/* line 48, ../../sass/screen.scss */
+/* line 52, ../../sass/screen.scss */
+body {
+  background-color: #cacaca;
+}
+
+/* line 59, ../../sass/screen.scss */
 .diapo_shuffle {
   color: #333;
 }

@@ -3,6 +3,7 @@
 *.sublime-workspace
 
 public/js/vendors/PM
+public/css/vendors/PM
 
 !.gitignore
 !.jshintrc

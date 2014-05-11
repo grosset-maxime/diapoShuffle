@@ -1,19 +1,24 @@
 /* global
-    define, console
+    define
 */
 
 define(
 [
-    'jquery'
+    'jquery',
+
+    // PM
+    'PM/Core',
+    'PM/Cmp/Notify',
 ],
-function ($) {
+function ($, PM, Notify) {
     'use strict';
 
     var DEFAULT_INTERVAL = 3,
         DEFAULT_CUSTOM_FOLDER = '',
         VIEW_MODE_CLASS = 'diapo_shuffle_view_mode';
 
-    var defaultOptions = {
+    var idInterval, errorNotify,
+        defaultOptions = {
             interval: DEFAULT_INTERVAL,
             customFolder: DEFAULT_CUSTOM_FOLDER,
             events: {
@@ -31,7 +36,8 @@ function ($) {
             }
         },
         options = {},
-        idInterval;
+        isPlaying = false,
+        isPausing = false;
 
     /**
      *
@@ -66,13 +72,17 @@ function ($) {
 
         $(document.body).addClass(VIEW_MODE_CLASS);
         getRandomPic();
+        isPlaying = true;
+        isPausing = false;
     } // End function start()
 
     /**
      *
      */
     function stop () {
-        var onBeforeStop = options.events.onBeforeStop;
+        var events = options.events,
+            onBeforeStop = events.onBeforeStop,
+            onStop = events.onStop;
 
         if ($.isFunction(onBeforeStop)) {
             onBeforeStop();
@@ -80,6 +90,12 @@ function ($) {
 
         clearTheInterval();
         $(document.body).removeClass(VIEW_MODE_CLASS);
+        isPlaying = false;
+        isPausing = false;
+
+        if ($.isFunction(onStop)) {
+            onStop();
+        }
     } // End function stop()
 
     /**
@@ -88,7 +104,9 @@ function ($) {
     function pause () {
         var events = options.events,
             onBeforePause = events.onBeforePause,
-            onBeforeResume = events.onBeforeResume;
+            onBeforeResume = events.onBeforeResume,
+            onPause = events.onPause,
+            onResume = events.onResume;
 
         if (idInterval) {
             if ($.isFunction(onBeforePause)) {
@@ -96,12 +114,22 @@ function ($) {
             }
 
             clearTheInterval();
+            isPausing = true;
+
+            if ($.isFunction(onPause)) {
+                onPause();
+            }
         } else {
             if ($.isFunction(onBeforeResume)) {
                 onBeforeResume();
             }
 
             start();
+            isPausing = false;
+
+            if ($.isFunction(onResume)) {
+                onResume();
+            }
         }
     } // End function pause()
 
@@ -110,10 +138,26 @@ function ($) {
      */
     function getRandomPic () {
         var xhr,
-            //message,
+            errorMessage,
             events = options.events,
             onBeforeGetRandom = events.onBeforeGetRandom,
             onGetRandom = events.onGetRandom;
+
+        /**
+         *
+         */
+        function displayErrorNotify (message, type) {
+            if (!errorNotify) {
+                errorNotify = new Notify({
+                    className: 'getRandomPicAction-notify',
+                    container: $(document.body),
+                    autoHide: true,
+                    duration: 3
+                });
+            }
+
+            errorNotify.setMessage(message, type, true);
+        } // End function displayErrorNotify()
 
         clearTheInterval();
 
@@ -132,24 +176,24 @@ function ($) {
         });
 
         xhr.done(function (json) {
-            var error;
+            var error, typeMessage;
 
             if (json.error || !json.success) {
                 error = json.error || {};
-                console.log('Error : ' + (error.message || 'no error message available'));
-                console.log(error);
 
+                if (error.wrongCustomFolder || error.noPic) {
+                    errorMessage = error.message;
+                    typeMessage = Notify.TYPE_WARNING;
+                } else {
+                    errorMessage = 'Error: ' + error.message || 'Unknown error.';
+                    typeMessage = Notify.TYPE_ERROR;
+                }
+
+                PM.log('Error : ' + errorMessage);
+                PM.log(error);
+
+                displayErrorNotify(errorMessage, typeMessage);
                 stop();
-
-                // if (error.mandatoryFieldsMissing) {
-                //     // info.html('Mandatory fields are missing.');
-                // } else if (error.wrongCustomFolder) {
-                //     message = 'Wrong custom folder.';
-                //     // info.html(message);
-                // } else {
-                //     message = 'Error: ' + error.message || 'Unknown error.';
-                //     // info.html(message);
-                // }
                 return;
             }
 
@@ -160,10 +204,10 @@ function ($) {
             setTheInterval();
         });
 
-        xhr.fail(function (jqXHR, textStatus) {
-            console.log('error getRandomPic() : ' +
-                textStatus + ' / responseText : ' + jqXHR.responseText);
+        xhr.fail(function (jqXHR, textStatus, errorThrown) {
+            var message = 'getRandomPicAction.getRandomPic()';
 
+            PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
             stop();
         });
     } // End function getRandomPic()
@@ -207,6 +251,20 @@ function ($) {
         pause: function () {
             pause();
         }, // End function pause()
+
+        /**
+         *
+         */
+        isPlaying: function () {
+            return isPlaying;
+        }, // End function isPlaying()
+
+        /**
+         *
+         */
+        isPausing: function () {
+            return isPausing && isPlaying;
+        }, // End function isPausing()
 
         /**
          *

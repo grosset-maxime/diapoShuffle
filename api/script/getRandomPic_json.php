@@ -259,7 +259,7 @@ do {
 if (!$fileName) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['noPic'] = true;
-    $jsonResult['error']['message'] = 'No picture to show!';
+    $jsonResult['error']['message'] = 'No picture to show after ' . $tryMax . ' try.';
     print json_encode($jsonResult);
     die;
 }

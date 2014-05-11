@@ -147,7 +147,9 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
             baseUrl: "/js",
             paths: {
                 'jquery': '<?php echo $_jQueryPath ?>',
-                'jquery-ui': '<?php echo $_jQueryUIPath; ?>'
+                'jquery-ui': '<?php echo $_jQueryUIPath; ?>',
+                'jquery-inherit': '<?php echo $_jQueryInheritPath; ?>.js',
+                'PM': '<?php echo $_PMPath; ?>'
             }
         };
         </script>
