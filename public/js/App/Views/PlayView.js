@@ -5,6 +5,8 @@
 define(
 [
     'jquery',
+
+    // App
     'App/Views/OptionsView'
 ],
 function ($, OptionsView) {

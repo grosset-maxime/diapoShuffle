@@ -5,7 +5,12 @@
 define(
 [
     'jquery',
-    'App/Actions/GetRandomPicAction'
+
+    // App
+    'App/Actions/GetRandomPicAction',
+
+    // Non AMD
+    'js!jquery-ui'
 ],
 function ($, GetRandomPicAction) {
     'use strict';

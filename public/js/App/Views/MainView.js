@@ -5,13 +5,18 @@
 define(
 [
     'jquery',
+
+    // App Views
+    'App/Views/HeaderView',
+    'App/Views/FooterView',
     'App/Views/OptionsView',
     'App/Views/InfosView',
     'App/Views/PlayView',
+
+    // App Actions
     'App/Actions/GetRandomPicAction',
-    'js!jquery-ui'
 ],
-function ($, OptionsView, InfosView, PlayView, GetRandomPicAction) {
+function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandomPicAction) {
     'use strict';
 
     /**
