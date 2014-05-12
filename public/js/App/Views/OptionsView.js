@@ -31,7 +31,7 @@ function ($, GetRandomPicAction) {
      */
     function buildSkeleton () {
         var mainCtn, inputCustomPathFolder, customFolderCtn,
-            btnStart, btnStop, btnPause, inputInterval,
+            footerCtn, btnStart, inputInterval,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom;
 
@@ -55,8 +55,18 @@ function ($, GetRandomPicAction) {
         } // End function keyUpInput()
 
 
-        mainCtn = els.mainCtn =$('<div>', {
-            'class': 'ds_options_view'
+        mainCtn = els.mainCtn = $('<div>', {
+            'class': 'ds_options_view flex',
+            html: $('<div>', {
+                'class': 'title_view',
+                'text': 'Options'
+            })
+        });
+
+        mainCtn.css('height', options.root.height() - 160);
+
+        footerCtn = els.footerCtn = $('<div>', {
+            'class': 'footer_ctn'
         });
 
         // Input custom folder
@@ -95,24 +105,6 @@ function ($, GetRandomPicAction) {
             .click(GetRandomPicAction.start)
             .button();
 
-        // Btn stop
-        btnStop = els.btnStop = $('<input>', {
-            'class': 'btn el_ctn',
-            type: 'button',
-            value: 'stop'
-        })
-            .click(GetRandomPicAction.stop)
-            .button();
-
-        // Btn pause
-        btnPause = els.btnPause = $('<input>', {
-            'class': 'btn el_ctn',
-            type: 'button',
-            value: 'pause'
-        })
-            .click(GetRandomPicAction.pause)
-            .button();
-
         // Input interval
         inputInterval = els.inputInterval = $('<input>', {
             'class': 'input_interval input_spinner',
@@ -145,7 +137,8 @@ function ($, GetRandomPicAction) {
         // Checkbox scale
         inputScale = els.inputScale = $('<input>', {
             'class': 'input_text',
-            type: 'checkbox'
+            type: 'checkbox',
+            checked: true
         });
 
         // Ctn scale
@@ -192,14 +185,16 @@ function ($, GetRandomPicAction) {
                 inputZoom
             );
 
+        footerCtn.append(
+            btnStart
+        );
+
         mainCtn.append(
             customFolderCtn,
-            btnStart,
-            btnStop,
-            btnPause,
             intervalCtn,
             zoomCtn,
-            scaleCtn
+            scaleCtn,
+            footerCtn
         );
 
         options.root.append(mainCtn);
@@ -278,20 +273,6 @@ function ($, GetRandomPicAction) {
         isScaleOn: function () {
             return !!els.inputScale[0].checked;
         }, // End function getScale()
-
-        /**
-         *
-         */
-        toggleStatePauseBtn: function (force) {
-            var btnPause = els.btnPause,
-                isPaused = GetRandomPicAction.isPausing();
-
-            if ((isPaused && !force) || force === 'resume') {
-                btnPause.val('resume');
-            } else if ((!isPaused && !force) || force === 'pause') {
-                btnPause.val('pause');
-            }
-        } // End function toggleStatePauseBtn()
     };
 
     return View;

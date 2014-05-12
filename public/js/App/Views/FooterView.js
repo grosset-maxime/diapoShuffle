@@ -22,7 +22,11 @@ function ($) {
         var mainCtn;
 
         mainCtn = els.mainCtn = $('<div>', {
-            'class': 'ds_footer_view'
+            'class': 'ds_footer_view',
+            html: $('<div>', {
+                'class': 'app_title',
+                text: 'Diapo Shuffle'
+            })
         });
 
         // mainCtn.append(

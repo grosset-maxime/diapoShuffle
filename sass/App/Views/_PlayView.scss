@@ -4,16 +4,48 @@
 
 .ds_play_view {
     display: none;
+    cursor: text;
 
-    .diapo_shuffle_view_mode & {
-        display: block;
+    .play_ctn,
+    .cmd_ctn {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
+    }
+
+    .play_ctn {
+        display: none;
         height: 100%;
         z-index: 500;
         background-color: #1d1d1d;
         text-align: center;
+
+        .diapo_shuffle_view_mode &  {
+            display: block;
+        }
+    }
+
+    .cmd_ctn {
+        cursor: auto;
+        height: 50px;
+        line-height: 50px;
+        z-index: 600;
+        background-color: rgba(50, 50, 50, 0.6);
+        border-bottom: 1px solid #888;
+        opacity: 0;
+        color: #eaeaea;
+        text-align: center;
+        @include transition(opacity 0.3s);
+        @include user-select(none);
+
+        &:hover {
+            opacity: 1;
+        }
+
+        .btn {
+            outline: none;
+            margin-right: 20px;
+        }
     }
 }

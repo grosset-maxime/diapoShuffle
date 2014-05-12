@@ -6,10 +6,16 @@ define(
 [
     'jquery',
 
-    // App
-    'App/Views/OptionsView'
+    // App Views
+    'App/Views/OptionsView',
+
+    // App Actions
+    'App/Actions/GetRandomPicAction',
+
+    // Non AMD
+    'js!jquery-ui'
 ],
-function ($, OptionsView) {
+function ($, OptionsView, GetRandomPicAction) {
     'use strict';
 
     var defaultOptions = {
@@ -26,14 +32,57 @@ function ($, OptionsView) {
      *
      */
     function buildSkeleton () {
-        var mainCtn;
+        var mainCtn, cmdCtn, playCtn;
+
+        /**
+         * @private
+         */
+        function buildCmd () {
+            var btnStop, btnPause;
+
+            // Btn stop
+            btnStop = $('<input>', {
+                'class': 'btn el_ctn',
+                type: 'button',
+                value: 'stop'
+            })
+                .click(GetRandomPicAction.stop)
+                .button();
+
+            // Btn pause
+            btnPause = els.btnPause = $('<input>', {
+                'class': 'btn el_ctn',
+                type: 'button',
+                value: 'pause'
+            })
+                .click(GetRandomPicAction.pause)
+                .button();
+
+            cmdCtn.append(
+                btnStop,
+                btnPause
+            );
+
+        } // End function buildCmd()
 
         mainCtn = els.mainCtn = $('<div>', {
             'class': 'ds_play_view'
         });
 
-        // mainCtn.append(
-        // );
+        cmdCtn = els.cmdCtn = $('<div>', {
+            'class': 'cmd_ctn'
+        });
+
+        playCtn = els.playCtn = $('<div>', {
+            'class': 'play_ctn'
+        });
+
+        buildCmd();
+
+        mainCtn.append(
+            cmdCtn,
+            playCtn
+        );
 
         options.root.append(mainCtn);
     } // End function buildSkeleton()
@@ -133,7 +182,7 @@ function ($, OptionsView) {
                 zoomPic(pic, img);
             }
 
-            els.mainCtn.html(img);
+            els.playCtn.html(img);
             View.show();
         }, // End function setPic()
 
@@ -160,7 +209,21 @@ function ($, OptionsView) {
          */
         hide: function () {
             els.mainCtn.hide();
-        } // End function hide()
+        }, // End function hide()
+
+        /**
+         *
+         */
+        toggleStatePauseBtn: function (force) {
+            var btnPause = els.btnPause,
+                isPaused = GetRandomPicAction.isPausing();
+
+            if ((isPaused && !force) || force === 'resume') {
+                btnPause.val('resume');
+            } else if ((!isPaused && !force) || force === 'pause') {
+                btnPause.val('pause');
+            }
+        } // End function toggleStatePauseBtn()
     };
 
     return View;

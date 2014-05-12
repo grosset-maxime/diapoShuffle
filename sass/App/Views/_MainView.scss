@@ -2,6 +2,47 @@
 // App Main View
 // ==================
 
+$HEADER_HEIGHT: 10px;
+
+$FOOTER_HEIGHT: 10px;
+
+
+&.flex {
+    flex-direction: column;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.ds_header_ctn,
+.ds_middle_ctn,
+.ds_footer_ctn {
+    flex: 1;
+    align-self: auto;
+    min-width: 100%;
+}
+
+.ds_header_ctn {
+    order: 1;
+    height: $HEADER_HEIGHT;
+    min-height: $HEADER_HEIGHT;
+    max-height: $HEADER_HEIGHT;
+}
+
+.ds_middle_ctn {
+    order: 2;
+    width: 100;
+    min-height: 1px;
+    box-shadow: inset 0 0 30px 30px #444;
+    align-items: flex-start;
+}
+
+.ds_footer_ctn {
+    order: 3;
+    height: $FOOTER_HEIGHT;
+    min-height: $FOOTER_HEIGHT;
+    max-height: $FOOTER_HEIGHT;
+}
+
 .ctn_loading {
     display: none;
     position: fixed;

@@ -2,6 +2,23 @@
 // App Footer View
 // ==================
 
-.ds_footer_view {
+// global:
+// |=> _MainView.scss:
+//      |=> $FOOTER_HEIGHT
 
+.ds_footer_view {
+    width: 100%;
+    height: 100%;
+    line-height: $FOOTER_HEIGHT;
+    z-index: 400;
+    color: #eaeaea;
+    background-color: #444;
+
+    .app_title {
+        position: absolute;
+        font-size: 1.5em;
+        bottom: 15px;
+        left: 15px;
+        text-shadow: 2px 2px 12px #eee;
+    }
 }

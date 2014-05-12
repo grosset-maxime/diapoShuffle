@@ -35,8 +35,20 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         var mainCtn, loadingCtn, pauseIconCtn;
 
         mainCtn = els.mainCtn = $('<div>', {
-            'class': 'diapo_shuffle'
+            'class': 'diapo_shuffle flex'
         });
+
+        els.headerCtn = $('<div>', {
+            'class': 'ds_header_ctn flex'
+        }).appendTo(mainCtn);
+
+        els.middleCtn = $('<div>', {
+            'class': 'ds_middle_ctn flex'
+        }).appendTo(mainCtn);
+
+        els.footerCtn = $('<div>', {
+            'class': 'ds_footer_ctn flex'
+        }).appendTo(mainCtn);
 
         // Loading
         // -------
@@ -150,7 +162,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
             customFolder: OptionsView.getCustomFolder() || ''
         });
 
-        OptionsView.toggleStatePauseBtn('pause');
+        PlayView.toggleStatePauseBtn('pause');
         els.pauseIconCtn.hide();
     } // End function onBeforeStart()
 
@@ -164,14 +176,14 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         els.pauseIconCtn.hide();
         els.loadingCtn.hide();
 
-        OptionsView.toggleStatePauseBtn('pause');
+        PlayView.toggleStatePauseBtn('pause');
     } // End function onBeforeStop(),
 
     /**
      *
      */
     function onPause () {
-        OptionsView.toggleStatePauseBtn();
+        PlayView.toggleStatePauseBtn();
         els.pauseIconCtn.show();
     } // End function onBeforePause()
 
@@ -179,7 +191,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
      *
      */
     function onResume () {
-        OptionsView.toggleStatePauseBtn();
+        PlayView.toggleStatePauseBtn();
 
         els.pauseIconCtn.hide();
     } // End function onBeforeResume()
@@ -224,15 +236,15 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
             mainCtn = els.mainCtn;
 
             HeaderView.init({
-                root: mainCtn
+                root: els.headerCtn
             });
 
             FooterView.init({
-                root: mainCtn
+                root: els.footerCtn
             });
 
             OptionsView.init({
-                root: mainCtn
+                root: els.middleCtn
             });
 
             InfosView.init({
