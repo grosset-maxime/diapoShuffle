@@ -33,7 +33,7 @@ function ($, GetRandomPicAction) {
         var mainCtn, inputCustomPathFolder, customFolderCtn,
             footerCtn, btnStart, inputInterval,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
-            inputZoom;
+            inputZoom, pathPicCtn, inputPathPic;
 
         /**
          *
@@ -74,65 +74,75 @@ function ($, GetRandomPicAction) {
             'class': 'input_custom_folder input_text',
             type: 'text',
             value: DEFAULT_CUSTOM_FOLDER,
-        }).focus(function () {
-                hasFocus = true;
-            })
-        .blur(function () {
-                hasFocus = false;
-            })
-        .on('keyup', keyUpInput);
+            on: {
+                focus:function () {
+                    hasFocus = true;
+                },
+                blur: function () {
+                    hasFocus = false;
+                },
+                keyup: keyUpInput
+            }
+        });
 
         // Ctn custom folder
         customFolderCtn = $('<div>', {
             'class': 'el_ctn'
-        })
-            .append($('<label>', {
+        }).append(
+            $('<label>', {
                 'class': 'title',
-                text: 'Folder :'
-            })
-                .click(function () {
-                    inputCustomPathFolder.focus();
-                }),
-                inputCustomPathFolder
-            );
+                text: 'Folder :',
+                on: {
+                    click: function () {
+                        inputCustomPathFolder.focus();
+                    }
+                }
+            }),
+            inputCustomPathFolder
+        );
 
         // Btn start
         btnStart = els.btnStart = $('<input>', {
             'class': 'btn el_ctn',
             type: 'button',
-            value: 'start'
-        })
-            .click(GetRandomPicAction.start)
-            .button();
+            value: 'start',
+            on: {
+                click: GetRandomPicAction.start
+            }
+        }).button();
 
         // Input interval
         inputInterval = els.inputInterval = $('<input>', {
             'class': 'input_interval input_spinner',
             value: DEFAULT_INTERVAL,
             maxlength: 2,
-            numberFormat: 'n'
-        })
-            .focus(function () {
-                hasFocus = true;
-            })
-            .blur(function () {
-                hasFocus = false;
-            })
-            .on('keyup', keyUpInput);
+            numberFormat: 'n',
+            on: {
+                focus: function () {
+                    hasFocus = true;
+                },
+                blur: function () {
+                    hasFocus = false;
+                },
+                keyup: keyUpInput
+            }
+        });
 
         // Ctn interval
         intervalCtn = $('<div>', {
             'class': 'el_ctn'
-        })
-            .append($('<label>', {
+        }).append(
+            $('<label>', {
                 'class': 'title',
-                text: 'Interval (s) :'
-            })
-                    .click(function () {
+                text: 'Interval (s) :',
+                on: {
+                    click: function () {
                         inputInterval.focus();
-                    }),
-                inputInterval
-            );
+                    }
+                }
+            }),
+            inputInterval
+        );
 
         // Checkbox scale
         inputScale = els.inputScale = $('<input>', {
@@ -148,11 +158,13 @@ function ($, GetRandomPicAction) {
             inputScale,
             $('<span>', {
                 'class': 'title',
-                text: 'Scale'
+                text: 'Scale',
+                on: {
+                    click: function () {
+                        inputScale[0].checked = !inputScale[0].checked;
+                    }
+                }
             })
-                .click(function () {
-                    inputScale[0].checked = !inputScale[0].checked;
-                })
         );
 
         // Spinner Zoom
@@ -161,29 +173,56 @@ function ($, GetRandomPicAction) {
             value: DEFAULT_ZOOM,
             step: 0.1,
             maxlength: 2,
-            numberFormat: 'n'
-        })
-            .focus(function () {
-                hasFocus = true;
-            })
-            .blur(function () {
-                hasFocus = false;
-            })
-            .on('keyup', keyUpInput);
+            numberFormat: 'n',
+            on: {
+                focus: function () {
+                    hasFocus = true;
+                },
+                blur: function () {
+                    hasFocus = false;
+                },
+                keyup: keyUpInput
+            }
+        });
 
         // Ctn Zoom
         zoomCtn = $('<div>', {
             'class': 'el_ctn'
-        })
-            .append($('<label>', {
+        }).append(
+            $('<label>', {
                 'class': 'title',
-                text: 'Zoom :'
-            })
-                    .click(function () {
+                text: 'Zoom :',
+                on: {
+                    click: function () {
                         inputZoom.focus();
-                    }),
-                inputZoom
-            );
+                    }
+                }
+            }),
+            inputZoom
+        );
+
+                // Checkbox scale
+        inputPathPic = els.inputPathPic = $('<input>', {
+            'class': 'input_text',
+            type: 'checkbox',
+            checked: true
+        });
+
+        // Ctn scale
+        pathPicCtn = $('<div>', {
+            'class': 'el_ctn'
+        }).append(
+            inputPathPic,
+            $('<span>', {
+                'class': 'title',
+                text: 'Display path picture',
+                on: {
+                    click: function () {
+                        inputPathPic[0].checked = !inputPathPic[0].checked;
+                    }
+                }
+            })
+        );
 
         footerCtn.append(
             btnStart
@@ -194,6 +233,7 @@ function ($, GetRandomPicAction) {
             intervalCtn,
             zoomCtn,
             scaleCtn,
+            pathPicCtn,
             footerCtn
         );
 
@@ -273,6 +313,13 @@ function ($, GetRandomPicAction) {
         isScaleOn: function () {
             return !!els.inputScale[0].checked;
         }, // End function getScale()
+
+        /**
+         *
+         */
+        isPublicPathOn: function () {
+            return !!els.inputPathPic[0].checked;
+        } // End function isPublicPathOn()
     };
 
     return View;

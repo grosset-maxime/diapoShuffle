@@ -44,19 +44,21 @@ function ($, OptionsView, GetRandomPicAction) {
             btnStop = $('<input>', {
                 'class': 'btn el_ctn',
                 type: 'button',
-                value: 'stop'
-            })
-                .click(GetRandomPicAction.stop)
-                .button();
+                value: 'stop',
+                on: {
+                    click: GetRandomPicAction.stop
+                }
+            }).button();
 
             // Btn pause
             btnPause = els.btnPause = $('<input>', {
                 'class': 'btn el_ctn',
                 type: 'button',
-                value: 'pause'
-            })
-                .click(GetRandomPicAction.pause)
-                .button();
+                value: 'pause',
+                on: {
+                    click: GetRandomPicAction.pause
+                }
+            }).button();
 
             cmdCtn.append(
                 btnStop,

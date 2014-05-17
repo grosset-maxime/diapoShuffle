@@ -5,8 +5,11 @@
 define(
 [
     'jquery',
+
+    // App View
+    'App/Views/OptionsView'
 ],
-function ($) {
+function ($, OptionsView) {
     'use strict';
 
     var defaultOptions = {
@@ -72,6 +75,11 @@ function ($) {
          *
          */
         show: function () {
+            if (!OptionsView.isPublicPathOn()) {
+                View.hide();
+                return;
+            }
+
             els.mainCtn.show();
         }, // End function show()
 
