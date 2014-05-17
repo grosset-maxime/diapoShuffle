@@ -27,6 +27,7 @@
     }
 
     .cmd_ctn {
+        width: 100%;
         cursor: auto;
         height: 50px;
         line-height: 50px;
@@ -36,7 +37,7 @@
         opacity: 0;
         color: #eaeaea;
         text-align: center;
-        @include transition(opacity 0.3s);
+        transition: opacity 0.3s;
         @include user-select(none);
 
         &:hover {
@@ -46,6 +47,20 @@
         .btn {
             outline: none;
             margin-right: 20px;
+        }
+
+        .ctn_el {
+            min-width: 1px;
+            width: 33.33%;
+        }
+
+        .ctn_left {
+            text-align: left;
+        }
+
+        .delete_btn {
+            display: none;
+            margin-left: 20px;
         }
     }
 }

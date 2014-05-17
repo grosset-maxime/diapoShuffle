@@ -11,11 +11,12 @@ define(
 
     // App Actions
     'App/Actions/GetRandomPicAction',
+    'App/Actions/DeletePicAction',
 
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, OptionsView, GetRandomPicAction) {
+function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
     'use strict';
 
     var BTN_PAUSE = 'Pause',
@@ -41,11 +42,33 @@ function ($, OptionsView, GetRandomPicAction) {
          * @private
          */
         function buildCmd () {
-            var btnStop, btnPause;
+            var btnStop, btnPause, btnDelete, ctnLeft, ctnCenter, ctnRight;
+
+            ctnLeft = $('<div>', {
+                'class': 'ctn_el ctn_left'
+            });
+
+            ctnCenter = $('<div>', {
+                'class': 'ctn_el ctn_center'
+            });
+
+            ctnRight = $('<div>', {
+                'class': 'ctn_el ctn_right'
+            });
+
+            // Btn delete
+            btnDelete = els.btnDelete = $('<input>', {
+                'class': 'btn delete_btn',
+                type: 'button',
+                value: 'Delete',
+                on: {
+                    click: DeletePicAction.askDelete
+                }
+            }).button();
 
             // Btn stop
             btnStop = $('<input>', {
-                'class': 'btn el_ctn',
+                'class': 'btn',
                 type: 'button',
                 value: 'Stop',
                 on: {
@@ -55,7 +78,7 @@ function ($, OptionsView, GetRandomPicAction) {
 
             // Btn pause
             btnPause = els.btnPause = $('<input>', {
-                'class': 'btn el_ctn',
+                'class': 'btn',
                 type: 'button',
                 value: BTN_PAUSE,
                 on: {
@@ -63,9 +86,19 @@ function ($, OptionsView, GetRandomPicAction) {
                 }
             }).button();
 
-            cmdCtn.append(
+            ctnLeft.append(
+                btnDelete
+            );
+
+            ctnCenter.append(
                 btnStop,
                 btnPause
+            );
+
+            cmdCtn.append(
+                ctnLeft,
+                ctnCenter,
+                ctnRight
             );
 
         } // End function buildCmd()
@@ -75,7 +108,7 @@ function ($, OptionsView, GetRandomPicAction) {
         });
 
         cmdCtn = els.cmdCtn = $('<div>', {
-            'class': 'cmd_ctn'
+            'class': 'cmd_ctn flex'
         });
 
         playCtn = els.playCtn = $('<div>', {
@@ -232,14 +265,19 @@ function ($, OptionsView, GetRandomPicAction) {
          */
         toggleStatePauseBtn: function (force) {
             var btnPause = els.btnPause,
+                btnDelete = els.btnDelete,
                 isPaused = GetRandomPicAction.isPausing();
 
             if ((isPaused && !force) || force === BTN_RESUME) {
                 btnPause.val(BTN_RESUME);
+                btnDelete.show();
             } else if ((!isPaused && !force) || force === BTN_PAUSE) {
                 btnPause.val(BTN_PAUSE);
+                btnDelete.hide();
             }
-        } // End function toggleStatePauseBtn()
+        }, // End function toggleStatePauseBtn()
+
+
     };
 
     return View;

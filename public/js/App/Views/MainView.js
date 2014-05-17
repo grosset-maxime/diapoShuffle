@@ -15,8 +15,9 @@ define(
 
     // App Actions
     'App/Actions/GetRandomPicAction',
+    'App/Actions/DeletePicAction'
 ],
-function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandomPicAction) {
+function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandomPicAction, DeletePicAction) {
     'use strict';
 
     /**
@@ -129,6 +130,12 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
                     }
                 }
                 break;
+            case 68: // d
+                doPreventDefault = true;
+
+                if (GetRandomPicAction.isPausing()) {
+                    DeletePicAction.askDelete();
+                }
             }
 
             if (doPreventDefault) {

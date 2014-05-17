@@ -16,3 +16,15 @@ div {
     display: flex;
     align-items: center;
 }
+
+
+// ===================
+// jQuery UI overrides
+// ===================
+.ui-widget-overlay {
+    z-index: 750;
+}
+.ui-dialog {
+    z-index: 800;
+}
+// End jQuery UI overrides

@@ -37,7 +37,8 @@ function ($, PM, Notify) {
         },
         options = {},
         isPlaying = false,
-        isPausing = false;
+        isPausing = false,
+        isDisabled = false;
 
     /**
      *
@@ -235,6 +236,10 @@ function ($, PM, Notify) {
          *
          */
         start: function (opts) {
+            if (isDisabled) {
+                return;
+            }
+
             start(opts);
         }, // End function start()
 
@@ -249,8 +254,26 @@ function ($, PM, Notify) {
          *
          */
         pause: function () {
+            if (isDisabled) {
+                return;
+            }
+
             pause();
         }, // End function pause()
+
+        /**
+         *
+         */
+        disable: function () {
+            isDisabled = true;
+        }, // End function disable()
+
+        /**
+         *
+         */
+        enable: function () {
+            isDisabled = false;
+        }, // End function enable()
 
         /**
          *
