@@ -162,7 +162,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
             customFolder: OptionsView.getCustomFolder() || ''
         });
 
-        PlayView.toggleStatePauseBtn('pause');
+        PlayView.toggleStatePauseBtn(PlayView.BTN_PAUSE);
         els.pauseIconCtn.hide();
     } // End function onBeforeStart()
 
@@ -176,7 +176,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         els.pauseIconCtn.hide();
         els.loadingCtn.hide();
 
-        PlayView.toggleStatePauseBtn('pause');
+        PlayView.toggleStatePauseBtn(PlayView.BTN_RESUME);
     } // End function onBeforeStop(),
 
     /**

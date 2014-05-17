@@ -7,7 +7,7 @@
     box-shadow: 0 0 6px 3px #444;
     width: 70%;
     margin: 0 auto;
-    padding: 60px 20px 40px;
+    padding: 60px 20px 20px;
     position: relative;
 
     &.flex {
@@ -34,19 +34,37 @@
 
     .footer_ctn {
         text-align: center;
-        height: 50px;
-        line-height: 50px;
         width: 100%;
+        margin-top: 15px;
     }
 
     .el_ctn {
         margin: 8px;
         line-height: 1em;
+        width: 100%;
+    }
+
+    .title_custom_folder {
+        width: 4em;
     }
 
     .input_custom_folder {
-        width: 100px;
-        @include border-radius(4px);
+        min-width: 100px;
+        max-width: 500px;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    .clear_custom_folder {
+        margin-left: 5px;
+        padding: 0 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 
     .input_interval,
@@ -57,5 +75,10 @@
     .title {
         margin-right: 4px;
         @include inline-block();
+    }
+
+    .start_btn {
+        width: 80%;
+        font-size: 1.5em;
     }
 } // End .ds_options_view

@@ -18,6 +18,9 @@ define(
 function ($, OptionsView, GetRandomPicAction) {
     'use strict';
 
+    var BTN_PAUSE = 'Pause',
+        BTN_RESUME = 'Resume';
+
     var defaultOptions = {
             root: null
         },
@@ -44,7 +47,7 @@ function ($, OptionsView, GetRandomPicAction) {
             btnStop = $('<input>', {
                 'class': 'btn el_ctn',
                 type: 'button',
-                value: 'stop',
+                value: 'Stop',
                 on: {
                     click: GetRandomPicAction.stop
                 }
@@ -54,7 +57,7 @@ function ($, OptionsView, GetRandomPicAction) {
             btnPause = els.btnPause = $('<input>', {
                 'class': 'btn el_ctn',
                 type: 'button',
-                value: 'pause',
+                value: BTN_PAUSE,
                 on: {
                     click: GetRandomPicAction.pause
                 }
@@ -149,6 +152,17 @@ function ($, OptionsView, GetRandomPicAction) {
     } // End function zoomPic()
 
     var View = {
+
+        /**
+         *
+         */
+        BTN_PAUSE: BTN_PAUSE,
+
+        /**
+         *
+         */
+        BTN_RESUME: BTN_RESUME,
+
         /**
          *
          */
@@ -220,10 +234,10 @@ function ($, OptionsView, GetRandomPicAction) {
             var btnPause = els.btnPause,
                 isPaused = GetRandomPicAction.isPausing();
 
-            if ((isPaused && !force) || force === 'resume') {
-                btnPause.val('resume');
-            } else if ((!isPaused && !force) || force === 'pause') {
-                btnPause.val('pause');
+            if ((isPaused && !force) || force === BTN_RESUME) {
+                btnPause.val(BTN_RESUME);
+            } else if ((!isPaused && !force) || force === BTN_PAUSE) {
+                btnPause.val(BTN_PAUSE);
             }
         } // End function toggleStatePauseBtn()
     };

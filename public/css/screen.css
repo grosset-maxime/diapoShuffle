@@ -366,7 +366,7 @@ body {
   box-shadow: 0 0 6px 3px #444;
   width: 70%;
   margin: 0 auto;
-  padding: 60px 20px 40px;
+  padding: 60px 20px 20px;
   position: relative;
 }
 /* line 13, ../../sass/App/Views/_OptionsView.scss */
@@ -393,30 +393,44 @@ body {
 /* line 35, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .footer_ctn {
   text-align: center;
-  height: 50px;
-  line-height: 50px;
   width: 100%;
+  margin-top: 15px;
 }
-/* line 42, ../../sass/App/Views/_OptionsView.scss */
+/* line 41, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .el_ctn {
   margin: 8px;
   line-height: 1em;
+  width: 100%;
 }
 /* line 47, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .title_custom_folder {
+  width: 4em;
+}
+/* line 51, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_custom_folder {
-  width: 100px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
+  min-width: 100px;
+  max-width: 500px;
+  width: 100%;
   border-radius: 4px;
 }
-/* line 53, ../../sass/App/Views/_OptionsView.scss */
+/* line 58, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .clear_custom_folder {
+  margin-left: 5px;
+  padding: 0 8px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+/* line 65, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .clear_custom_folder:hover {
+  opacity: 1;
+}
+/* line 71, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_interval,
 .diapo_shuffle .ds_options_view .input_zoom {
   width: 20px;
 }
-/* line 57, ../../sass/App/Views/_OptionsView.scss */
+/* line 75, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title {
   margin-right: 4px;
   display: -moz-inline-stack;
@@ -425,6 +439,11 @@ body {
   *vertical-align: auto;
   zoom: 1;
   *display: inline;
+}
+/* line 80, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .start_btn {
+  width: 80%;
+  font-size: 1.5em;
 }
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {

@@ -87,10 +87,10 @@ function ($, GetRandomPicAction) {
 
         // Ctn custom folder
         customFolderCtn = $('<div>', {
-            'class': 'el_ctn'
+            'class': 'el_ctn flex'
         }).append(
             $('<label>', {
-                'class': 'title',
+                'class': 'title title_custom_folder',
                 text: 'Folder :',
                 on: {
                     click: function () {
@@ -98,14 +98,24 @@ function ($, GetRandomPicAction) {
                     }
                 }
             }),
-            inputCustomPathFolder
+            inputCustomPathFolder,
+            $('<span>', {
+                'class': 'clear_custom_folder',
+                text: 'x',
+                title: 'Clear custom folder.',
+                on: {
+                    click: function () {
+                        inputCustomPathFolder.val('');
+                    }
+                }
+            })
         );
 
         // Btn start
         btnStart = els.btnStart = $('<input>', {
-            'class': 'btn el_ctn',
+            'class': 'btn start_btn',
             type: 'button',
-            value: 'start',
+            value: 'Start',
             on: {
                 click: GetRandomPicAction.start
             }
