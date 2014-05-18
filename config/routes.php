@@ -36,6 +36,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/getRandomPic_json.php',
     ),
+    'deletePic_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/deletePic_json.php',
+    ),
 );
 
 // Static - Views - Errors

@@ -83,6 +83,7 @@ if (!array_key_exists($_r, $_routes)) {
 
 // If the route is a Script
 if (!empty($_routes[$_r]['isScript'])) {
+    include_once ROOT_DIR . '/api/globals.php';
     include_once ROOT_DIR . $_routes[$_r]['path'];
     exit;
 }

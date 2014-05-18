@@ -15,7 +15,8 @@ function ($, PM, Notify) {
 
     var DEFAULT_INTERVAL = 3,
         DEFAULT_CUSTOM_FOLDER = '',
-        VIEW_MODE_CLASS = 'diapo_shuffle_view_mode';
+        VIEW_MODE_CLASS = 'diapo_shuffle_view_mode',
+        NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
     var idInterval, errorNotify,
         defaultOptions = {
@@ -38,7 +39,8 @@ function ($, PM, Notify) {
         options = {},
         isPlaying = false,
         isPausing = false,
-        isDisabled = false;
+        isDisabled = false,
+        currentPicPath;
 
     /**
      *
@@ -139,7 +141,6 @@ function ($, PM, Notify) {
      */
     function getRandomPic () {
         var xhr,
-            errorMessage,
             events = options.events,
             onBeforeGetRandom = events.onBeforeGetRandom,
             onGetRandom = events.onGetRandom;
@@ -177,7 +178,7 @@ function ($, PM, Notify) {
         });
 
         xhr.done(function (json) {
-            var error, typeMessage;
+            var error, typeMessage, errorMessage;
 
             if (json.error || !json.success) {
                 error = json.error || {};
@@ -187,7 +188,7 @@ function ($, PM, Notify) {
                     typeMessage = Notify.TYPE_WARNING;
                 } else {
                     errorMessage = 'Error: ' + error.message || 'Unknown error.';
-                    typeMessage = Notify.TYPE_ERROR;
+                    typeMessage = NOTIFY_TYPE_ERROR;
                 }
 
                 PM.log('Error : ' + errorMessage);
@@ -199,6 +200,7 @@ function ($, PM, Notify) {
             }
 
             if ($.isFunction(onGetRandom)) {
+                currentPicPath = json.pic.src;
                 onGetRandom(json);
             }
 
@@ -207,6 +209,8 @@ function ($, PM, Notify) {
 
         xhr.fail(function (jqXHR, textStatus, errorThrown) {
             var message = 'getRandomPicAction.getRandomPic()';
+
+            displayErrorNotify('Server error.', NOTIFY_TYPE_ERROR);
 
             PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
             stop();
@@ -288,6 +292,13 @@ function ($, PM, Notify) {
         isPausing: function () {
             return isPausing && isPlaying;
         }, // End function isPausing()
+
+        /**
+         *
+         */
+        getPicSrc: function () {
+            return currentPicPath || '';
+        }, // End function getPicSrc()
 
         /**
          *

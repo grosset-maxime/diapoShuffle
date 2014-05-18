@@ -13,7 +13,8 @@
  */
 
 /*global
-    ROOT_DIR
+    ROOT_DIR,
+    $_BASE_PIC_PATH, $_BASE_PIC_FOLDER_NAME
 */
 
 /**
@@ -143,7 +144,7 @@ function getRandomFolder($folder)
  */
 function searchRandomPic($folder)
 {
-    global $levelCurent, $levelMax, $fileName, $publicPathPic, $absolutePathFolder, $BASE_FOLDER;
+    global $levelCurent, $levelMax, $fileName, $publicPathPic, $absolutePathFolder, $_BASE_PIC_FOLDER_NAME;
 
     try {
         $hasFolder = hasFolder($folder);
@@ -161,7 +162,7 @@ function searchRandomPic($folder)
         $fileName = getRandomFile($folder);
         $absolutePathFolder = $folder;
 
-        $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), $BASE_FOLDER));
+        $publicPathPic = substr($folder, strpos(str_replace('\\', '/', $folder), '/' . $_BASE_PIC_FOLDER_NAME));
     }
 }
 
@@ -190,8 +191,6 @@ $jsonResult = array(
 
 
 // Init variables
-$BASE_FOLDER = '/pic';
-$baseAppPathFolder = ROOT_DIR . '/public' . $BASE_FOLDER;
 $absolutePathFolder = '';
 $fileName = '';
 $publicPathPic = '';
@@ -217,7 +216,7 @@ if ($customFolder) {
         $customFolder .= '/';
     }
 }
-$folder = $baseAppPathFolder . $customFolder;
+$folder = $_BASE_PIC_PATH . $customFolder;
 
 
 
@@ -279,7 +278,7 @@ list($width, $height) = getimagesize($absolutePathFolder . '/' . $fileName);
 
 $jsonResult['success'] = true;
 $jsonResult['pic']['src'] = $src;
-$jsonResult['pic']['randomPublicPath'] = substr($publicPathPic, strlen($BASE_FOLDER . $customFolder));
+$jsonResult['pic']['randomPublicPath'] = substr($publicPathPic, strlen('/' . $_BASE_PIC_FOLDER_NAME . $customFolder));
 $jsonResult['pic']['customFolderPath'] = $customFolder;
 $jsonResult['pic']['width'] = $width;
 $jsonResult['pic']['height'] = $height;
