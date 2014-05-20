@@ -65,6 +65,10 @@ function ($, PM, Notify) {
     function start () {
         var onBeforeStart = options.events.onBeforeStart;
 
+        if (isPlaying && !isPausing) {
+            return;
+        }
+
         if ($.isFunction(onBeforeStart)) {
             onBeforeStart();
         }
@@ -92,6 +96,7 @@ function ($, PM, Notify) {
         }
 
         clearTheInterval();
+
         $(document.body).removeClass(VIEW_MODE_CLASS);
         isPlaying = false;
         isPausing = false;
