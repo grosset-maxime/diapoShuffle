@@ -294,7 +294,7 @@ class RandomPic extends Root
         list($width, $height) = getimagesize($absolutePathFolder . '/' . $picFileName);
 
         $result = array(
-            'publicPathPic' => $publicPathPic,
+            'src' => $publicPathPic,
             'randomPublicPath' => substr(
                 $publicPathFolder,
                 strlen('/' . $_BASE_PIC_FOLDER_NAME . $customFolder)
