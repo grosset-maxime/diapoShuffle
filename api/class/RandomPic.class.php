@@ -27,13 +27,14 @@ require_once dirname(__FILE__) . '/Root.class.php';
  */
 class RandomPic extends Root
 {
-    protected $customFolder = '';
-    protected $publicPathPic = '';
-    protected $fileName = '';
-    protected $absolutePathFolder = '';
-    protected $levelMax = 20;
-    protected $tryMax = 5;
-    protected $rootPath = '';
+    protected $customFolder = '';       // Custom path folder choose by user where to get random pic.
+    protected $picFileName = '';        // Random pic file name.
+    protected $rootPathFolder = '';     // Absolute root folder (with custom path folder) where to get random pic.
+    protected $absolutePathFolder = ''; // Complete path of the random pic's folder.
+    protected $publicPathFolder = '';   // Relative path from pic folder of the random pic's folder.
+    protected $levelMax = 20;           // Maximum folder depth.
+    protected $tryMax = 5;              // Maximum try before to raise folder empty exception.
+
 
     /**
      * RandomPic constructor.
@@ -45,9 +46,21 @@ class RandomPic extends Root
     {
         parent::__construct($data);
 
-        if (empty($this->rootPath)) {
+        if (empty($this->rootPathFolder)) {
             $this->setRootPath();
         }
+    }
+
+    /**
+     * replaceWinSlaches
+     *
+     * @param {String} $s : String to replace antislashes by slashes.
+     *
+     * @return {String} String with win antislashes replaced by slashes.
+     */
+    protected function replaceWinSlaches($s)
+    {
+        return str_replace('\\', '/', $s);
     }
 
     /**
@@ -147,6 +160,12 @@ class RandomPic extends Root
     {
         $listFolder = array();
         $dir = new DirectoryIterator($folder);
+        $fileName;
+        $folderPath;
+        $file;
+        $min = 0;
+        $max;
+        $nb;
 
         foreach ($dir as $file) {
             set_time_limit(30);
@@ -164,7 +183,6 @@ class RandomPic extends Root
             $listFolder[] = $folderPath;
         }
 
-        $min = 0;
         $max = count($listFolder) - 1;
 
         if ($max < 0) {
@@ -198,22 +216,19 @@ class RandomPic extends Root
             return;
         }
 
-        error_log('levelCurrent = ' . $levelCurrent);
-        error_log('levelMax = ' . $this->levelMax);
-
         if ($hasFolder && $levelCurrent < $this->levelMax) {
             $levelCurrent++;
             $this->searchRandomPic(
                 $this->getRandomFolder($folder)
             );
         } else {
-            $this->fileName = $this->getRandomFile($folder);
+            $this->picFileName = $this->getRandomFile($folder);
             $this->absolutePathFolder = $folder;
 
-            $this->publicPathPic = substr(
+            $this->publicPathFolder = substr(
                 $folder,
                 strpos(
-                    str_replace('\\', '/', $folder),
+                    $this->replaceWinSlaches($folder),
                     '/' . $_BASE_PIC_FOLDER_NAME
                 )
             );
@@ -229,15 +244,15 @@ class RandomPic extends Root
     {
         // Init vars
         global $_BASE_PIC_FOLDER_NAME;
-        $folder = $this->rootPath;
-        $fileName = '';
+        $folder = $this->rootPathFolder;
+        $picFileName = '';
         $try = 0;
         $tryMax = $this->tryMax;
         $result = array();
-        $src = '';
         $publicPathPic = '';
+        $publicPathFolder = '';
         $absolutePathFolder = '';
-        $lenghtPublicPathPic = 0;
+        $lenghtPublicPathFolder = 0;
         $width = 0;
         $height = 0;
         $customFolder = $this->getCustomFolder();
@@ -250,40 +265,38 @@ class RandomPic extends Root
                 // $jsonResult['error']['errorMessage'] = $e->getMessage();
             }
 
-            if ($this->fileName) {
+            if ($this->picFileName) {
                 break;
             }
 
             $try++;
-        } while (empty($this->fileName) && $try < $tryMax);
+        } while (empty($this->picFileName) && $try < $tryMax);
 
-        $fileName = $this->fileName;
-        $publicPathPic = $this->publicPathPic;
+        $picFileName = $this->picFileName;
+        $publicPathFolder = $this->publicPathFolder;
         $absolutePathFolder = $this->absolutePathFolder;
 
         // If no pic found after nb try.
-        if (!$fileName) {
+        if (!$picFileName) {
             throw new Exception('No picture to show after ' . $tryMax . ' try.');
         }
 
         // End of customFolder
-        $lenghtPublicPathPic = strlen($publicPathPic);
-        if ($publicPathPic[$lenghtPublicPathPic - 1] !== '/' && $publicPathPic[$lenghtPublicPathPic - 1] !== '\\') {
-            $publicPathPic .= '/';
+        $lenghtPublicPathFolder = strlen($publicPathFolder);
+        if ($publicPathFolder[$lenghtPublicPathFolder - 1] !== '/' && $publicPathFolder[$lenghtPublicPathFolder - 1] !== '\\') {
+            $publicPathFolder .= '/';
         }
 
-        $src = $publicPathPic . $fileName;
-        $src = str_replace('\\', '/', $src);
+        $publicPathFolder = $this->replaceWinSlaches($publicPathFolder);
 
-        $customFolder = str_replace('\\', '/', $customFolder);
-        $publicPathPic = str_replace('\\', '/', $publicPathPic);
+        $publicPathPic = $publicPathFolder . $picFileName;
 
-        list($width, $height) = getimagesize($absolutePathFolder . '/' . $fileName);
+        list($width, $height) = getimagesize($absolutePathFolder . '/' . $picFileName);
 
         $result = array(
-            'src' => $src,
+            'publicPathPic' => $publicPathPic,
             'randomPublicPath' => substr(
-                $publicPathPic,
+                $publicPathFolder,
                 strlen('/' . $_BASE_PIC_FOLDER_NAME . $customFolder)
             ),
             'customFolderPath' => $customFolder,
@@ -303,18 +316,18 @@ class RandomPic extends Root
     {
         // Init vars
         global $_BASE_PIC_PATH;
-        $rootPath;
+        $rootPathFolder;
 
-        $this->rootPath = $rootPath = $_BASE_PIC_PATH . $this->customFolder;
+        $this->rootPathFolder = $rootPathFolder = $_BASE_PIC_PATH . $this->customFolder;
 
         try {
-            if (!file_exists($rootPath)) {
+            if (!file_exists($rootPathFolder)) {
                 throw new Exception();
             }
 
-            new DirectoryIterator($rootPath);
+            new DirectoryIterator($rootPathFolder);
         } catch (Exception $e) {
-            throw new Exception('Custom folder doesn\'t exist: ' . $rootPath);
+            throw new Exception('Custom folder doesn\'t exist: ' . $rootPathFolder);
         }
     }
 
@@ -343,7 +356,7 @@ class RandomPic extends Root
 
         // Manage '/' for begining end end of the customFolder.
         if ($customFolder) {
-            $customFolder = str_replace('\\', '/', $customFolder);
+            $customFolder = $this->replaceWinSlaches($customFolder);
             $lenghtCustoFolder = strlen($customFolder);
             $firstCharCustomFolder = $customFolder[0];
 
