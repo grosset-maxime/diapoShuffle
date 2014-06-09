@@ -18,6 +18,8 @@
 
 require_once ROOT_DIR . '/api/class/RandomPic.class.php';
 
+use RandomPic\RandomPic;
+
 // ====================
 // Start of the script.
 // ====================
@@ -30,7 +32,6 @@ $RandomPic; // Instance of RandomPic class.
 
 
 $customFolder = trim($_POST['customFolder']) ? trim($_POST['customFolder']) : '';
-$customFolder = !empty($customFolder) ? $customFolder : '/';
 
 $logError = array(
     'mandatory_fields' => array(
