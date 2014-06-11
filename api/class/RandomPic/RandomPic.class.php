@@ -13,9 +13,11 @@
 
 namespace RandomPic;
 
-require_once dirname(__FILE__) . '/../globals.php';
+require_once dirname(__FILE__) . '/../../globals.php';
 
-require_once dirname(__FILE__) . '/Root.class.php';
+require_once dirname(__FILE__) . '/../Root.class.php';
+require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
+require_once dirname(__FILE__) . '/Item.class.php';
 
 
 // PHP
@@ -23,7 +25,11 @@ use \DirectoryIterator;
 use \Exception;
 
 // DS
-use \Root;
+use DS\Root;
+use DS\ExceptionExtended;
+
+// RandomPic
+use RandomPic\Item;
 
 
 /**
@@ -37,6 +43,9 @@ use \Root;
  */
 class RandomPic extends Root
 {
+    protected $WIN_SEP = '\\';
+    protected $UNIX_SEP = '/';
+
     protected $customFolder = '';       // Custom path folder choose by user where to get random pic.
     protected $picFileName = '';        // Random pic file name.
     protected $rootPathFolder = '';     // Absolute root folder (with custom path folder) where to get random pic.
@@ -70,51 +79,7 @@ class RandomPic extends Root
      */
     protected function replaceWinSlaches($s)
     {
-        return str_replace('\\', '/', $s);
-    }
-
-    /**
-     * HasFolder
-     *
-     * @param {string} $folder : folder to scan
-     *
-     * @return {bool} $hasFolder : true if the folder has folder else false
-     */
-    protected function hasFolder($folder)
-    {
-        $hasFolder = false;
-        $isEmptyFolder = true;
-        $dir;
-        $file;
-
-        try {
-            $dir = new DirectoryIterator($folder);
-        } catch (Exception $e) {
-            throw new Exception('Folder doesn\'t exist: ' . $folder);
-        }
-
-        foreach ($dir as $file) {
-            set_time_limit(30);
-
-            if ($file->isDot()) {
-                continue;
-            }
-
-            if ($file->isDir() && !preg_match('/^[\.].*/i', $file->getFilename())) {
-                $hasFolder = true;
-                $isEmptyFolder = false;
-                break;
-            } else if ($file->isFile() && !preg_match('/^[\.].*/i', $file->getFilename())) {
-                $isEmptyFolder = false;
-                break;
-            }
-        }
-
-        if ($isEmptyFolder) {
-            throw new Exception('The folder is empty : ' . $folder);
-        }
-
-        return $hasFolder;
+        return str_replace($this->WIN_SEP, $this->UNIX_SEP, $s);
     }
 
     /**
@@ -189,11 +154,25 @@ class RandomPic extends Root
 
         try {
             $item = $this->getRandomItem($folder);
+        } catch (ExceptionExtended $e) {
+            throw $e;
         } catch (Exception $e) {
             if ($levelCurrent === 0) {
-                throw new Exception('Root folder is empty: ' . $folder);
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => 'Root folder is empty: ' . $folder,
+                        'message' => $e->getMessage(),
+                        'severity' => ExceptionExtended::SEVERITY_WARNING
+                    )
+                );
+            } else {
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => 'Unexpected error.',
+                        'message' => $e->getMessage()
+                    )
+                );
             }
-            return;
         }
 
         if (!$item) {
@@ -213,7 +192,7 @@ class RandomPic extends Root
                 $folder,
                 strpos(
                     $this->replaceWinSlaches($folder),
-                    '/' . $_BASE_PIC_FOLDER_NAME
+                    $this->UNIX_SEP . $_BASE_PIC_FOLDER_NAME
                 )
             );
         }
@@ -229,6 +208,7 @@ class RandomPic extends Root
     {
         // Init vars
         global $_BASE_PIC_FOLDER_NAME;
+        $UNIX_SEP = $this->UNIX_SEP;
         $folder = $this->rootPathFolder;
         $picFileName = '';
         $try = 0;
@@ -239,13 +219,21 @@ class RandomPic extends Root
         $width = 0;
         $height = 0;
         $customFolder = $this->getCustomFolder();
+        $errorMessage;
+
 
         do {
             try {
                 $this->searchRandomPic($folder);
+            } catch (ExceptionExtended $e) {
+                throw $e;
             } catch (Exception $e) {
-                throw new Exception('No picture to show! or : ' . $e->getMessage());
-                // $jsonResult['error']['errorMessage'] = $e->getMessage();
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => 'Unexpected error.',
+                        'message' => $e->getMessage()
+                    )
+                );
             }
 
             if ($this->picFileName) {
@@ -261,23 +249,30 @@ class RandomPic extends Root
 
         // If no pic found after nb try.
         if (!$picFileName) {
-            throw new Exception('No picture to show after ' . $tryMax . ' try.');
+            $errorMessage = 'No picture to show after ' . $tryMax . ' try.';
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => $errorMessage,
+                    'message' => $errorMessage,
+                    'severity' => ExceptionExtended::SEVERITY_INFO
+                )
+            );
         }
 
         $publicPathFolder = $this->replaceWinSlaches($publicPathFolder);
 
         // End of customFolder
-        if ($publicPathFolder[strlen($publicPathFolder) - 1] !== '/') {
-            $publicPathFolder .= '/';
+        if ($publicPathFolder[strlen($publicPathFolder) - 1] !== $UNIX_SEP) {
+            $publicPathFolder .= $UNIX_SEP;
         }
 
-        list($width, $height) = getimagesize($absolutePathFolder . '/' . $picFileName);
+        list($width, $height) = getimagesize($absolutePathFolder . $UNIX_SEP . $picFileName);
 
         $result = array(
             'src' => $publicPathFolder . $picFileName,
             'randomPublicPath' => substr(
                 $publicPathFolder,
-                strlen('/' . $_BASE_PIC_FOLDER_NAME . $customFolder)
+                strlen($UNIX_SEP . $_BASE_PIC_FOLDER_NAME . $customFolder)
             ),
             'customFolderPath' => $customFolder,
             'width' => $width,
@@ -297,8 +292,9 @@ class RandomPic extends Root
         // Init vars
         global $_BASE_PIC_PATH;
         $rootPathFolder;
+        $customFolder = $this->getCustomFolder();
 
-        $this->rootPathFolder = $rootPathFolder = $_BASE_PIC_PATH . $this->customFolder;
+        $this->rootPathFolder = $rootPathFolder = $_BASE_PIC_PATH . $customFolder;
 
         try {
             if (!file_exists($rootPathFolder)) {
@@ -307,7 +303,15 @@ class RandomPic extends Root
 
             new DirectoryIterator($rootPathFolder);
         } catch (Exception $e) {
-            throw new Exception('Custom folder doesn\'t exist: ' . $rootPathFolder);
+            $errorMessage = 'Custom folder doesn\'t exist: ' . $customFolder;
+
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => $errorMessage,
+                    'message' => $e->getMessage() ? $e->getMessage : $errorMessage,
+                    'severity' => ExceptionExtended::SEVERITY_WARNING
+                )
+            );
         }
     }
 
@@ -331,13 +335,14 @@ class RandomPic extends Root
     public function setCustomFolder($customFolder = '')
     {
         // Init vars.
+        $UNIX_SEP = $this->UNIX_SEP;
         $lenghtCustoFolder = 0;
         $firstCharCustomFolder = '';
 
         $customFolder = $this->replaceWinSlaches($customFolder);
         $lenghtCustoFolder = strlen($customFolder);
 
-        if ($customFolder === '/') {
+        if ($customFolder === $UNIX_SEP) {
             $customFolder = '';
         }
 
@@ -346,13 +351,13 @@ class RandomPic extends Root
             $firstCharCustomFolder = $customFolder[0];
 
             // Begin of customFolder
-            if ($firstCharCustomFolder !== '/' && $firstCharCustomFolder !== '\\') {
-                $customFolder = '/' . $customFolder;
+            if ($firstCharCustomFolder !== $UNIX_SEP) {
+                $customFolder = $UNIX_SEP . $customFolder;
             }
 
             // End of customFolder
-            if ($customFolder[$lenghtCustoFolder - 1] !== '/' && $customFolder[$lenghtCustoFolder - 1] !== '\\') {
-                $customFolder .= '/';
+            if ($customFolder[$lenghtCustoFolder - 1] !== $UNIX_SEP) {
+                $customFolder .= $UNIX_SEP;
             }
         }
 
@@ -361,128 +366,3 @@ class RandomPic extends Root
         $this->setRootPath();
     } // End function setCustomFolder()
 } // End Class RandomPic
-
-
-/**
- * Class Item.
- *
- * @category Class
- * @package  No
- * @author   Maxime GROSSET <contact@mail.com>
- * @license  tag in file comment
- * @link     No
- */
-class Item extends Root
-{
-    const TYPE_FOLDER = 'folder';
-    const TYPE_FILE = 'file';
-
-    protected $name = '';
-    protected $type = '';
-    protected $path = '';
-
-    /**
-     * Item constructor.
-     *
-     * @param {array} $data : RandomPic data.
-     * * param {String} data.name : Item name.
-     * * param {String} data.type : Item type.
-     * * param {String} data.path : Item path.
-     */
-    public function __construct(array $data = array())
-    {
-        parent::__construct($data);
-    }
-
-    /**
-     * Is folder.
-     *
-     * @return {Boolean} Item is a folder.
-     */
-    public function isFolder()
-    {
-        return $this->type === self::TYPE_FOLDER;
-    }
-
-    /**
-     * Getter name.
-     *
-     * @return {String} Item name.
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Setter name.
-     *
-     * @param {String} $name : Item name.
-     *
-     * @return null
-     */
-    public function setName($name = '')
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Getter type.
-     *
-     * @return {String} Item type.
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Setter type.
-     *
-     * @param {String} $type : Item type (folder or item).
-     *
-     * @return null
-     */
-    public function setType($type = self::TYPE_FILE)
-    {
-        $type = strtolower($type);
-
-        if ($type !== self::TYPE_FILE && $type !== self::TYPE_FOLDER) {
-            $type = self::TYPE_FILE;
-        }
-
-        $this->type = $type;
-    }
-
-    /**
-     * Getter path with name.
-     *
-     * @return {String} Item path with name.
-     */
-    public function getPathWithName()
-    {
-        return $this->path . '/' . $this->name;
-    }
-
-    /**
-     * Getter path.
-     *
-     * @return {String} Item path.
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * Setter path.
-     *
-     * @param {String} $path : Item path.
-     *
-     * @return null
-     */
-    public function setPath($path = '')
-    {
-        $this->path = $path;
-    }
-} // End Class Item

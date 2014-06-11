@@ -183,23 +183,20 @@ function ($, PM, Notify) {
         });
 
         xhr.done(function (json) {
-            var error, typeMessage, errorMessage;
+            var error,
+                unknownErrorMessage = 'Unknown error.';
 
             if (json.error || !json.success) {
                 error = json.error || {};
 
-                if (error.wrongCustomFolder || error.noPic) {
-                    errorMessage = error.message;
-                    typeMessage = Notify.TYPE_WARNING;
-                } else {
-                    errorMessage = 'Error: ' + error.message || 'Unknown error.';
-                    typeMessage = NOTIFY_TYPE_ERROR;
-                }
+                displayErrorNotify(
+                    error.publicMessage || unknownErrorMessage,
+                    error.severity || Notify.TYPE_ERROR
+                );
 
-                PM.log('Error : ' + errorMessage);
+                PM.log('Error : ' + error.message || unknownErrorMessage);
                 PM.log(error);
 
-                displayErrorNotify(errorMessage, typeMessage);
                 stop();
                 return;
             }

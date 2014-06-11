@@ -11,6 +11,8 @@
  * @link     No
  */
 
+namespace DS;
+
 /**
  * Root class.
  *

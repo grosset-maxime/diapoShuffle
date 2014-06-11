@@ -16,13 +16,15 @@
     ROOT_DIR,
 */
 
-require_once ROOT_DIR . '/api/class/RandomPic.class.php';
+require_once ROOT_DIR . '/api/class/RandomPic/RandomPic.class.php';
+require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 
+// DS
+use DS\ExceptionExtended;
+
+// RandomPic
 use RandomPic\RandomPic;
 
-// ====================
-// Start of the script.
-// ====================
 
 // Init vars.
 $customFolder;
@@ -55,9 +57,18 @@ try {
 
     $jsonResult['pic'] = $RandomPic->getRandomPic();
 
+} catch (ExceptionExtended $e) {
+    $jsonResult['error'] = $logError;
+    $jsonResult['error']['message'] = $e->getMessage();
+    $jsonResult['error']['publicMessage'] = $e->getPublicMessage();
+    $jsonResult['error']['severity'] = $e->getSeverity();
+    print json_encode($jsonResult);
+    die;
 } catch (Exception $e) {
     $jsonResult['error'] = $logError;
-    $jsonResult['error']['errorMessage'] = $e->getMessage();
+    $jsonResult['error']['message'] = $e->getMessage();
+    $jsonResult['error']['publicMessage'] = 'Unexpected error.';
+    $jsonResult['error']['severity'] = ExceptionExtended::SEVERITY_ERROR;
     print json_encode($jsonResult);
     die;
 }
