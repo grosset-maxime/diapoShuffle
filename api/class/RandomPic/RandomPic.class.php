@@ -53,6 +53,7 @@ class RandomPic extends Root
     protected $publicPathFolder = '';   // Relative path from pic folder of the random pic's folder.
     protected $levelMax = 20;           // Maximum folder depth.
     protected $tryMax = 5;              // Maximum try before to raise folder empty exception.
+    protected $cacheFolder = array();
 
 
     /**
@@ -91,32 +92,34 @@ class RandomPic extends Root
      */
     protected function getRandomItem($folder)
     {
+        // Init vars
+        $file; $min; $max; $nb; $item; $fileName; $randomItem; $dir;
         $listItem = array();
-        $dir = new DirectoryIterator($folder);
-        $file;
-        $min;
-        $max;
-        $nb;
-        $item;
-        $fileName;
-        $randomItem;
 
-        foreach ($dir as $item) {
-            set_time_limit(30);
+        if (isset($this->cacheFolder[$folder]) || array_key_exists($folder, $this->cacheFolder)) {
+            $listItem = $this->cacheFolder[$folder];
+        } else {
+            $dir = new DirectoryIterator($folder);
 
-            $fileName = $item->getFilename();
+            foreach ($dir as $item) {
+                set_time_limit(30);
 
-            if ($item->isDot()
-                || preg_match('/^[\.].*/i', $fileName)
-                || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
-            ) {
-                continue;
+                $fileName = $item->getFilename();
+
+                if ($item->isDot()
+                    || preg_match('/^[\.].*/i', $fileName)
+                    || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
+                ) {
+                    continue;
+                }
+
+                $listItem[] = array(
+                    'name' => $item->getFilename(),
+                    'isFolder' => $item->isDir()
+                );
             }
 
-            $listItem[] = array(
-                'name' => $item->getFilename(),
-                'isFolder' => $item->isDir()
-            );
+            $this->cacheFolder[$folder] = $listItem;
         }
 
         $min = 0;
@@ -149,8 +152,7 @@ class RandomPic extends Root
     {
         global $_BASE_PIC_FOLDER_NAME;
         static $levelCurrent = 0;
-        $item;
-        $isFolder;
+        $item; $isFolder;
 
         try {
             $item = $this->getRandomItem($folder);
