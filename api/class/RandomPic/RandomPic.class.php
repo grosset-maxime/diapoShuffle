@@ -54,6 +54,7 @@ class RandomPic extends Root
     protected $levelMax = 20;           // Maximum folder depth.
     protected $tryMax = 5;              // Maximum try before to raise folder empty exception.
     protected $cacheFolder = array();
+    protected $needUpdateCache = false;
 
 
     /**
@@ -69,6 +70,8 @@ class RandomPic extends Root
         if (empty($this->rootPathFolder)) {
             $this->setRootPath();
         }
+
+        $this->cacheFolder = !empty($_SESSION['cacheFolder']) ? $_SESSION['cacheFolder'] : array();
     }
 
     /**
@@ -120,6 +123,7 @@ class RandomPic extends Root
             }
 
             $this->cacheFolder[$folder] = $listItem;
+            $this->needUpdateCache = true;
         }
 
         $min = 0;
@@ -280,6 +284,11 @@ class RandomPic extends Root
             'width' => $width,
             'height' => $height
         );
+
+        if ($this->needUpdateCache) {
+            $this->needUpdateCache = false;
+            $_SESSION['cacheFolder'] = $this->cacheFolder;
+        }
 
         return $result;
     } // End function getRandomPic()
