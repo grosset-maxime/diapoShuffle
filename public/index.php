@@ -23,6 +23,10 @@ define('HTTP_HOST', $_SERVER['HTTP_HOST']);
 ini_set('log_errors', 'on');
 ini_set('error_log', ROOT_DIR . '/log/php/php_error.log');
 
+// Clear and destroy session.
+// session_unset();
+// session_destroy();
+
 /**
  * Description :
  *

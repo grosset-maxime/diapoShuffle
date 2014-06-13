@@ -117,8 +117,8 @@ class RandomPic extends Root
                 }
 
                 $listItem[] = array(
-                    'name' => $item->getFilename(),
-                    'isFolder' => $item->isDir()
+                    'n' => $item->getFilename(),
+                    'f' => $item->isDir()
                 );
             }
 
@@ -138,8 +138,8 @@ class RandomPic extends Root
 
         return new Item(
             array(
-                'name' => $randomItem['name'],
-                'type' => $randomItem['isFolder'] ? Item::TYPE_FOLDER : Item::TYPE_FILE,
+                'name' => $randomItem['n'],
+                'type' => $randomItem['f'] ? Item::TYPE_FOLDER : Item::TYPE_FILE,
                 'path' => $folder
             )
         );
@@ -215,7 +215,6 @@ class RandomPic extends Root
         // Init vars
         global $_BASE_PIC_FOLDER_NAME;
         $UNIX_SEP = $this->UNIX_SEP;
-        $folder = $this->rootPathFolder;
         $picFileName = '';
         $try = 0;
         $tryMax = $this->tryMax;
@@ -230,7 +229,7 @@ class RandomPic extends Root
 
         do {
             try {
-                $this->searchRandomPic($folder);
+                $this->searchRandomPic($this->rootPathFolder);
             } catch (ExceptionExtended $e) {
                 throw $e;
             } catch (Exception $e) {
