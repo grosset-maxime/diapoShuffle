@@ -102,7 +102,17 @@ class RandomPic extends Root
         if (isset($this->cacheFolder[$folder]) || array_key_exists($folder, $this->cacheFolder)) {
             $listItem = $this->cacheFolder[$folder];
         } else {
-            $dir = new DirectoryIterator($folder);
+            try {
+                $dir = new DirectoryIterator($folder);
+            } catch (Exception $e) {
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => 'Folder "' . $folder . '" is not accessible.',
+                        'message' => $e->getMessage(),
+                        'severity' => ExceptionExtended::SEVERITY_ERROR
+                    )
+                );
+            }
 
             foreach ($dir as $item) {
                 set_time_limit(30);
