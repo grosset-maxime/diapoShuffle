@@ -191,7 +191,7 @@ class RandomPic extends Root
             }
         }
 
-        if (!$item) {
+        if (!$item || !file_exists($item->getPathWithName())) {
             return;
         }
 
@@ -281,7 +281,17 @@ class RandomPic extends Root
             $publicPathFolder .= $UNIX_SEP;
         }
 
-        list($width, $height) = getimagesize($absolutePathFolder . $UNIX_SEP . $picFileName);
+        try {
+            list($width, $height) = getimagesize($absolutePathFolder . $UNIX_SEP . $picFileName);
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'File: "' . $absolutePathFolder . $UNIX_SEP . $picFileName . '" doesn\'t exists.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
 
         $result = array(
             'src' => $publicPathFolder . $picFileName,

@@ -211,7 +211,7 @@ div {
 
 /* line 52, ../../sass/screen.scss */
 body {
-  background-color: #cacaca;
+  background-color: #fff;
 }
 
 /* line 59, ../../sass/screen.scss */
@@ -235,26 +235,25 @@ body {
 /* line 24, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ds_header_ctn {
   order: 1;
-  height: 10px;
-  min-height: 10px;
-  max-height: 10px;
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
 }
 /* line 31, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ds_middle_ctn {
   order: 2;
   width: 100;
   min-height: 1px;
-  box-shadow: inset 0 0 30px 30px #444;
   align-items: flex-start;
 }
-/* line 39, ../../sass/App/Views/_MainView.scss */
+/* line 38, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ds_footer_ctn {
   order: 3;
   height: 10px;
   min-height: 10px;
   max-height: 10px;
 }
-/* line 46, ../../sass/App/Views/_MainView.scss */
+/* line 45, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading {
   display: none;
   position: fixed;
@@ -265,7 +264,7 @@ body {
   width: 38px;
   height: 20px;
 }
-/* line 56, ../../sass/App/Views/_MainView.scss */
+/* line 55, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading {
   width: 4px;
   height: 4px;
@@ -288,28 +287,28 @@ body {
   -o-border-radius: 20px;
   border-radius: 20px;
 }
-/* line 70, ../../sass/App/Views/_MainView.scss */
+/* line 69, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading_1 {
   -moz-animation-delay: 0s;
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
   animation-delay: 0s;
 }
-/* line 77, ../../sass/App/Views/_MainView.scss */
+/* line 76, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading_2 {
   -moz-animation-delay: 0.39s;
   -webkit-animation-delay: 0.39s;
   -ms-animation-delay: 0.39s;
   animation-delay: 0.39s;
 }
-/* line 84, ../../sass/App/Views/_MainView.scss */
+/* line 83, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading_3 {
   -moz-animation-delay: 0.78s;
   -webkit-animation-delay: 0.78s;
   -ms-animation-delay: 0.78s;
   animation-delay: 0.78s;
 }
-/* line 92, ../../sass/App/Views/_MainView.scss */
+/* line 91, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_icon_pause {
   display: none;
   position: fixed;
@@ -320,7 +319,7 @@ body {
   width: 18px;
   height: 16px;
 }
-/* line 102, ../../sass/App/Views/_MainView.scss */
+/* line 101, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_icon_pause .el_icon_pause {
   width: 4px;
   height: 14px;
@@ -338,10 +337,9 @@ body {
 .diapo_shuffle .ds_header_view {
   width: 100%;
   height: 100%;
-  line-height: 10px;
+  line-height: 50px;
   z-index: 400;
   color: #eaeaea;
-  background-color: #444;
 }
 /* line 9, ../../sass/App/Views/_FooterView.scss */
 .diapo_shuffle .ds_footer_view {
@@ -350,7 +348,6 @@ body {
   line-height: 10px;
   z-index: 400;
   color: #eaeaea;
-  background-color: #444;
 }
 /* line 17, ../../sass/App/Views/_FooterView.scss */
 .diapo_shuffle .ds_footer_view .app_title {
