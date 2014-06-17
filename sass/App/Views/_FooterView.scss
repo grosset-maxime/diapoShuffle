@@ -11,14 +11,13 @@
     height: 100%;
     line-height: $FOOTER_HEIGHT;
     z-index: 400;
-    color: #eaeaea;
-    // background-color: #444;
+    border-top: 1px solid #dadada;
+    background-color: #fff;
 
     .app_title {
-        position: absolute;
-        font-size: 1.5em;
-        bottom: 15px;
-        left: 15px;
-        text-shadow: 2px 2px 12px #eee;
+        text-shadow: 0 0 9px #777,
+                     0 0 1px #aaa;
+        margin-left: 15px;
+        color: #fff;
     }
 }

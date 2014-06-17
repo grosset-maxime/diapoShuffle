@@ -1,0 +1,9 @@
+
+.btn.ui-button {
+    background: #FCF3E5;
+    transition: 0.1s;
+
+    &.ui-state-hover {
+        background: #FDECD0;
+    }
+}

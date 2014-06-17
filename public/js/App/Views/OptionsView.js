@@ -63,10 +63,10 @@ function ($, GetRandomPicAction) {
             })
         });
 
-        mainCtn.css('height', options.root.height() - 160);
+        mainCtn.css('max-height', options.root.height() - 160);
 
         footerCtn = els.footerCtn = $('<div>', {
-            'class': 'footer_ctn'
+            'class': 'footer_ctn flex'
         });
 
         // Input custom folder
