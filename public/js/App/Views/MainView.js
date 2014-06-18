@@ -114,23 +114,34 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         $(document).on('keydown', function (e) {
             var keyPressed = e.which,
                 doPreventDefault = false;
+
             // console.log(keyPressed);
+
             switch (keyPressed) {
             case 27: // ESC
-                GetRandomPicAction.stop();
-                break;
-            case 32: // SPACE
-                if (!OptionsView.hasFocus()) {
-                    doPreventDefault = true;
-
-                    if (GetRandomPicAction.isPlaying()) {
-                        GetRandomPicAction.pause();
-                    } else {
-                        GetRandomPicAction.start();
-                    }
+                if (GetRandomPicAction.isPlaying()) {
+                    GetRandomPicAction.stop();
                 }
                 break;
-            case 68: // d
+            case 32: // SPACE
+            case 80: // p (as pause)
+                if (OptionsView.hasFocus() && !GetRandomPicAction.isPlaying()) {
+                    return;
+                }
+
+                doPreventDefault = true;
+
+                if (GetRandomPicAction.isPlaying()) {
+                    GetRandomPicAction.pause();
+                } else {
+                    GetRandomPicAction.start();
+                }
+                break;
+            case 68: // d (as delete)
+                if (!GetRandomPicAction.isPausing()) {
+                    return;
+                }
+
                 doPreventDefault = true;
 
                 if (GetRandomPicAction.isPausing()) {
