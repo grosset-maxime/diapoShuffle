@@ -156,7 +156,7 @@ function ($, PM, Notify) {
         function displayErrorNotify (message, type) {
             if (!errorNotify) {
                 errorNotify = new Notify({
-                    className: 'getRandomPicAction-notify',
+                    className: 'getRandomPicAction_notify',
                     container: $(document.body),
                     autoHide: true,
                     duration: 3

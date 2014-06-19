@@ -458,6 +458,20 @@ body {
   text-align: center;
   margin: auto;
 }
+/* line 92, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .clear_cache_btn {
+  position: absolute;
+  bottom: 6px;
+  right: 20px;
+  color: #f1f1f1;
+  transition: .3s;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+/* line 101, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .clear_cache_btn:hover {
+  color: #ddd;
+}
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {
   display: none;

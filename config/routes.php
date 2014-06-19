@@ -40,6 +40,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/deletePic_json.php',
     ),
+    'clearCache_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/clearCache_json.php',
+    )
 );
 
 // Static - Views - Errors

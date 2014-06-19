@@ -6,37 +6,43 @@ define(
 [
     'jquery',
 
+    // PM
+    'PM/Core',
+    'PM/Cmp/Notify',
+
     // App
     'App/Actions/GetRandomPicAction',
 
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, GetRandomPicAction) {
+function ($, PM, Notify, GetRandomPicAction) {
     'use strict';
 
     var DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
         DEFAULT_CUSTOM_FOLDER = GetRandomPicAction.DEFAULT_CUSTOM_FOLDER,
-        DEFAULT_ZOOM = 1;
+        DEFAULT_ZOOM = 1,
+        NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
     var defaultOptions = {
             root: null
         },
         options = {},
         els = {},
-        hasFocus = false;
+        hasFocus = false,
+        notify = null;
 
     /**
      *
      */
     function buildSkeleton () {
         var mainCtn, inputCustomPathFolder, customFolderCtn,
-            footerCtn, btnStart, inputInterval,
+            footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic;
 
         /**
-         *
+         * @private
          */
         function keyUpInput (e) {
             var keyPressed = e.which,
@@ -54,6 +60,62 @@ function ($, GetRandomPicAction) {
             }
         } // End function keyUpInput()
 
+        /**
+         * @private
+         */
+        function clearCache () {
+            var xhr,
+                errorMessage = 'Server error while trying to clear cache.';
+
+            /**
+             * @private
+             */
+            function displayNotify (message, type) {
+                if (!notify) {
+                    notify = new Notify({
+                        className: 'optionsView_notify',
+                        container: $(document.body),
+                        autoHide: true,
+                        duration: 3
+                    });
+                }
+
+                notify.setMessage(message, type, true);
+            } // End function displayErrorNotify()
+
+            xhr = $.ajax({
+                url: '/?r=clearCache_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true
+            });
+
+            xhr.done(function (json) {
+                var error;
+
+                if (json.success) {
+                    displayNotify('Cache has been cleared successfully.', Notify.TYPE_INFO);
+                } else {
+                    error = json.error || {};
+                    displayNotify(errorMessage + ' ' + (error.publicMessage || ''), NOTIFY_TYPE_ERROR);
+                    PM.log(error.message || 'Undefined error.');
+                }
+
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                var message = 'OptionsView.clearCache()';
+
+                displayNotify(errorMessage, NOTIFY_TYPE_ERROR);
+
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+            });
+        } // End function clearCache()
+
+
+        // =================================
+        // Start of function buildSkeleton()
+        // =================================
 
         mainCtn = els.mainCtn = $('<div>', {
             'class': 'ds_options_view flex',
@@ -234,8 +296,17 @@ function ($, GetRandomPicAction) {
             })
         );
 
+        btnClearCache = $('<div>', {
+            'class': 'clear_cache_btn',
+            text: 'Clear cache',
+            on: {
+                click: clearCache
+            }
+        });
+
         footerCtn.append(
-            btnStart
+            btnStart,
+            btnClearCache
         );
 
         mainCtn.append(
