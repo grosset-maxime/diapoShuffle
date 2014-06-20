@@ -147,13 +147,11 @@ class RandomPic extends Root
 
         $nb = mt_rand($min, $max);
         $fileName = array_keys($listItem)[$nb];
-        $listItem = array_values($listItem);
-        $randomItem = $listItem[$nb];
 
         return new Item(
             array(
                 'name' => $fileName,
-                'type' => $randomItem['f'] ? Item::TYPE_FOLDER : Item::TYPE_FILE,
+                'type' => $listItem[$fileName] ? Item::TYPE_FOLDER : Item::TYPE_FILE,
                 'path' => $folder
             )
         );

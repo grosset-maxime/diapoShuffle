@@ -31,10 +31,8 @@ use DS\Root;
  */
 class CacheManager extends Root
 {
-    protected $cacheFolder = array();
-
     /**
-     * RandomPic constructor.
+     * CacheManager constructor.
      *
      * @param {array} $data : CacheManager data.
      * * param {array} data.cacheFolder : Cache folder.
@@ -42,24 +40,21 @@ class CacheManager extends Root
     public function __construct(array $data = array())
     {
         parent::__construct($data);
-
-        if (empty($data['cacheFolder'])) {
-            $this->cacheFolder = !empty($_SESSION['cacheFolder']) ? $_SESSION['cacheFolder'] : array();
-        }
     }
 
     /**
-     * Getter cache folder.
+     * Fetch cache folder.
      *
      * @return {array} Cache folder.
      */
     public function getCacheFolder()
     {
-        return $this->cacheFolder;
+        $cacheFolder = apc_fetch('cacheFolder');
+        return is_array($cacheFolder) ? $cacheFolder : array();
     }
 
     /**
-     * Setter cache folder.
+     * Store cache folder.
      *
      * @param {array} $cacheFolder : Cache folder.
      *
@@ -67,8 +62,16 @@ class CacheManager extends Root
      */
     public function setCacheFolder($cacheFolder = array())
     {
-        $this->cacheFolder = $cacheFolder;
-        $_SESSION['cacheFolder'] = $cacheFolder;
+        apc_store('cacheFolder', $cacheFolder);
     }
 
+    /**
+     * Delete cache folder.
+     *
+     * @return null
+     */
+    public function deleteCacheFolder()
+    {
+        apc_delete('cacheFolder');
+    }
 } // End Class CacheManager

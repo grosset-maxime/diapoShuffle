@@ -12,6 +12,12 @@
  * @link     No
  */
 
+require_once ROOT_DIR . '/api/class/CacheManager.class.php';
+
+// DS
+use DS\CacheManager;
+
+
 // ====================
 // Start of the script.
 // ====================
@@ -29,6 +35,7 @@ $jsonResult = array(
 
 // Clean all session variable.
 session_unset();
+(new CacheManager())->deleteCacheFolder();
 
 $jsonResult['success'] = true;
 print json_encode($jsonResult);
