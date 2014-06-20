@@ -17,6 +17,12 @@
     $_BASE_PIC_FOLDER_NAME, $_BASE_PIC_PATH
 */
 
+require_once ROOT_DIR . '/api/class/CacheManager.class.php';
+
+// DS
+use DS\CacheManager;
+
+
 // ====================
 // Start of the script.
 // ====================
@@ -58,9 +64,11 @@ if ($firstCharPicPAth !== '/') {
 $absolutePicPath = $_BASE_PIC_PATH . $picPath;
 
 try {
+
     if (!file_exists($absolutePicPath)) {
         throw new Exception('Picture doesn\'t exist: ' . $absolutePicPath);
     }
+
 } catch (Exception $e) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['wrongCustomFolder'] = true;
@@ -71,7 +79,9 @@ try {
 }
 
 try {
+
     $success = unlink($absolutePicPath);
+
 } catch (Exception $e) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['message'] = 'Error while trying to delete picture.';
@@ -83,6 +93,33 @@ if (!$success) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['message'] = 'Error while trying to delete picture.';
     print json_encode($jsonResult);
+}
+
+$folderPath = substr(
+    $absolutePicPath,
+    0,
+    strrpos(
+        $absolutePicPath,
+        '/'
+    )
+);
+
+$picName = substr(
+    $absolutePicPath,
+    strrpos(
+        $absolutePicPath,
+        '/'
+    ) + 1
+);
+
+$cacheManager = new CacheManager();
+$cacheFolder = $cacheManager->getCacheFolder();
+
+if (isset($cacheFolder[$folderPath][$picName])) {
+
+    unset($cacheFolder[$folderPath][$picName]);
+    $cacheManager->setCacheFolder($cacheFolder);
+
 }
 
 $jsonResult['success'] = $success;

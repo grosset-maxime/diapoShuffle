@@ -16,6 +16,7 @@ namespace RandomPic;
 require_once dirname(__FILE__) . '/../../globals.php';
 
 require_once dirname(__FILE__) . '/../Root.class.php';
+require_once dirname(__FILE__) . '/../CacheManager.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 require_once dirname(__FILE__) . '/Item.class.php';
 
@@ -27,6 +28,7 @@ use \Exception;
 // DS
 use DS\Root;
 use DS\ExceptionExtended;
+use DS\CacheManager;
 
 // RandomPic
 use RandomPic\Item;
@@ -56,6 +58,8 @@ class RandomPic extends Root
     protected $cacheFolder = array();
     protected $needUpdateCache = false;
 
+    protected $cacheManager = null;
+
 
     /**
      * RandomPic constructor.
@@ -71,7 +75,8 @@ class RandomPic extends Root
             $this->setRootPath();
         }
 
-        $this->cacheFolder = !empty($_SESSION['cacheFolder']) ? $_SESSION['cacheFolder'] : array();
+        $this->cacheManager = new CacheManager();
+        $this->cacheFolder = $this->cacheManager->getCacheFolder();
     }
 
     /**
@@ -126,10 +131,7 @@ class RandomPic extends Root
                     continue;
                 }
 
-                $listItem[] = array(
-                    'n' => $item->getFilename(),
-                    'f' => $item->isDir()
-                );
+                $listItem[$fileName] = $item->isDir();
             }
 
             $this->cacheFolder[$folder] = $listItem;
@@ -144,11 +146,13 @@ class RandomPic extends Root
         }
 
         $nb = mt_rand($min, $max);
+        $fileName = array_keys($listItem)[$nb];
+        $listItem = array_values($listItem);
         $randomItem = $listItem[$nb];
 
         return new Item(
             array(
-                'name' => $randomItem['n'],
+                'name' => $fileName,
                 'type' => $randomItem['f'] ? Item::TYPE_FOLDER : Item::TYPE_FILE,
                 'path' => $folder
             )
@@ -306,7 +310,7 @@ class RandomPic extends Root
 
         if ($this->needUpdateCache) {
             $this->needUpdateCache = false;
-            $_SESSION['cacheFolder'] = $this->cacheFolder;
+            $this->cacheManager->setCacheFolder($this->cacheFolder);
         }
 
         return $result;
