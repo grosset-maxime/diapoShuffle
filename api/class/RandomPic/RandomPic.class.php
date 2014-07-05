@@ -11,6 +11,10 @@
  * @link     No
  */
 
+/* global
+    $_BASE_PIC_PATH, $_BASE_PIC_FOLDER_NAME
+*/
+
 namespace RandomPic;
 
 require_once dirname(__FILE__) . '/../../globals.php';

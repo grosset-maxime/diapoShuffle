@@ -12,15 +12,15 @@ define(
 
     // App
     'App/Actions/GetRandomPicAction',
+    'App/Views/FolderFinderView',
 
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, PM, Notify, GetRandomPicAction) {
+function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
     'use strict';
 
     var DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
-        DEFAULT_CUSTOM_FOLDER = GetRandomPicAction.DEFAULT_CUSTOM_FOLDER,
         DEFAULT_ZOOM = 1,
         NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
@@ -36,7 +36,7 @@ function ($, PM, Notify, GetRandomPicAction) {
      *
      */
     function buildSkeleton () {
-        var mainCtn, inputCustomPathFolder, customFolderCtn,
+        var mainCtn, customFolderCtn,
             footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic;
@@ -118,7 +118,7 @@ function ($, PM, Notify, GetRandomPicAction) {
         // =================================
 
         mainCtn = els.mainCtn = $('<div>', {
-            'class': 'ds_options_view flex',
+            'class': 'window ds_options_view flex',
             html: $('<div>', {
                 'class': 'title_view',
                 'text': 'Options'
@@ -131,46 +131,24 @@ function ($, PM, Notify, GetRandomPicAction) {
             'class': 'footer_ctn flex'
         });
 
-        // Input custom folder
-        inputCustomPathFolder = els.inputCustomFolder = $('<input>', {
-            'class': 'input_custom_folder input_text',
-            type: 'text',
-            value: DEFAULT_CUSTOM_FOLDER,
-            on: {
-                focus:function () {
-                    hasFocus = true;
-                },
-                blur: function () {
-                    hasFocus = false;
-                },
-                keyup: keyUpInput
-            }
-        });
-
         // Ctn custom folder
         customFolderCtn = $('<div>', {
             'class': 'el_ctn flex'
         }).append(
             $('<label>', {
                 'class': 'title title_custom_folder',
-                text: 'Folder :',
-                on: {
-                    click: function () {
-                        inputCustomPathFolder.focus();
-                    }
-                }
+                text: 'Folder(s) :'
             }),
-            inputCustomPathFolder,
-            $('<span>', {
-                'class': 'clear_custom_folder',
-                text: 'x',
-                title: 'Clear custom folder.',
+            $('<input>', {
+                'class': 'btn browse_custom_folder_btn',
+                type: 'button',
+                value: 'Browse ...',
                 on: {
                     click: function () {
-                        inputCustomPathFolder.val('');
+                        FolderFinderView.show();
                     }
                 }
-            })
+            }).button()
         );
 
         // Btn start
@@ -343,6 +321,10 @@ function ($, PM, Notify, GetRandomPicAction) {
             }
 
             buildSkeleton();
+
+            FolderFinderView.init({
+                root: opts.root
+            });
         }, // End function init()
 
         /**
@@ -380,12 +362,7 @@ function ($, PM, Notify, GetRandomPicAction) {
          *
          */
         getCustomFolder: function () {
-            var inputCustomFolder = els.inputCustomFolder,
-                customFolder = inputCustomFolder.val().trim() || DEFAULT_CUSTOM_FOLDER;
-
-            inputCustomFolder.val(customFolder);
-
-            return customFolder;
+            return FolderFinderView.getSelectedPath()[0];
         }, // End function getCustomFolder()
 
         /**

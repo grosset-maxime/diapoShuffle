@@ -1,0 +1,99 @@
+// =======================
+// App Folder Finder View
+// =======================
+
+// global:
+// |=> _uikit.scss:
+//      |=> $ORANGE
+//      |=> $ORANGE_LIGHT
+
+@mixin calc($property, $expression) {
+  #{$property}: -webkit-calc(#{$expression});
+  #{$property}: calc(#{$expression});
+}
+
+$FOOTER_HEIGHT: 50px;
+
+.ds_folder_finder {
+    position: absolute;
+    top: 4%;
+    left: 4%;
+    height: 92%;
+    width: 92%;
+    padding-bottom: $FOOTER_HEIGHT;
+
+    .title_view {
+        position: absolute;
+        top: 0;
+        left: 2%;
+        font-weight: bold;
+        font-size: 1.3em;
+        text-align: center;
+        padding-top: 4px;
+        width: 96%;
+        height: $FOOTER_HEIGHT;
+        border-bottom: 1px solid #e6e6e6;
+        justify-content: center;
+    }
+
+    .folders_ctn {
+        margin-top: 40px;
+        overflow: auto;
+        @include calc(height, unquote("100% -")$FOOTER_HEIGHT);
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 5px;
+
+            &.empty {
+                padding-left: 1.85em;
+            }
+        }
+
+        .checkbox,
+        .label {
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .expand_btn {
+            margin-right: 5px;
+
+            &.minus .ui-button-text {
+                padding: .1em .5em;
+            }
+
+            .ui-button-text {
+                padding: .1em .4em;
+            }
+        }
+
+        .checkbox {
+            margin-right: 5px;
+        }
+
+        .child_items {
+            margin-left: 10px;
+            padding-left: 10px;
+            border-left: 1px dashed #ddd;
+        }
+    } // End .folders_ctn
+
+    .footer_ctn {
+        text-align: right;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: $FOOTER_HEIGHT;
+        padding-right: 20px;
+        justify-content: flex-end;
+        border-top: 1px solid #f2f2f2;
+    }
+
+    .close_btn {
+        height: 3em;
+    }
+}

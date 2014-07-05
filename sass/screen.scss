@@ -51,6 +51,8 @@
 // ----------
 body {
     background-color: #f8f8f8;
+    font: 14px arial, sans-serif;
+    overflow: hidden;
 }
 // End App Global
 
@@ -65,4 +67,5 @@ body {
     @import 'App/Views/OptionsView';
     @import 'App/Views/InfosView';
     @import 'App/Views/PlayView';
+    @import 'App/Views/FolderFinderView';
 }

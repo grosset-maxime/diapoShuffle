@@ -95,14 +95,24 @@ div {
   z-index: 800;
 }
 
-/* line 2, ../../sass/base/_uikit.scss */
+/* line 7, ../../sass/base/_uikit.scss */
 .btn.ui-button {
-  background: #FCF3E5;
+  background: #fcf3e5;
   transition: 0.1s;
 }
-/* line 6, ../../sass/base/_uikit.scss */
+/* line 11, ../../sass/base/_uikit.scss */
 .btn.ui-button.ui-state-hover {
-  background: #FDECD0;
+  background: #fdecd0;
+}
+
+/* line 16, ../../sass/base/_uikit.scss */
+.window {
+  border-radius: 4px;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 8px -3px #aaa;
+  padding: 20px;
 }
 
 /* line 10, ../../../sass/Cmp/Notify.scss */
@@ -222,9 +232,11 @@ div {
 /* line 52, ../../sass/screen.scss */
 body {
   background-color: #f8f8f8;
+  font: 14px arial, sans-serif;
+  overflow: hidden;
 }
 
-/* line 59, ../../sass/screen.scss */
+/* line 61, ../../sass/screen.scss */
 .diapo_shuffle {
   color: #333;
 }
@@ -255,15 +267,16 @@ body {
   width: 100;
   min-height: 1px;
   align-items: flex-start;
+  position: relative;
 }
-/* line 38, ../../sass/App/Views/_MainView.scss */
+/* line 39, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ds_footer_ctn {
   order: 3;
   height: 44px;
   min-height: 44px;
   max-height: 44px;
 }
-/* line 45, ../../sass/App/Views/_MainView.scss */
+/* line 46, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading {
   display: none;
   position: fixed;
@@ -274,7 +287,7 @@ body {
   width: 38px;
   height: 20px;
 }
-/* line 55, ../../sass/App/Views/_MainView.scss */
+/* line 56, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading {
   width: 4px;
   height: 4px;
@@ -297,28 +310,28 @@ body {
   -o-border-radius: 20px;
   border-radius: 20px;
 }
-/* line 69, ../../sass/App/Views/_MainView.scss */
+/* line 70, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading_1 {
   -moz-animation-delay: 0s;
   -webkit-animation-delay: 0s;
   -ms-animation-delay: 0s;
   animation-delay: 0s;
 }
-/* line 76, ../../sass/App/Views/_MainView.scss */
+/* line 77, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading_2 {
   -moz-animation-delay: 0.39s;
   -webkit-animation-delay: 0.39s;
   -ms-animation-delay: 0.39s;
   animation-delay: 0.39s;
 }
-/* line 83, ../../sass/App/Views/_MainView.scss */
+/* line 84, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_loading .el_loading_3 {
   -moz-animation-delay: 0.78s;
   -webkit-animation-delay: 0.78s;
   -ms-animation-delay: 0.78s;
   animation-delay: 0.78s;
 }
-/* line 91, ../../sass/App/Views/_MainView.scss */
+/* line 92, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_icon_pause {
   display: none;
   position: fixed;
@@ -329,7 +342,7 @@ body {
   width: 18px;
   height: 16px;
 }
-/* line 101, ../../sass/App/Views/_MainView.scss */
+/* line 102, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ctn_icon_pause .el_icon_pause {
   width: 4px;
   height: 14px;
@@ -368,22 +381,18 @@ body {
 }
 /* line 5, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view {
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  box-shadow: 2px 2px 8px -3px #aaa;
   width: 70%;
   margin: 0 auto;
-  padding: 20px 20px 100px;
+  padding-bottom: 100px;
   position: relative;
-  background-color: #fff;
 }
-/* line 15, ../../sass/App/Views/_OptionsView.scss */
+/* line 11, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view.flex {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
 }
-/* line 21, ../../sass/App/Views/_OptionsView.scss */
+/* line 17, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title_view {
   font-weight: bold;
   font-size: 1.3em;
@@ -393,12 +402,12 @@ body {
   width: 100%;
   border-bottom: 1px solid #e6e6e6;
 }
-/* line 32, ../../sass/App/Views/_OptionsView.scss */
+/* line 28, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .btn,
 .diapo_shuffle .ds_options_view .input_spinner {
   outline: none;
 }
-/* line 37, ../../sass/App/Views/_OptionsView.scss */
+/* line 33, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .footer_ctn {
   text-align: center;
   width: 100%;
@@ -407,24 +416,24 @@ body {
   left: 0;
   height: 100px;
 }
-/* line 46, ../../sass/App/Views/_OptionsView.scss */
+/* line 42, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .el_ctn {
   margin: 8px;
   line-height: 1em;
   width: 100%;
 }
-/* line 52, ../../sass/App/Views/_OptionsView.scss */
+/* line 48, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title_custom_folder {
-  width: 4em;
+  width: 5.5em;
 }
-/* line 56, ../../sass/App/Views/_OptionsView.scss */
+/* line 52, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_custom_folder {
   min-width: 100px;
   max-width: 500px;
   width: 100%;
   border-radius: 4px;
 }
-/* line 63, ../../sass/App/Views/_OptionsView.scss */
+/* line 59, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_custom_folder {
   margin-left: 5px;
   padding: 0 8px;
@@ -432,16 +441,16 @@ body {
   opacity: 0.5;
   transition: opacity 0.3s;
 }
-/* line 70, ../../sass/App/Views/_OptionsView.scss */
+/* line 66, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_custom_folder:hover {
   opacity: 1;
 }
-/* line 76, ../../sass/App/Views/_OptionsView.scss */
+/* line 72, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_interval,
 .diapo_shuffle .ds_options_view .input_zoom {
   width: 20px;
 }
-/* line 80, ../../sass/App/Views/_OptionsView.scss */
+/* line 76, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title {
   margin-right: 4px;
   display: -moz-inline-stack;
@@ -451,14 +460,14 @@ body {
   zoom: 1;
   *display: inline;
 }
-/* line 85, ../../sass/App/Views/_OptionsView.scss */
+/* line 81, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .start_btn {
   width: 80%;
   font-size: 1.5em;
   text-align: center;
   margin: auto;
 }
-/* line 92, ../../sass/App/Views/_OptionsView.scss */
+/* line 88, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_cache_btn {
   position: absolute;
   bottom: 6px;
@@ -468,7 +477,7 @@ body {
   cursor: pointer;
   font-size: 0.8em;
 }
-/* line 101, ../../sass/App/Views/_OptionsView.scss */
+/* line 97, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_cache_btn:hover {
   color: #ddd;
 }
@@ -566,4 +575,89 @@ body {
 .diapo_shuffle .ds_play_view .cmd_ctn .delete_btn {
   display: none;
   margin-left: 20px;
+}
+/* line 17, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder {
+  position: absolute;
+  top: 4%;
+  left: 4%;
+  height: 92%;
+  width: 92%;
+  padding-bottom: 50px;
+}
+/* line 25, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .title_view {
+  position: absolute;
+  top: 0;
+  left: 2%;
+  font-weight: bold;
+  font-size: 1.3em;
+  text-align: center;
+  padding-top: 4px;
+  width: 96%;
+  height: 50px;
+  border-bottom: 1px solid #e6e6e6;
+  justify-content: center;
+}
+/* line 39, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn {
+  margin-top: 40px;
+  overflow: auto;
+  height: -webkit-calc(100% - 50px);
+  height: calc(100% - 50px);
+}
+/* line 44, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+}
+/* line 50, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .item.empty {
+  padding-left: 1.85em;
+}
+/* line 56, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .checkbox,
+.diapo_shuffle .ds_folder_finder .folders_ctn .label {
+  display: inline-block;
+  cursor: pointer;
+}
+/* line 61, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .expand_btn {
+  margin-right: 5px;
+}
+/* line 64, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .expand_btn.minus .ui-button-text {
+  padding: .1em .5em;
+}
+/* line 68, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .expand_btn .ui-button-text {
+  padding: .1em .4em;
+}
+/* line 73, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .checkbox {
+  margin-right: 5px;
+}
+/* line 77, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .folders_ctn .child_items {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px dashed #ddd;
+}
+/* line 84, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .footer_ctn {
+  text-align: right;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 50px;
+  padding-right: 20px;
+  justify-content: flex-end;
+  border-top: 1px solid #f2f2f2;
+}
+/* line 96, ../../sass/App/Views/_FolderFinderView.scss */
+.diapo_shuffle .ds_folder_finder .close_btn {
+  height: 3em;
 }

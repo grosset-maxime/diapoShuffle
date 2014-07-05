@@ -1,9 +1,23 @@
 
+
+$ORANGE: #FDECD0;
+$ORANGE_LIGHT: #FCF3E5;
+
+
 .btn.ui-button {
-    background: #FCF3E5;
+    background: $ORANGE_LIGHT;
     transition: 0.1s;
 
     &.ui-state-hover {
-        background: #FDECD0;
+        background: $ORANGE;
     }
+}
+
+.window {
+    border-radius: 4px;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.96);
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 8px -3px #aaa;
+    padding: 20px;
 }

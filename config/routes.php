@@ -32,18 +32,22 @@ $_routes += array(
 // API - Scripts
 // -------------
 $_routes += array(
-    'getRandomPic_s' => array(
+    'clearCache_s' => array(
         'isScript' => true,
-        'path' => '/api/script/getRandomPic_json.php',
+        'path' => '/api/script/clearCache_json.php',
     ),
     'deletePic_s' => array(
         'isScript' => true,
         'path' => '/api/script/deletePic_json.php',
     ),
-    'clearCache_s' => array(
+    'getFolderList_s' => array(
         'isScript' => true,
-        'path' => '/api/script/clearCache_json.php',
-    )
+        'path' => '/api/script/getFolderList_json.php',
+    ),
+    'getRandomPic_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/getRandomPic_json.php',
+    ),
 );
 
 // Static - Views - Errors
