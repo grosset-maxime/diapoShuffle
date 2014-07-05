@@ -21,6 +21,7 @@ require_once dirname(__FILE__) . '/../../globals.php';
 
 require_once dirname(__FILE__) . '/../Root.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
+require_once dirname(__FILE__) . '/../CacheManager.class.php';
 
 
 // PHP
@@ -30,6 +31,7 @@ use \Exception;
 // DS
 use DS\Root;
 use DS\ExceptionExtended;
+use DS\CacheManager;
 
 
 /**
@@ -46,14 +48,17 @@ class FolderList extends Root
     protected $WIN_SEP = '\\';
     protected $UNIX_SEP = '/';
 
-    protected $customFolder = '';       // Custom path folder choose by user where to get random pic.
-    protected $rootPathFolder = '';     // Absolute root folder (with custom path folder) where to get random pic.
+    protected $customFolder = '';
+    protected $rootPathFolder = '';
+
+    protected $cacheFolderList = array();
+    protected $cacheManager = null;
 
 
     /**
-     * RandomPic constructor.
+     * FolderList constructor.
      *
-     * @param {array} $data : RandomPic data.
+     * @param {array} $data : FolderList data.
      * * param {String} data.customFolder : Custom folder.
      */
     public function __construct(array $data = array())
@@ -63,6 +68,9 @@ class FolderList extends Root
         if (empty($this->rootPathFolder)) {
             $this->setRootPath();
         }
+
+        $this->cacheManager = new CacheManager();
+        $this->cacheFolderList = $this->cacheManager->getCacheFolderList();
     }
 
     /**
@@ -92,38 +100,47 @@ class FolderList extends Root
         $item;
         $fileName;
 
-        try {
+        if (isset($this->cacheFolderList[$folder])
+            || array_key_exists($folder, $this->cacheFolderList)
+        ) {
+            $listFolder = $this->cacheFolderList[$folder];
+        } else {
+            try {
 
-            if (!file_exists($folder)) {
-                throw new Exception();
+                if (!file_exists($folder)) {
+                    throw new Exception();
+                }
+
+                $dir = new DirectoryIterator($folder);
+
+            } catch (Exception $e) {
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => 'Folder "' . $folder . '" is not accessible.',
+                        'message' => $e->getMessage(),
+                        'severity' => ExceptionExtended::SEVERITY_ERROR
+                    )
+                );
             }
 
-            $dir = new DirectoryIterator($folder);
+            foreach ($dir as $item) {
+                set_time_limit(30);
 
-        } catch (Exception $e) {
-            throw new ExceptionExtended(
-                array(
-                    'publicMessage' => 'Folder "' . $folder . '" is not accessible.',
-                    'message' => $e->getMessage(),
-                    'severity' => ExceptionExtended::SEVERITY_ERROR
-                )
-            );
-        }
+                $fileName = $item->getFilename();
 
-        foreach ($dir as $item) {
-            set_time_limit(30);
+                if ($item->isDot()
+                    || !$item->isDir()
+                    || preg_match('/^[\.].*/i', $fileName)
+                    || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
+                ) {
+                    continue;
+                }
 
-            $fileName = $item->getFilename();
-
-            if ($item->isDot()
-                || !$item->isDir()
-                || preg_match('/^[\.].*/i', $fileName)
-                || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
-            ) {
-                continue;
+                $listFolder[] = $fileName;
             }
 
-            $listFolder[] = $fileName;
+            $this->cacheFolderList[$folder] = $listFolder;
+            $this->cacheManager->setCacheFolderList($this->cacheFolderList);
         }
 
         return $listFolder;

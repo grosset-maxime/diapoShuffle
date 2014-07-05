@@ -36,6 +36,7 @@ class CacheManager extends Root
      *
      * @param {array} $data : CacheManager data.
      * * param {array} data.cacheFolder : Cache folder.
+     * * param {array} data.cacheFolderList : Cache folder list (only folder).
      */
     public function __construct(array $data = array())
     {
@@ -43,13 +44,24 @@ class CacheManager extends Root
     }
 
     /**
-     * Fetch cache folder.
+     * Get cache folder.
      *
      * @return {array} Cache folder.
      */
     public function getCacheFolder()
     {
         $cacheFolder = apc_fetch('cacheFolder');
+        return is_array($cacheFolder) ? $cacheFolder : array();
+    }
+
+    /**
+     * Get cache folder list (only folder).
+     *
+     * @return {array} Cache folder list.
+     */
+    public function getCacheFolderList()
+    {
+        $cacheFolder = apc_fetch('cacheFolderList');
         return is_array($cacheFolder) ? $cacheFolder : array();
     }
 
@@ -66,6 +78,18 @@ class CacheManager extends Root
     }
 
     /**
+     * Store cache folder list.
+     *
+     * @param {array} $cacheFolderList : Cache folder list.
+     *
+     * @return null
+     */
+    public function setCacheFolderList($cacheFolderList = array())
+    {
+        apc_store('cacheFolderList', $cacheFolderList);
+    }
+
+    /**
      * Delete cache folder.
      *
      * @return null
@@ -73,5 +97,15 @@ class CacheManager extends Root
     public function deleteCacheFolder()
     {
         apc_delete('cacheFolder');
+    }
+
+    /**
+     * Delete cache folder list.
+     *
+     * @return null
+     */
+    public function deleteCacheFolderList()
+    {
+        apc_delete('cacheFolderList');
     }
 } // End Class CacheManager

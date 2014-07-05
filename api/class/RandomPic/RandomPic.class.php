@@ -105,7 +105,14 @@ class RandomPic extends Root
     protected function getRandomItem($folder)
     {
         // Init vars
-        $file; $min; $max; $nb; $item; $fileName; $randomItem; $dir;
+        $file;
+        $min;
+        $max;
+        $nb;
+        $item;
+        $fileName;
+        $randomItem;
+        $dir;
         $listItem = array();
 
         if (isset($this->cacheFolder[$folder]) || array_key_exists($folder, $this->cacheFolder)) {

@@ -35,7 +35,9 @@ $jsonResult = array(
 
 // Clean all session variable.
 session_unset();
-(new CacheManager())->deleteCacheFolder();
+$cacheManager = new CacheManager();
+$cacheManager->deleteCacheFolder();
+$cacheManager->deleteCacheFolderList();
 
 $jsonResult['success'] = true;
 print json_encode($jsonResult);
