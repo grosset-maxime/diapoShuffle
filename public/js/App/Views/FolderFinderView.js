@@ -13,9 +13,9 @@ define(
 function ($, PM, Notify) {
     'use strict';
 
-    var NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
+    var NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR,
 
-    var _defaultOptions = {
+        _defaultOptions = {
             root: null
         },
         _options = {},
@@ -31,7 +31,8 @@ function ($, PM, Notify) {
             ctn: null,
             childCtn: null
         },
-        _selectedPaths = [];
+        _selectedPaths = [],
+        _selectedFolderCtn = null;
 
     /**
      *
@@ -121,12 +122,9 @@ function ($, PM, Notify) {
                 on: {
                     change: function () {
                         if ($(this).prop('checked')) {
-                            _selectedPaths.push(newModel.path);
+                            onCheckItem(newModel);
                         } else {
-                            _selectedPaths.splice(
-                                $.inArray(newModel.path, _selectedPaths),
-                                1
-                            );
+                            onUncheckItem(newModel);
                         }
                     }
                 }
@@ -140,7 +138,17 @@ function ($, PM, Notify) {
 
             childCtn = $('<div>', {'class': 'child_items'});
 
-            item = $('<div>', {'class': 'item'});
+            item = $('<div>', {
+                'class': 'item',
+                on: {
+                    check: function () {
+                        checkbox.prop('checked', true);
+                    },
+                    uncheck: function () {
+                        checkbox.prop('checked', false);
+                    }
+                }
+            });
 
             item.append(
                 expand,
@@ -189,6 +197,49 @@ function ($, PM, Notify) {
             folderList.forEach(buildItem);
         });
     } // End function fillFolderCtn()
+
+    /**
+     *
+     */
+    function onCheckItem (model) {
+        var item;
+
+        _selectedPaths.push(model.path);
+
+        model.ctn.trigger('check');
+
+        if (model.thumb) {
+            model.thumb.show();
+        } else {
+            item = model.thumb = $('<div>', {
+                'class': 'thumb btn',
+                text: model.path,
+                on: {
+                    click: function () {
+                        onUncheckItem(model);
+                    }
+                }
+            }).button();
+
+            _selectedFolderCtn.append(item);
+        }
+    }
+
+    /**
+     *
+     */
+    function onUncheckItem (model) {
+        _selectedPaths.splice(
+            $.inArray(model.path, _selectedPaths),
+            1
+        );
+
+        model.ctn.trigger('uncheck');
+
+        if (model.thumb) {
+            model.thumb.hide();
+        }
+    }
 
     /**
      *
@@ -283,6 +334,10 @@ function ($, PM, Notify) {
 
             if (!_options.root) {
                 _options.root = $(document.body);
+            }
+
+            if (_options.selectedFolderCtn) {
+                _selectedFolderCtn = _options.selectedFolderCtn;
             }
         }, // End function init()
 

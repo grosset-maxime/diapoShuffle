@@ -481,6 +481,16 @@ body {
 .diapo_shuffle .ds_options_view .clear_cache_btn:hover {
   color: #ddd;
 }
+/* line 102, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .selected_custom_folder_ctn {
+  font-size: 0.8em;
+  overflow: auto;
+  min-height: 30px;
+}
+/* line 107, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .selected_custom_folder_ctn .thumb {
+  margin: 0 6px 6px 0;
+}
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {
   display: none;

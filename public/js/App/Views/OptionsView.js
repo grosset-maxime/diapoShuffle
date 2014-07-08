@@ -22,21 +22,21 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
 
     var DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
         DEFAULT_ZOOM = 1,
-        NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
+        NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR,
 
-    var defaultOptions = {
+        _defaultOptions = {
             root: null
         },
-        options = {},
-        els = {},
-        hasFocus = false,
-        notify = null;
+        _options = {},
+        _els = {},
+        _hasFocus = false,
+        _notify = null;
 
     /**
      *
      */
     function buildSkeleton () {
-        var mainCtn, customFolderCtn,
+        var mainCtn, customFolderCtn, selectedCustomFolderCtn,
             footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic;
@@ -71,8 +71,8 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
              * @private
              */
             function displayNotify (message, type) {
-                if (!notify) {
-                    notify = new Notify({
+                if (!_notify) {
+                    _notify = new Notify({
                         className: 'optionsView_notify',
                         container: $(document.body),
                         autoHide: true,
@@ -80,7 +80,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
                     });
                 }
 
-                notify.setMessage(message, type, true);
+                _notify.setMessage(message, type, true);
             } // End function displayErrorNotify()
 
             xhr = $.ajax({
@@ -117,7 +117,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         // Start of function buildSkeleton()
         // =================================
 
-        mainCtn = els.mainCtn = $('<div>', {
+        mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_options_view flex',
             html: $('<div>', {
                 'class': 'title_view',
@@ -125,9 +125,9 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             })
         });
 
-        mainCtn.css('max-height', options.root.height() - 160);
+        mainCtn.css('max-height', _options.root.height() - 160);
 
-        footerCtn = els.footerCtn = $('<div>', {
+        footerCtn = _els.footerCtn = $('<div>', {
             'class': 'footer_ctn flex'
         });
 
@@ -151,8 +151,12 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             }).button()
         );
 
+        selectedCustomFolderCtn = _els.selectedCustomFolderCtn = $('<div>', {
+            'class': 'selected_custom_folder_ctn'
+        });
+
         // Btn start
-        btnStart = els.btnStart = $('<input>', {
+        btnStart = _els.btnStart = $('<input>', {
             'class': 'btn start_btn',
             type: 'button',
             value: 'Start',
@@ -162,17 +166,17 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         }).button();
 
         // Input interval
-        inputInterval = els.inputInterval = $('<input>', {
+        inputInterval = _els.inputInterval = $('<input>', {
             'class': 'input_interval input_spinner',
             value: DEFAULT_INTERVAL,
             maxlength: 2,
             numberFormat: 'n',
             on: {
                 focus: function () {
-                    hasFocus = true;
+                    _hasFocus = true;
                 },
                 blur: function () {
-                    hasFocus = false;
+                    _hasFocus = false;
                 },
                 keyup: keyUpInput
             }
@@ -195,7 +199,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         );
 
         // Checkbox scale
-        inputScale = els.inputScale = $('<input>', {
+        inputScale = _els.inputScale = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
             checked: true
@@ -218,7 +222,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         );
 
         // Spinner Zoom
-        inputZoom = els.inputZoom = $('<input>', {
+        inputZoom = _els.inputZoom = $('<input>', {
             'class': 'input_zoom input_spinner',
             value: DEFAULT_ZOOM,
             step: 0.1,
@@ -226,10 +230,10 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             numberFormat: 'n',
             on: {
                 focus: function () {
-                    hasFocus = true;
+                    _hasFocus = true;
                 },
                 blur: function () {
-                    hasFocus = false;
+                    _hasFocus = false;
                 },
                 keyup: keyUpInput
             }
@@ -252,7 +256,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         );
 
                 // Checkbox scale
-        inputPathPic = els.inputPathPic = $('<input>', {
+        inputPathPic = _els.inputPathPic = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
             checked: true
@@ -289,6 +293,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
 
         mainCtn.append(
             customFolderCtn,
+            selectedCustomFolderCtn,
             intervalCtn,
             zoomCtn,
             scaleCtn,
@@ -296,7 +301,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             footerCtn
         );
 
-        options.root.append(mainCtn);
+        _options.root.append(mainCtn);
 
         inputInterval.spinner({
             min: 1,
@@ -314,16 +319,17 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          *
          */
         init: function (opts) {
-            $.extend(true, options, defaultOptions, opts || {});
+            $.extend(true, _options, _defaultOptions, opts || {});
 
-            if (!options.root) {
-                options.root = $(document.body);
+            if (!_options.root) {
+                _options.root = $(document.body);
             }
 
             buildSkeleton();
 
             FolderFinderView.init({
-                root: opts.root
+                root: opts.root,
+                selectedFolderCtn: _els.selectedCustomFolderCtn
             });
         }, // End function init()
 
@@ -331,14 +337,14 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          *
          */
         hasFocus: function () {
-            return hasFocus;
+            return _hasFocus;
         }, // End function hasFocus()
 
         /**
          *
          */
         getTimeInterval: function () {
-            var inputInterval = els.inputInterval,
+            var inputInterval = _els.inputInterval,
                 interval = inputInterval.spinner('value') || DEFAULT_INTERVAL;
 
             inputInterval.spinner('value', interval);
@@ -350,7 +356,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          *
          */
         getZoom: function () {
-            var inputZoom = els.inputZoom,
+            var inputZoom = _els.inputZoom,
                 zoom = inputZoom.spinner('value') || DEFAULT_ZOOM;
 
             inputZoom.spinner('value', zoom);
@@ -369,14 +375,14 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          *
          */
         isScaleOn: function () {
-            return !!els.inputScale[0].checked;
+            return !!_els.inputScale[0].checked;
         }, // End function getScale()
 
         /**
          *
          */
         isPublicPathOn: function () {
-            return !!els.inputPathPic[0].checked;
+            return !!_els.inputPathPic[0].checked;
         } // End function isPublicPathOn()
     };
 

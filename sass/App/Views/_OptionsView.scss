@@ -98,4 +98,14 @@
             color: #ddd;
         }
     }
+
+    .selected_custom_folder_ctn {
+        font-size: 0.8em;
+        overflow: auto;
+        min-height: 30px;
+
+        .thumb {
+            margin: 0 6px 6px 0;
+        }
+    }
 } // End .ds_options_view
