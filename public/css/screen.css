@@ -485,7 +485,7 @@ body {
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn {
   font-size: 0.8em;
   overflow: auto;
-  min-height: 30px;
+  min-height: 32px;
 }
 /* line 107, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn .thumb {

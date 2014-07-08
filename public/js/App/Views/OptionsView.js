@@ -152,7 +152,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         );
 
         selectedCustomFolderCtn = _els.selectedCustomFolderCtn = $('<div>', {
-            'class': 'selected_custom_folder_ctn'
+            'class': 'el_ctn selected_custom_folder_ctn'
         });
 
         // Btn start
