@@ -367,8 +367,8 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         /**
          *
          */
-        getCustomFolder: function () {
-            return FolderFinderView.getSelectedPath()[0];
+        getCustomFolders: function () {
+            return FolderFinderView.getSelectedPath();
         }, // End function getCustomFolder()
 
         /**

@@ -177,7 +177,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
 
         GetRandomPicAction.setOptions({
             interval: OptionsView.getTimeInterval(),
-            customFolder: OptionsView.getCustomFolder() || ''
+            customFolders: OptionsView.getCustomFolders() || []
         });
 
         PlayView.toggleStatePauseBtn(PlayView.BTN_PAUSE);

@@ -27,19 +27,19 @@ use RandomPic\RandomPic;
 
 
 // Init vars.
-$customFolder;
+$customFolders;
 $logError;
 $jsonResult;
 $RandomPic; // Instance of RandomPic class.
 
 
-$customFolder = trim($_POST['customFolder']) ? trim($_POST['customFolder']) : '';
+$customFolders = !empty($_POST['customFolders']) ? $_POST['customFolders'] : array();
 
 $logError = array(
     'mandatory_fields' => array(
     ),
     'optional_fields' => array(
-        'customFolder' => '= ' . $customFolder
+        'customFolders' => '= ' . implode(' - ', $customFolders)
     ),
 );
 
@@ -52,7 +52,7 @@ $jsonResult = array(
 try {
 
     $RandomPic = new RandomPic(
-        array('customFolder' => $customFolder)
+        array('customFolders' => $customFolders)
     );
 
     $jsonResult['pic'] = $RandomPic->getRandomPic();

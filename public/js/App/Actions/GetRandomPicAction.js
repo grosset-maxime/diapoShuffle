@@ -14,14 +14,14 @@ function ($, PM, Notify) {
     'use strict';
 
     var DEFAULT_INTERVAL = 3,
-        DEFAULT_CUSTOM_FOLDER = '',
+        DEFAULT_CUSTOM_FOLDERS = [],
         VIEW_MODE_CLASS = 'diapo_shuffle_view_mode',
         NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
     var idInterval, errorNotify,
         defaultOptions = {
             interval: DEFAULT_INTERVAL,
-            customFolder: DEFAULT_CUSTOM_FOLDER,
+            customFolders: DEFAULT_CUSTOM_FOLDERS,
             events: {
                 onBeforeStart: null,
                 onStart: null,
@@ -178,7 +178,7 @@ function ($, PM, Notify) {
             dataType: 'json',
             async: true,
             data: {
-                customFolder: options.customFolder
+                customFolders: options.customFolders
             }
         });
 
@@ -229,7 +229,7 @@ function ($, PM, Notify) {
         /**
          *
          */
-        DEFAULT_CUSTOM_FOLDER: DEFAULT_CUSTOM_FOLDER,
+        DEFAULT_CUSTOM_FOLDERS: DEFAULT_CUSTOM_FOLDERS,
 
         /**
          *
@@ -305,9 +305,9 @@ function ($, PM, Notify) {
         /**
          *
          */
-        setCustomFolder: function (customFolder) {
-            options.customFolder = customFolder;
-        }, // End function setCustomFolder()
+        setCustomFolders: function (customFolders) {
+            options.customFolders = customFolders;
+        }, // End function setCustomFolders()
 
         /**
          *
@@ -321,6 +321,7 @@ function ($, PM, Notify) {
          */
         setOptions: function (opts) {
             $.extend(true, options, opts || {});
+            options.customFolders = opts.customFolders || [];
         } // End function setOptions()
     };
 

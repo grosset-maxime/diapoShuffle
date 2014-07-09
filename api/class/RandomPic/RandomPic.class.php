@@ -52,13 +52,13 @@ class RandomPic extends Root
     protected $WIN_SEP = '\\';
     protected $UNIX_SEP = '/';
 
-    protected $customFolder = '';       // Custom path folder choose by user where to get random pic.
+    protected $customFolders = array();  // List of custom path folder choose by user where to get random pic.
     protected $picFileName = '';        // Random pic file name.
-    protected $rootPathFolder = '';     // Absolute root folder (with custom path folder) where to get random pic.
+
     protected $absolutePathFolder = ''; // Complete path of the random pic's folder.
     protected $publicPathFolder = '';   // Relative path from pic folder of the random pic's folder.
-    protected $levelMax = 20;           // Maximum folder depth.
-    protected $tryMax = 5;              // Maximum try before to raise folder empty exception.
+    protected $levelMax = 25;           // Maximum folder depth.
+    protected $tryMax = 10;             // Maximum try before to raise folder empty exception.
     protected $cacheFolder = array();
     protected $needUpdateCache = false;
 
@@ -69,15 +69,11 @@ class RandomPic extends Root
      * RandomPic constructor.
      *
      * @param {array} $data : RandomPic data.
-     * * param {String} data.customFolder : Custom folder.
+     * * param {String[]} data.customFolders : List of custom folder.
      */
     public function __construct(array $data = array())
     {
         parent::__construct($data);
-
-        if (empty($this->rootPathFolder)) {
-            $this->setRootPath();
-        }
 
         $this->cacheManager = new CacheManager();
         $this->cacheFolder = $this->cacheManager->getCacheFolder();
@@ -236,7 +232,7 @@ class RandomPic extends Root
     public function getRandomPic()
     {
         // Init vars
-        global $_BASE_PIC_FOLDER_NAME;
+        global $_BASE_PIC_FOLDER_NAME, $_BASE_PIC_PATH;
         $UNIX_SEP = $this->UNIX_SEP;
         $picFileName = '';
         $try = 0;
@@ -246,13 +242,13 @@ class RandomPic extends Root
         $absolutePathFolder = '';
         $width = 0;
         $height = 0;
-        $customFolder = $this->getCustomFolder();
+        $randomCustomFolder = $this->getRandomCustomFolder();
         $errorMessage;
 
 
         do {
             try {
-                $this->searchRandomPic($this->rootPathFolder);
+                $this->searchRandomPic($_BASE_PIC_PATH . $randomCustomFolder);
             } catch (ExceptionExtended $e) {
                 throw $e;
             } catch (Exception $e) {
@@ -289,7 +285,6 @@ class RandomPic extends Root
 
         $publicPathFolder = $this->replaceWinSlaches($publicPathFolder);
 
-        // End of customFolder
         if ($publicPathFolder[strlen($publicPathFolder) - 1] !== $UNIX_SEP) {
             $publicPathFolder .= $UNIX_SEP;
         }
@@ -310,9 +305,9 @@ class RandomPic extends Root
             'src' => $publicPathFolder . $picFileName,
             'randomPublicPath' => substr(
                 $publicPathFolder,
-                strlen($UNIX_SEP . $_BASE_PIC_FOLDER_NAME . $customFolder)
+                strlen($UNIX_SEP . $_BASE_PIC_FOLDER_NAME . $randomCustomFolder)
             ),
-            'customFolderPath' => $customFolder,
+            'customFolderPath' => $randomCustomFolder,
             'width' => $width,
             'height' => $height
         );
@@ -326,56 +321,13 @@ class RandomPic extends Root
     } // End function getRandomPic()
 
     /**
-     * Set root path.
+     * Normalize a custom folder.
      *
-     * @return null
+     * @param {String} $customFolder : List of custom folder.
+     *
+     * @return {String} Normalized custom folder.
      */
-    protected function setRootPath()
-    {
-        // Init vars
-        global $_BASE_PIC_PATH;
-        $rootPathFolder;
-        $customFolder = $this->getCustomFolder();
-
-        $this->rootPathFolder = $rootPathFolder = $_BASE_PIC_PATH . $customFolder;
-
-        try {
-            if (!file_exists($rootPathFolder)) {
-                throw new Exception();
-            }
-
-            new DirectoryIterator($rootPathFolder);
-        } catch (Exception $e) {
-            $errorMessage = 'Custom folder doesn\'t exist: ' . $customFolder;
-
-            throw new ExceptionExtended(
-                array(
-                    'publicMessage' => $errorMessage,
-                    'message' => $e->getMessage() ? $e->getMessage : $errorMessage,
-                    'severity' => ExceptionExtended::SEVERITY_WARNING
-                )
-            );
-        }
-    }
-
-    /**
-     * Getter custom folder.
-     *
-     * @return {String} $customFolder : Custom folder.
-     */
-    public function getCustomFolder()
-    {
-        return $this->customFolder;
-    }
-
-    /**
-     * Setter custom folder.
-     *
-     * @param {String} $customFolder : Custom folder.
-     *
-     * @return null
-     */
-    public function setCustomFolder($customFolder = '')
+    protected function normalizeCustomFolder($customFolder = '')
     {
         // Init vars.
         $UNIX_SEP = $this->UNIX_SEP;
@@ -404,8 +356,90 @@ class RandomPic extends Root
             }
         }
 
-        $this->customFolder = $customFolder;
+        return $customFolder;
+    } // End function normalizeCustomFolder()
 
-        $this->setRootPath();
-    } // End function setCustomFolder()
+    /**
+     * Get randomly one of custom folders.
+     *
+     * @return {String} One custom folder get randomly.
+     */
+    protected function getRandomCustomFolder()
+    {
+        // Init vars
+
+        $randomCustomFolder;
+        $randomIndex;
+        $min = 0;
+        $max = count($this->customFolders) - 1;
+
+        if ($max < 0) {
+
+            $randomCustomFolder = '';
+
+        } else {
+
+            $randomIndex = mt_rand($min, $max);
+            $randomCustomFolder =  $this->customFolders[$randomIndex];
+
+        }
+
+        return $randomCustomFolder;
+    }
+
+    /**
+     * Getter list of custom folders.
+     *
+     * @return {String} $customFolders : List of custom folders.
+     */
+    public function getCustomFolders()
+    {
+        return $this->customFolders;
+    }
+
+    /**
+     * Setter list of custom folders.
+     *
+     * @param {String[]} $customFolders : List of custom folders.
+     *
+     * @return null
+     */
+    public function setCustomFolders($customFolders = array(''))
+    {
+        // Init vars.
+        global $_BASE_PIC_PATH;
+        $errorMessage;
+        $rootPathFolder;
+        $customFolder;
+
+        foreach ($customFolders as $customFolder) {
+            $customFolder = $this->normalizeCustomFolder($customFolder);
+
+            $rootPathFolder = $_BASE_PIC_PATH . $customFolder;
+
+            try {
+                if (!file_exists($rootPathFolder)) {
+                    throw new Exception();
+                }
+
+                new DirectoryIterator($rootPathFolder);
+
+                $this->customFolders[] = $customFolder;
+            } catch (Exception $e) {
+                continue;
+            }
+        }
+
+        if (count($customFolders) > 0 && count($this->customFolders) <= 0) {
+            $errorMessage = 'No valid custom folders provided: ' . implode(' - ', $customFolders);
+
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => $errorMessage,
+                    'message' => $e->getMessage() ? $e->getMessage : $errorMessage,
+                    'severity' => ExceptionExtended::SEVERITY_WARNING
+                )
+            );
+        }
+    } // End function setCustomFolders()
 } // End Class RandomPic
