@@ -22,6 +22,7 @@ function ($, PM, Notify) {
         _els = {},
         _notify = null,
         _isBuilt = false,
+        _isOpen = false,
         _rootModel = {
             level: 0,
             parent: null,
@@ -350,6 +351,7 @@ function ($, PM, Notify) {
             }
 
             _els.mainCtn.show();
+            _isOpen = true;
         }, // End function show()
 
         /**
@@ -361,6 +363,7 @@ function ($, PM, Notify) {
             }
 
             _els.mainCtn.hide();
+            _isOpen = false;
         }, // End function hide()
 
         /**
@@ -368,7 +371,14 @@ function ($, PM, Notify) {
          */
         getSelectedPath: function () {
             return _selectedPaths;
-        } // End function getSelectedPath()
+        }, // End function getSelectedPath()
+
+        /**
+         *
+         */
+        isOpen: function () {
+            return _isOpen;
+        }
     };
 
     return View;

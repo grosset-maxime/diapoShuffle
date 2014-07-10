@@ -118,11 +118,19 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
             // console.log(keyPressed);
 
             switch (keyPressed) {
+            case 13: // Enter
+                if (OptionsView.isFolderFinderOpen()) {
+                    OptionsView.closeFolderFinder();
+                    doPreventDefault = true;
+                }
+                break;
+
             case 27: // ESC
                 if (GetRandomPicAction.isPlaying()) {
                     GetRandomPicAction.stop();
                 }
                 break;
+
             case 32: // SPACE
             case 80: // p (as pause)
                 if (OptionsView.hasFocus() && !GetRandomPicAction.isPlaying()) {
@@ -137,6 +145,13 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
                     GetRandomPicAction.start();
                 }
                 break;
+
+            case 66: // b (as browse)
+                if (!GetRandomPicAction.isPlaying()) {
+                    OptionsView.toggleFolderFinder();
+                }
+                break;
+
             case 68: // d (as delete)
                 if (!GetRandomPicAction.isPausing()) {
                     return;

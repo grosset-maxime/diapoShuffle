@@ -369,7 +369,25 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          */
         getCustomFolders: function () {
             return FolderFinderView.getSelectedPath();
-        }, // End function getCustomFolder()
+        }, // End function getCustomFolders()
+
+        /**
+         *
+         */
+        toggleFolderFinder: function () {
+            if (FolderFinderView.isOpen()) {
+                FolderFinderView.hide();
+            } else {
+                FolderFinderView.show();
+            }
+        }, // End function toggleFolderFinder()
+
+        /**
+         *
+         */
+        closeFolderFinder: function () {
+            FolderFinderView.hide();
+        }, // End function closeFolderFinder()
 
         /**
          *
@@ -383,7 +401,14 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          */
         isPublicPathOn: function () {
             return !!_els.inputPathPic[0].checked;
-        } // End function isPublicPathOn()
+        }, // End function isPublicPathOn()
+
+        /**
+         *
+         */
+        isFolderFinderOpen: function () {
+            return FolderFinderView.isOpen();
+        } // End function isFolderFinderOpen()
     };
 
     return View;
