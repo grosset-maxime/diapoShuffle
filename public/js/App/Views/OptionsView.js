@@ -95,13 +95,17 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
                 var error;
 
                 if (json.success) {
+
+                    FolderFinderView.clear();
                     displayNotify('Cache has been cleared successfully.', Notify.TYPE_INFO);
+
                 } else {
+
                     error = json.error || {};
                     displayNotify(errorMessage + ' ' + (error.publicMessage || ''), NOTIFY_TYPE_ERROR);
                     PM.log(error.message || 'Undefined error.');
-                }
 
+                }
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {

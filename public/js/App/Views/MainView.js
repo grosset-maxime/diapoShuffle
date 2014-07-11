@@ -129,6 +129,10 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
                 if (GetRandomPicAction.isPlaying()) {
                     GetRandomPicAction.stop();
                 }
+
+                if (OptionsView.isFolderFinderOpen()) {
+                    OptionsView.closeFolderFinder();
+                }
                 break;
 
             case 32: // SPACE

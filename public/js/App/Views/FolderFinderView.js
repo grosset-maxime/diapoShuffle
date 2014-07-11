@@ -25,12 +25,7 @@ function ($, PM, Notify) {
                 onUnselect: null
             }
         },
-        _options = {},
-        _els = {},
-        _notify = null,
-        _isBuilt = false,
-        _isOpen = false,
-        _rootModel = {
+        _defaultModel = {
             level: 0,
             parent: null,
             name: '',
@@ -39,6 +34,12 @@ function ($, PM, Notify) {
             ctn: null,
             childCtn: null
         },
+        _options = {},
+        _els = {},
+        _notify = null,
+        _isBuilt = false,
+        _isOpen = false,
+        _rootModel = $.extend(true, {}, _defaultModel),
         _selectedPaths = [],
         _selectedItems = [],
         _selectedFolderCtn = null;
@@ -464,7 +465,30 @@ function ($, PM, Notify) {
          */
         isOpen: function () {
             return _isOpen;
-        }
+        }, // End function isOpen()
+
+        /**
+         *
+         */
+        clear: function () {
+            var onNonSelected = _options.events.onNonSelected;
+
+            this.close();
+
+            _els.mainCtn.remove();
+            _rootModel = $.extend(true, {}, _defaultModel);
+            _isBuilt = false;
+            _selectedPaths = [];
+            _selectedItems = [];
+
+            if (_selectedFolderCtn) {
+                _selectedFolderCtn.empty();
+            }
+
+            if ($.isFunction(onNonSelected)) {
+                onNonSelected();
+            }
+        } // End function clear()
     };
 
     return View;
