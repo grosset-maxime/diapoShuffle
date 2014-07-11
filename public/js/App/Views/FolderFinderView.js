@@ -16,7 +16,14 @@ function ($, PM, Notify) {
     var NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR,
 
         _defaultOptions = {
-            root: null
+            root: null,
+            selectedFolderCtn: null,
+            events: {
+                onClose: null,
+                onNonSelected: null,
+                onSelect: null,
+                onUnselect: null
+            }
         },
         _options = {},
         _els = {},
@@ -40,7 +47,8 @@ function ($, PM, Notify) {
      *
      */
     function buildSkeleton () {
-        var mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn;
+        var mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn,
+            nbSelectedCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_folder_finder',
@@ -52,6 +60,10 @@ function ($, PM, Notify) {
 
         footerCtn = _els.footerCtn = $('<div>', {
             'class': 'footer_ctn flex'
+        });
+
+        _els.nbSelectedCtn = nbSelectedCtn = $('<div>', {
+            'class': 'nb_selected'
         });
 
         _els.btnUnSelectAll = btnUnSelectAll = $('<input>', {
@@ -71,7 +83,7 @@ function ($, PM, Notify) {
             value: 'Close',
             on: {
                 click: function () {
-                    View.hide();
+                    View.close();
                 }
             }
         }).button();
@@ -79,6 +91,7 @@ function ($, PM, Notify) {
         _rootModel.childCtn = _rootModel.ctn = foldersCtn = _els.foldersCtn = $('<div>', {'class': 'folders_ctn'});
 
         footerCtn.append(
+            nbSelectedCtn,
             btnUnSelectAll,
             btnClose
         );
@@ -93,6 +106,29 @@ function ($, PM, Notify) {
 
         fillFolderCtn(_rootModel);
     } // End function buildSkeleton()
+
+    /**
+     *
+     */
+    function updateNbSelected () {
+        var onNonSelected,
+            nbSelectedCtn = _els.nbSelectedCtn,
+            nbSelected = _selectedItems.length;
+
+        if (!nbSelected) {
+            nbSelectedCtn.hide();
+
+            onNonSelected = _options.events.onNonSelected;
+            if ($.isFunction(onNonSelected)) {
+                onNonSelected();
+            }
+
+            return;
+        }
+
+        nbSelectedCtn.text('Selected: ' + nbSelected);
+        nbSelectedCtn.show();
+    }
 
     /**
      *
@@ -216,7 +252,8 @@ function ($, PM, Notify) {
      *
      */
     function onCheckItem (model) {
-        var item;
+        var item,
+            onSelect = _options.events.onSelect;
 
         _selectedItems.push(model);
         _selectedPaths.push(model.path);
@@ -240,13 +277,19 @@ function ($, PM, Notify) {
         }
 
         _els.btnUnSelectAll.button('enable');
+        updateNbSelected();
+
+        if ($.isFunction(onSelect)) {
+            onSelect();
+        }
     }
 
     /**
      *
      */
     function onUncheckItem (model) {
-        var index = $.inArray(model.path, _selectedPaths);
+        var index = $.inArray(model.path, _selectedPaths),
+            onUnselect = _options.events.onUnselect;
 
         _selectedItems.splice(index, 1);
         _selectedPaths.splice(index, 1);
@@ -255,6 +298,12 @@ function ($, PM, Notify) {
 
         if (model.thumb) {
             model.thumb.hide();
+        }
+
+        updateNbSelected();
+
+        if ($.isFunction(onUnselect)) {
+            onUnselect();
         }
     }
 
@@ -361,7 +410,7 @@ function ($, PM, Notify) {
         /**
          *
          */
-        show: function () {
+        open: function () {
             if (!_isBuilt) {
                 buildSkeleton();
             }
@@ -373,14 +422,20 @@ function ($, PM, Notify) {
         /**
          *
          */
-        hide: function () {
+        close: function () {
+            var onClose = _options.events.onClose;
+
             if (!_isBuilt) {
                 return;
             }
 
             _els.mainCtn.hide();
             _isOpen = false;
-        }, // End function hide()
+
+            if ($.isFunction(onClose)) {
+                onClose();
+            }
+        }, // End function close()
 
         /**
          *
@@ -392,7 +447,9 @@ function ($, PM, Notify) {
                 onUncheckItem(_selectedItems[i]);
             }
 
-            _els.btnUnSelectAll.button('disable');
+            if (_isBuilt) {
+                _els.btnUnSelectAll.button('disable');
+            }
         },// End function unSelectAll()
 
         /**

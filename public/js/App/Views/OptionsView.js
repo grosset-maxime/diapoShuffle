@@ -39,7 +39,8 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         var mainCtn, customFolderCtn, selectedCustomFolderCtn,
             footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
-            inputZoom, pathPicCtn, inputPathPic;
+            inputZoom, pathPicCtn, inputPathPic, btnUnSelectAll,
+            nbSelectedCtn;
 
         /**
          * @private
@@ -132,6 +133,23 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         });
 
         // Ctn custom folder
+        // -----------------
+        _els.btnUnSelectAll = btnUnSelectAll = $('<input>', {
+            'class': 'btn btn_unselectall',
+            type: 'button',
+            value: 'Unselect All',
+            on: {
+                click: function () {
+                    FolderFinderView.unSelectAll();
+                    btnUnSelectAll.hide();
+                }
+            }
+        }).button();
+
+        _els.nbSelectedCtn = nbSelectedCtn = $('<div>', {
+            'class': 'nb_selected'
+        });
+
         customFolderCtn = $('<div>', {
             'class': 'el_ctn flex'
         }).append(
@@ -145,10 +163,12 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
                 value: 'Browse ...',
                 on: {
                     click: function () {
-                        FolderFinderView.show();
+                        FolderFinderView.open();
                     }
                 }
-            }).button()
+            }).button(),
+            btnUnSelectAll,
+            nbSelectedCtn
         );
 
         selectedCustomFolderCtn = _els.selectedCustomFolderCtn = $('<div>', {
@@ -314,6 +334,35 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         });
     } // End function buildSkeleton()
 
+    /**
+     *
+     */
+    function onCloseFolderFinder () {
+        var nbCustomFolderSelected = View.getCustomFolders().length,
+            btnUnSelectAll = _els.btnUnSelectAll,
+            nbSelectedCtn = _els.nbSelectedCtn;
+
+        if (!nbCustomFolderSelected) {
+            btnUnSelectAll.hide();
+            nbSelectedCtn.hide();
+            return;
+        }
+
+        btnUnSelectAll.show();
+        updateNbCustomFolderSelected();
+    } // End function onCloseFolderFinder()
+
+    /**
+     *
+     */
+    function updateNbCustomFolderSelected () {
+        var nbCustomFolderSelected = View.getCustomFolders().length,
+            nbSelectedCtn = _els.nbSelectedCtn;
+
+        nbSelectedCtn.text('Selected: ' + nbCustomFolderSelected);
+        nbSelectedCtn.show();
+    } // End function updateNbCustomFolderSelected()
+
     var View = {
         /**
          *
@@ -329,7 +378,13 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
 
             FolderFinderView.init({
                 root: opts.root,
-                selectedFolderCtn: _els.selectedCustomFolderCtn
+                selectedFolderCtn: _els.selectedCustomFolderCtn,
+                events: {
+                    onClose: onCloseFolderFinder,
+                    onNonSelected: onCloseFolderFinder,
+                    onSelect: updateNbCustomFolderSelected,
+                    onUnselect: updateNbCustomFolderSelected
+                }
             });
         }, // End function init()
 
@@ -376,9 +431,9 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          */
         toggleFolderFinder: function () {
             if (FolderFinderView.isOpen()) {
-                FolderFinderView.hide();
+                FolderFinderView.close();
             } else {
-                FolderFinderView.show();
+                FolderFinderView.open();
             }
         }, // End function toggleFolderFinder()
 
@@ -386,7 +441,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          *
          */
         closeFolderFinder: function () {
-            FolderFinderView.hide();
+            FolderFinderView.close();
         }, // End function closeFolderFinder()
 
         /**

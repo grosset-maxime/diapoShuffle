@@ -29,7 +29,6 @@
         outline: none;
     }
 
-
     .footer_ctn {
         text-align: center;
         width: 100%;
@@ -83,6 +82,18 @@
         font-size: 1.5em;
         text-align: center;
         margin: auto;
+    }
+
+    .btn_unselectall {
+        display: none;
+        margin-left: 30px;
+    }
+
+    .nb_selected {
+        display: none;
+        margin-left: 15px;
+        color: #ccc;
+        font-size: 0.8em;
     }
 
     .clear_cache_btn {
