@@ -117,55 +117,54 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
 
             // console.log(keyPressed);
 
-            switch (keyPressed) {
-            case 13: // Enter
-                if (OptionsView.isFolderFinderOpen()) {
-                    OptionsView.closeFolderFinder();
-                    doPreventDefault = true;
-                }
-                break;
+            if (GetRandomPicAction.isPlaying()) {
 
-            case 27: // ESC
-                if (GetRandomPicAction.isPlaying()) {
+                switch (keyPressed) {
+                case 27: // ESC
                     GetRandomPicAction.stop();
-                }
+                    break;
 
-                if (OptionsView.isFolderFinderOpen()) {
-                    OptionsView.closeFolderFinder();
-                }
-                break;
-
-            case 32: // SPACE
-            case 80: // p (as pause)
-                if (OptionsView.hasFocus() && !GetRandomPicAction.isPlaying()) {
-                    return;
-                }
-
-                doPreventDefault = true;
-
-                if (GetRandomPicAction.isPlaying()) {
+                case 32: // SPACE
+                case 80: // p (as pause)
                     GetRandomPicAction.pause();
-                } else {
-                    GetRandomPicAction.start();
-                }
-                break;
+                    break;
 
-            case 66: // b (as browse)
-                if (!GetRandomPicAction.isPlaying()) {
+                case 68: // d (as delete)
+                    if (GetRandomPicAction.isPausing()) {
+                        DeletePicAction.askDelete();
+                    }
+                    break;
+                }
+
+            } else {
+
+                switch (keyPressed) {
+                case 13: // Enter
+                    if (OptionsView.isFolderFinderOpen()) {
+                        OptionsView.closeFolderFinder();
+                        doPreventDefault = true;
+                    }
+                    break;
+
+                case 27: // ESC
+                    if (OptionsView.isFolderFinderOpen()) {
+                        OptionsView.closeFolderFinder();
+                    }
+                    break;
+
+                case 32: // SPACE
+                case 80: // p (as pause)
+                    if (!OptionsView.hasFocus()) {
+                        GetRandomPicAction.start();
+                        doPreventDefault = true;
+                    }
+                    break;
+
+                case 66: // b (as browse)
                     OptionsView.toggleFolderFinder();
-                }
-                break;
-
-            case 68: // d (as delete)
-                if (!GetRandomPicAction.isPausing()) {
-                    return;
+                    break;
                 }
 
-                doPreventDefault = true;
-
-                if (GetRandomPicAction.isPausing()) {
-                    DeletePicAction.askDelete();
-                }
             }
 
             if (doPreventDefault) {
