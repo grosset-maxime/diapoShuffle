@@ -6,11 +6,9 @@
 // |=> _uikit.scss:
 //      |=> $ORANGE
 //      |=> $ORANGE_LIGHT
-
-@mixin calc($property, $expression) {
-  #{$property}: -webkit-calc(#{$expression});
-  #{$property}: calc(#{$expression});
-}
+//
+// |=> _mixins.scss
+//      |=> calc()
 
 $FOOTER_HEIGHT: 50px;
 
@@ -93,7 +91,7 @@ $FOOTER_HEIGHT: 50px;
         border-top: 1px solid #f2f2f2;
     }
 
-    .close_btn {
-        height: 3em;
+    .btn_unselectall {
+        margin-right: 15px;
     }
 }

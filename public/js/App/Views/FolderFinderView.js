@@ -33,13 +33,14 @@ function ($, PM, Notify) {
             childCtn: null
         },
         _selectedPaths = [],
+        _selectedItems = [],
         _selectedFolderCtn = null;
 
     /**
      *
      */
     function buildSkeleton () {
-        var mainCtn, btnClose, footerCtn, foldersCtn;
+        var mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_folder_finder',
@@ -52,6 +53,17 @@ function ($, PM, Notify) {
         footerCtn = _els.footerCtn = $('<div>', {
             'class': 'footer_ctn flex'
         });
+
+        _els.btnUnSelectAll = btnUnSelectAll = $('<input>', {
+            'class': 'btn btn_unselectall',
+            type: 'button',
+            value: 'Unselect All',
+            on: {
+                click: function () {
+                    View.unSelectAll();
+                }
+            }
+        }).button({disabled: true});
 
         btnClose = $('<input>', {
             'class': 'btn btn_close',
@@ -67,6 +79,7 @@ function ($, PM, Notify) {
         _rootModel.childCtn = _rootModel.ctn = foldersCtn = _els.foldersCtn = $('<div>', {'class': 'folders_ctn'});
 
         footerCtn.append(
+            btnUnSelectAll,
             btnClose
         );
 
@@ -205,6 +218,7 @@ function ($, PM, Notify) {
     function onCheckItem (model) {
         var item;
 
+        _selectedItems.push(model);
         _selectedPaths.push(model.path);
 
         model.ctn.trigger('check');
@@ -224,16 +238,18 @@ function ($, PM, Notify) {
 
             _selectedFolderCtn.append(item);
         }
+
+        _els.btnUnSelectAll.button('enable');
     }
 
     /**
      *
      */
     function onUncheckItem (model) {
-        _selectedPaths.splice(
-            $.inArray(model.path, _selectedPaths),
-            1
-        );
+        var index = $.inArray(model.path, _selectedPaths);
+
+        _selectedItems.splice(index, 1);
+        _selectedPaths.splice(index, 1);
 
         model.ctn.trigger('uncheck');
 
@@ -365,6 +381,19 @@ function ($, PM, Notify) {
             _els.mainCtn.hide();
             _isOpen = false;
         }, // End function hide()
+
+        /**
+         *
+         */
+        unSelectAll: function () {
+            var i;
+
+            for (i = _selectedItems.length - 1; i >= 0; i--) {
+                onUncheckItem(_selectedItems[i]);
+            }
+
+            _els.btnUnSelectAll.button('disable');
+        },// End function unSelectAll()
 
         /**
          *
