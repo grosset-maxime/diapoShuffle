@@ -141,7 +141,6 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             on: {
                 click: function () {
                     FolderFinderView.unSelectAll();
-                    btnUnSelectAll.hide();
                 }
             }
         }).button();
@@ -339,17 +338,16 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
      */
     function onCloseFolderFinder () {
         var nbCustomFolderSelected = View.getCustomFolders().length,
-            btnUnSelectAll = _els.btnUnSelectAll,
-            nbSelectedCtn = _els.nbSelectedCtn;
+            btnUnSelectAll = _els.btnUnSelectAll;
+
+        updateNbCustomFolderSelected();
 
         if (!nbCustomFolderSelected) {
             btnUnSelectAll.hide();
-            nbSelectedCtn.hide();
             return;
         }
 
         btnUnSelectAll.show();
-        updateNbCustomFolderSelected();
     } // End function onCloseFolderFinder()
 
     /**
@@ -359,9 +357,15 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         var nbCustomFolderSelected = View.getCustomFolders().length,
             nbSelectedCtn = _els.nbSelectedCtn;
 
+        if (!nbCustomFolderSelected) {
+            nbSelectedCtn.hide();
+            return;
+        }
+
         nbSelectedCtn.text('Selected: ' + nbCustomFolderSelected);
         nbSelectedCtn.show();
     } // End function updateNbCustomFolderSelected()
+
 
     var View = {
         /**
