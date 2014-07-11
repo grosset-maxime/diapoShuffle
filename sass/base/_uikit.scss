@@ -7,6 +7,7 @@ $ORANGE_LIGHT: #FCF3E5;
 .btn.ui-button {
     background: $ORANGE_LIGHT;
     transition: 0.1s;
+    outline: none;
 
     &.ui-state-hover {
         background: $ORANGE;

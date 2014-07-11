@@ -190,6 +190,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
 
         // Input interval
         inputInterval = _els.inputInterval = $('<input>', {
+            id: 'intervalOpts',
             'class': 'input_interval input_spinner',
             value: DEFAULT_INTERVAL,
             maxlength: 2,
@@ -210,22 +211,19 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             'class': 'el_ctn'
         }).append(
             $('<label>', {
-                'class': 'title',
+                'class': 'title label',
                 text: 'Interval (s) :',
-                on: {
-                    click: function () {
-                        inputInterval.focus();
-                    }
-                }
+                for: 'intervalOpts'
             }),
             inputInterval
         );
 
         // Checkbox scale
         inputScale = _els.inputScale = $('<input>', {
+            id: 'scaleOpts',
             'class': 'input_text',
             type: 'checkbox',
-            checked: true
+            checked: true,
         });
 
         // Ctn scale
@@ -233,19 +231,16 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             'class': 'el_ctn'
         }).append(
             inputScale,
-            $('<span>', {
-                'class': 'title',
+            $('<label>', {
+                'class': 'title label',
                 text: 'Scale',
-                on: {
-                    click: function () {
-                        inputScale[0].checked = !inputScale[0].checked;
-                    }
-                }
+                for: 'scaleOpts'
             })
         );
 
         // Spinner Zoom
         inputZoom = _els.inputZoom = $('<input>', {
+            id: 'zoomOpts',
             'class': 'input_zoom input_spinner',
             value: DEFAULT_ZOOM,
             step: 0.1,
@@ -267,8 +262,9 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             'class': 'el_ctn'
         }).append(
             $('<label>', {
-                'class': 'title',
+                'class': 'title label',
                 text: 'Zoom :',
+                for: 'zoomOpts',
                 on: {
                     click: function () {
                         inputZoom.focus();
@@ -291,7 +287,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         }).append(
             inputPathPic,
             $('<span>', {
-                'class': 'title',
+                'class': 'title label',
                 text: 'Display path picture',
                 on: {
                     click: function () {

@@ -24,7 +24,6 @@
         border-bottom: 1px solid #e6e6e6;
     }
 
-    .btn,
     .input_spinner {
         outline: none;
     }
@@ -75,6 +74,10 @@
     .title {
         margin-right: 4px;
         @include inline-block();
+
+        &.label {
+            cursor: pointer;
+        }
     }
 
     .start_btn {

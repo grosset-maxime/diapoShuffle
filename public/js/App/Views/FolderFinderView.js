@@ -114,10 +114,12 @@ function ($, PM, Notify) {
     function updateNbSelected () {
         var onNonSelected,
             nbSelectedCtn = _els.nbSelectedCtn,
+            btnUnSelectAll = _els.btnUnSelectAll,
             nbSelected = _selectedItems.length;
 
         if (!nbSelected) {
             nbSelectedCtn.hide();
+            btnUnSelectAll.button('disable');
 
             onNonSelected = _options.events.onNonSelected;
             if ($.isFunction(onNonSelected)) {
@@ -129,7 +131,8 @@ function ($, PM, Notify) {
 
         nbSelectedCtn.text('Selected: ' + nbSelected);
         nbSelectedCtn.show();
-    }
+        btnUnSelectAll.button('enable');
+    } // End function updateNbSelected()
 
     /**
      *
@@ -144,6 +147,7 @@ function ($, PM, Notify) {
          */
         function buildItem (el) {
             var item, expand, label, checkbox, newModel, childCtn,
+                btnSelectAllChild,
                 currentLevel = model.level + 1;
 
             expand = $('<div>', {
@@ -158,9 +162,11 @@ function ($, PM, Notify) {
                         if (getBtnText(btn) === '+') {
                             setBtnText(btn, '-');
                             btn.addClass('minus');
+                            btnSelectAllChild.show();
                         } else {
                             setBtnText(btn, '+');
                             btn.removeClass('minus');
+                            btnSelectAllChild.hide();
                         }
                     }
                 }
@@ -187,6 +193,34 @@ function ($, PM, Notify) {
                 for: 'folder_' + el + '_' + currentLevel
             });
 
+            btnSelectAllChild = $('<input>', {
+                'class': 'btn btn_selectallchild',
+                type: 'button',
+                value: 'Select all',
+                on: {
+                    click: function () {
+                        var btn = $(this),
+                            children = newModel.child || [];
+
+                        if (!children.length) {
+                            return;
+                        }
+
+                        if (getBtnText(btn) === 'Select all') {
+                            children.forEach(function (child) {
+                                onCheckItem(child);
+                            });
+                            setBtnText(btn, 'Unselect all');
+                        } else {
+                            children.forEach(function (child) {
+                                onUncheckItem(child);
+                            });
+                            setBtnText(btn, 'Select all');
+                        }
+                    }
+                }
+            }).button();
+
             childCtn = $('<div>', {'class': 'child_items'});
 
             item = $('<div>', {
@@ -204,7 +238,8 @@ function ($, PM, Notify) {
             item.append(
                 expand,
                 checkbox,
-                label
+                label,
+                btnSelectAllChild
             );
 
             modelChildCtn.append(
@@ -277,7 +312,6 @@ function ($, PM, Notify) {
             _selectedFolderCtn.append(item);
         }
 
-        _els.btnUnSelectAll.button('enable');
         updateNbSelected();
 
         if ($.isFunction(onSelect)) {
@@ -446,10 +480,6 @@ function ($, PM, Notify) {
 
             for (i = _selectedItems.length - 1; i >= 0; i--) {
                 onUncheckItem(_selectedItems[i]);
-            }
-
-            if (_isBuilt) {
-                _els.btnUnSelectAll.button('disable');
             }
         },// End function unSelectAll()
 
