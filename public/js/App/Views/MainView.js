@@ -127,6 +127,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
                 case 32: // SPACE
                 case 80: // p (as pause)
                     GetRandomPicAction.pause();
+                    doPreventDefault = true;
                     break;
 
                 case 68: // d (as delete)
