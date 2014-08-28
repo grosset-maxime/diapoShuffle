@@ -16,13 +16,18 @@
 
     .play_ctn {
         display: none;
+        align-items: center;
         height: 100%;
+        width: 100%;
         z-index: 500;
         background-color: #1d1d1d;
-        text-align: center;
 
         .diapo_shuffle_view_mode &  {
-            display: block;
+            display: flex;
+        }
+
+        .random_pic {
+            margin: auto;
         }
     }
 

@@ -553,16 +553,21 @@ body {
 /* line 17, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .play_ctn {
   display: none;
+  align-items: center;
   height: 100%;
+  width: 100%;
   z-index: 500;
   background-color: #1d1d1d;
-  text-align: center;
 }
-/* line 24, ../../sass/App/Views/_PlayView.scss */
+/* line 25, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle_view_mode .diapo_shuffle .ds_play_view .play_ctn {
-  display: block;
+  display: flex;
 }
 /* line 29, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .play_ctn .random_pic {
+  margin: auto;
+}
+/* line 34, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .cmd_ctn {
   width: 100%;
   cursor: auto;
@@ -579,25 +584,25 @@ body {
   -moz-user-select: none;
   user-select: none;
 }
-/* line 43, ../../sass/App/Views/_PlayView.scss */
+/* line 48, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .cmd_ctn:hover {
   opacity: 1;
 }
-/* line 47, ../../sass/App/Views/_PlayView.scss */
+/* line 52, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .cmd_ctn .btn {
   outline: none;
   margin-right: 20px;
 }
-/* line 52, ../../sass/App/Views/_PlayView.scss */
+/* line 57, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .cmd_ctn .ctn_el {
   min-width: 1px;
   width: 33.33%;
 }
-/* line 57, ../../sass/App/Views/_PlayView.scss */
+/* line 62, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .cmd_ctn .ctn_left {
   text-align: left;
 }
-/* line 61, ../../sass/App/Views/_PlayView.scss */
+/* line 66, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view .cmd_ctn .delete_btn {
   display: none;
   margin-left: 20px;
