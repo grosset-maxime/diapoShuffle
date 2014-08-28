@@ -18,8 +18,8 @@ function ($, PM, Notify) {
         VIEW_MODE_CLASS = 'diapo_shuffle_view_mode',
         NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
-    var idInterval, errorNotify,
-        defaultOptions = {
+    var _idInterval, _errorNotify,
+        _defaultOptions = {
             interval: DEFAULT_INTERVAL,
             customFolders: DEFAULT_CUSTOM_FOLDERS,
             events: {
@@ -32,40 +32,39 @@ function ($, PM, Notify) {
                 onBeforeStop: null,
                 onStop: null,
                 onBeforeGetRandom: null,
-                onGetRandom: null,
-                toto: null
+                onGetRandom: null
             }
         },
-        options = {},
-        isPlaying = false,
-        isPausing = false,
-        isDisabled = false,
-        currentPicPath;
+        _options = {},
+        _isPlaying = false,
+        _isPausing = false,
+        _isDisabled = false,
+        _currentPicPath;
 
     /**
      *
      */
     function setTheInterval () {
-        idInterval = setInterval(function () {
+        _idInterval = setInterval(function () {
             getRandomPic();
-        }, options.interval * 1000);
+        }, _options.interval * 1000);
     } // End function setTheInterval()
 
     /**
      *
      */
     function clearTheInterval () {
-        clearInterval(idInterval);
-        idInterval = null;
+        clearInterval(_idInterval);
+        _idInterval = null;
     } // End function clearTheInterval()
 
     /**
      *
      */
     function start () {
-        var onBeforeStart = options.events.onBeforeStart;
+        var onBeforeStart = _options.events.onBeforeStart;
 
-        if (isPlaying && !isPausing) {
+        if (_isPlaying && !_isPausing) {
             return;
         }
 
@@ -73,21 +72,21 @@ function ($, PM, Notify) {
             onBeforeStart();
         }
 
-        if (idInterval) {
+        if (_idInterval) {
             stop();
         }
 
         $(document.body).addClass(VIEW_MODE_CLASS);
         getRandomPic();
-        isPlaying = true;
-        isPausing = false;
+        _isPlaying = true;
+        _isPausing = false;
     } // End function start()
 
     /**
      *
      */
     function stop () {
-        var events = options.events,
+        var events = _options.events,
             onBeforeStop = events.onBeforeStop,
             onStop = events.onStop;
 
@@ -98,8 +97,8 @@ function ($, PM, Notify) {
         clearTheInterval();
 
         $(document.body).removeClass(VIEW_MODE_CLASS);
-        isPlaying = false;
-        isPausing = false;
+        _isPlaying = false;
+        _isPausing = false;
 
         if ($.isFunction(onStop)) {
             onStop();
@@ -110,19 +109,19 @@ function ($, PM, Notify) {
      *
      */
     function pause () {
-        var events = options.events,
+        var events = _options.events,
             onBeforePause = events.onBeforePause,
             onBeforeResume = events.onBeforeResume,
             onPause = events.onPause,
             onResume = events.onResume;
 
-        if (idInterval) {
+        if (_idInterval) {
             if ($.isFunction(onBeforePause)) {
                 onBeforePause();
             }
 
             clearTheInterval();
-            isPausing = true;
+            _isPausing = true;
 
             if ($.isFunction(onPause)) {
                 onPause();
@@ -133,7 +132,7 @@ function ($, PM, Notify) {
             }
 
             start();
-            isPausing = false;
+            _isPausing = false;
 
             if ($.isFunction(onResume)) {
                 onResume();
@@ -146,7 +145,7 @@ function ($, PM, Notify) {
      */
     function getRandomPic () {
         var xhr,
-            events = options.events,
+            events = _options.events,
             onBeforeGetRandom = events.onBeforeGetRandom,
             onGetRandom = events.onGetRandom;
 
@@ -154,8 +153,8 @@ function ($, PM, Notify) {
          *
          */
         function displayErrorNotify (message, type) {
-            if (!errorNotify) {
-                errorNotify = new Notify({
+            if (!_errorNotify) {
+                _errorNotify = new Notify({
                     className: 'getRandomPicAction_notify',
                     container: $(document.body),
                     autoHide: true,
@@ -163,7 +162,7 @@ function ($, PM, Notify) {
                 });
             }
 
-            errorNotify.setMessage(message, type, true);
+            _errorNotify.setMessage(message, type, true);
         } // End function displayErrorNotify()
 
         clearTheInterval();
@@ -178,7 +177,7 @@ function ($, PM, Notify) {
             dataType: 'json',
             async: true,
             data: {
-                customFolders: options.customFolders
+                customFolders: _options.customFolders
             }
         });
 
@@ -202,7 +201,7 @@ function ($, PM, Notify) {
             }
 
             if ($.isFunction(onGetRandom)) {
-                currentPicPath = json.pic.src;
+                _currentPicPath = json.pic.src;
                 onGetRandom(json);
             }
 
@@ -235,14 +234,14 @@ function ($, PM, Notify) {
          *
          */
         init: function (opts) {
-            $.extend(true, options, defaultOptions, opts || {});
+            $.extend(true, _options, _defaultOptions, opts || {});
         }, // End function init()
 
         /**
          *
          */
         start: function (opts) {
-            if (isDisabled) {
+            if (_isDisabled) {
                 return;
             }
 
@@ -260,7 +259,7 @@ function ($, PM, Notify) {
          *
          */
         pause: function () {
-            if (isDisabled) {
+            if (_isDisabled) {
                 return;
             }
 
@@ -271,57 +270,64 @@ function ($, PM, Notify) {
          *
          */
         disable: function () {
-            isDisabled = true;
+            _isDisabled = true;
         }, // End function disable()
 
         /**
          *
          */
         enable: function () {
-            isDisabled = false;
+            _isDisabled = false;
         }, // End function enable()
 
         /**
          *
          */
+        isDisabled: function () {
+            return _isDisabled;
+        }, // End function isDisabled()
+
+        /**
+         *
+         */
         isPlaying: function () {
-            return isPlaying;
+            return _isPlaying;
         }, // End function isPlaying()
 
         /**
          *
          */
         isPausing: function () {
-            return isPausing && isPlaying;
+            return _isPausing && _isPlaying;
         }, // End function isPausing()
 
         /**
          *
          */
         getPicSrc: function () {
-            return currentPicPath || '';
+            return _currentPicPath || '';
         }, // End function getPicSrc()
 
         /**
          *
          */
         setCustomFolders: function (customFolders) {
-            options.customFolders = customFolders;
+            _options.customFolders = customFolders;
         }, // End function setCustomFolders()
 
         /**
          *
          */
         setTimeInterval: function (timeInterval) {
-            options.interval = timeInterval;
+            _options.interval = timeInterval;
         }, // End function setTimeInterval()
 
         /**
          *
          */
         setOptions: function (opts) {
-            $.extend(true, options, opts || {});
-            options.customFolders = opts.customFolders || [];
+            $.extend(true, _options, opts || {});
+            _options.customFolders = opts.customFolders || [];
         } // End function setOptions()
     };
 

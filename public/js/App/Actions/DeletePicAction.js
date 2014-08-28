@@ -21,20 +21,30 @@ function ($, PM, Notify, GetRandomPicAction) {
 
     var NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
-    var errorNotify;
+    var _errorNotify,
+        _defaultOptions = {
+            events: {
+                onBeforeDelete: null,
+                onDelete: null
+            }
+        },
+        _options = {};
 
     /**
      *
      */
-    function deletePic (callback) {
-        var xhr;
+    function _deletePic (callback) {
+        var xhr,
+            events = _options.events,
+            onBeforeDelete = events.onBeforeDelete,
+            onDelete = events.onDelete;
 
         /**
          *
          */
         function displayErrorNotify (message, type) {
-            if (!errorNotify) {
-                errorNotify = new Notify({
+            if (!_errorNotify) {
+                _errorNotify = new Notify({
                     className: 'deletePicAction-notify',
                     container: $(document.body),
                     autoHide: true,
@@ -42,8 +52,12 @@ function ($, PM, Notify, GetRandomPicAction) {
                 });
             }
 
-            errorNotify.setMessage(message, type, true);
+            _errorNotify.setMessage(message, type, true);
         } // End function displayErrorNotify()
+
+        if ($.isFunction(onBeforeDelete)) {
+            onBeforeDelete();
+        }
 
         xhr = $.ajax({
             url: '/?r=deletePic_s',
@@ -71,21 +85,32 @@ function ($, PM, Notify, GetRandomPicAction) {
                 return;
             }
 
+            if ($.isFunction(onDelete)) {
+                onDelete();
+            }
+
             if ($.isFunction(callback)) {
                 callback();
             }
         });
 
         xhr.fail(function (jqXHR, textStatus, errorThrown) {
-            var message = 'deletePicAction.deletePic()';
+            var message = 'deletePicAction._deletePic()';
 
             displayErrorNotify('Server error.', NOTIFY_TYPE_ERROR);
 
             PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
         });
-    } // End function deletePic()
+    } // End function _deletePic()
 
     var Action = {
+
+        /**
+         *
+         */
+        init: function (opts) {
+            $.extend(true, _options, _defaultOptions, opts || {});
+        },
 
         /**
          *
@@ -125,7 +150,8 @@ function ($, PM, Notify, GetRandomPicAction) {
                     click: function () {
                         $(this).dialog('close');
 
-                        deletePic(function () {
+                        _deletePic(function () {
+                            GetRandomPicAction.enable();
                             GetRandomPicAction.pause();
                         });
                     }

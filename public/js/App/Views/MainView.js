@@ -126,8 +126,10 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
 
                 case 32: // SPACE
                 case 80: // p (as pause)
-                    GetRandomPicAction.pause();
-                    doPreventDefault = true;
+                    if (!GetRandomPicAction.isDisabled()) {
+                        GetRandomPicAction.pause();
+                        doPreventDefault = true;
+                    }
                     break;
 
                 case 68: // d (as delete)
@@ -256,6 +258,21 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         }
     } // End function onGetRandom()
 
+    /**
+     *
+     */
+    function onBeforeDelete () {
+        els.pauseIconCtn.hide();
+        showLoading();
+    } // End function onBeforeDelete()
+
+    /**
+     *
+     */
+    function onDelete () {
+        hideLoading();
+    } // End function onDelete()
+
     var View = {
         /**
          *
@@ -290,6 +307,13 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
 
             PlayView.init({
                 root:mainCtn
+            });
+
+            DeletePicAction.init({
+                events: {
+                    onBeforeDelete: onBeforeDelete,
+                    onDelete: onDelete
+                }
             });
 
             GetRandomPicAction.init({

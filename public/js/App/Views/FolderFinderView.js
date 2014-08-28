@@ -503,13 +503,15 @@ function ($, PM, Notify) {
         clear: function () {
             var onNonSelected = _options.events.onNonSelected;
 
-            this.close();
+            if (_isBuilt) {
+                this.close();
 
-            _els.mainCtn.remove();
-            _rootModel = $.extend(true, {}, _defaultModel);
-            _isBuilt = false;
-            _selectedPaths = [];
-            _selectedItems = [];
+                _els.mainCtn.remove();
+                _rootModel = $.extend(true, {}, _defaultModel);
+                _isBuilt = false;
+                _selectedPaths = [];
+                _selectedItems = [];
+            }
 
             if (_selectedFolderCtn) {
                 _selectedFolderCtn.empty();

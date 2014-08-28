@@ -61,6 +61,7 @@ class RandomPic extends Root
     protected $tryMax = 10;             // Maximum try before to raise folder empty exception.
     protected $cacheFolder = array();
     protected $needUpdateCache = false;
+    protected $useCache = false;
 
     protected $cacheManager = null;
 
@@ -106,13 +107,18 @@ class RandomPic extends Root
         $max;
         $nb;
         $item;
+        $itemType;
         $fileName;
         $randomItem;
         $dir;
-        $listItem = array();
+        $isDir;
+        $listItems = array();
+        $useCache = false;
+
 
         if (isset($this->cacheFolder[$folder]) || array_key_exists($folder, $this->cacheFolder)) {
-            $listItem = $this->cacheFolder[$folder];
+            $listItems = $this->cacheFolder[$folder];
+            $useCache = true;
         } else {
             try {
                 $dir = new DirectoryIterator($folder);
@@ -138,27 +144,36 @@ class RandomPic extends Root
                     continue;
                 }
 
-                $listItem[$fileName] = $item->isDir();
+                $isDir = $item->isDir();
+
+                if (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp)$/i', $fileName)) {
+                    continue;
+                }
+
+                $listItems[$fileName] = $isDir;
             }
 
-            $this->cacheFolder[$folder] = $listItem;
+            $this->cacheFolder[$folder] = $listItems;
             $this->needUpdateCache = true;
         }
 
         $min = 0;
-        $max = count($listItem) - 1;
+        $max = count($listItems) - 1;
 
         if ($max < 0) {
             return null;
         }
 
         $nb = mt_rand($min, $max);
-        $fileName = array_keys($listItem)[$nb];
+        $fileName = array_keys($listItems)[$nb];
+        $itemType = $listItems[$fileName] ? Item::TYPE_FOLDER : Item::TYPE_FILE;
+
+        $this->useCache = $useCache && $itemType === Item::TYPE_FILE;
 
         return new Item(
             array(
                 'name' => $fileName,
-                'type' => $listItem[$fileName] ? Item::TYPE_FOLDER : Item::TYPE_FILE,
+                'type' => $itemType,
                 'path' => $folder
             )
         );
@@ -309,7 +324,8 @@ class RandomPic extends Root
             ),
             'customFolderPath' => $randomCustomFolder,
             'width' => $width,
-            'height' => $height
+            'height' => $height,
+            'useCache' => $this->useCache
         );
 
         if ($this->needUpdateCache) {
