@@ -11,12 +11,12 @@ define(
     'PM/Cmp/Notify',
 
     // App Actions
-    'App/Actions/GetRandomPicAction',
+    'App/Actions/HistoryPicAction',
 
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, PM, Notify, GetRandomPicAction) {
+function ($, PM, Notify, HistoryPicAction) {
     'use strict';
 
     var NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
@@ -65,7 +65,7 @@ function ($, PM, Notify, GetRandomPicAction) {
             dataType: 'json',
             async: true,
             data: {
-                picPath: GetRandomPicAction.getPicSrc()
+                picPath: HistoryPicAction.getCurrent().src
             }
         });
 
@@ -115,13 +115,7 @@ function ($, PM, Notify, GetRandomPicAction) {
         /**
          *
          */
-        askDelete: function () {
-            var isPaused = GetRandomPicAction.isPausing();
-
-            if (!isPaused) {
-                return;
-            }
-
+        askDelete: function (opts) {
             $('<div>', {
                 'class': '',
                 html: 'Do you really want to delete this picture ?'
@@ -134,16 +128,25 @@ function ($, PM, Notify, GetRandomPicAction) {
                 },
                 close: function(event) {
                     event.stopPropagation();
-                    GetRandomPicAction.enable();
+
+                    if ($.isFunction(opts.onClose)) {
+                        opts.onClose();
+                    }
                 },
                 open: function () {
-                    GetRandomPicAction.disable();
+                    if ($.isFunction(opts.onOpen)) {
+                        opts.onOpen();
+                    }
                 },
                 buttons: [{
                     text: 'Cancel',
                     tabIndex: -1,
                     click: function () {
                         $(this).dialog('close');
+
+                        if ($.isFunction(opts.onCancel)) {
+                            opts.onCancel();
+                        }
                     }
                 }, {
                     text: 'Delete',
@@ -151,8 +154,9 @@ function ($, PM, Notify, GetRandomPicAction) {
                         $(this).dialog('close');
 
                         _deletePic(function () {
-                            GetRandomPicAction.enable();
-                            GetRandomPicAction.pause();
+                            if ($.isFunction(opts.onDelete)) {
+                                opts.onDelete();
+                            }
                         });
                     }
                 }]

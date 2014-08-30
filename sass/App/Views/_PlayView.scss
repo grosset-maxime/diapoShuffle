@@ -33,7 +33,6 @@
 
     .cmd_ctn {
         width: 100%;
-        cursor: auto;
         height: 50px;
         line-height: 50px;
         z-index: 600;
@@ -43,6 +42,8 @@
         color: #eaeaea;
         text-align: center;
         transition: opacity 0.3s;
+        cursor: auto;
+        white-space: nowrap;
         @include user-select(none);
 
         &:hover {
@@ -51,21 +52,29 @@
 
         .btn {
             outline: none;
-            margin-right: 20px;
+            margin-right: 10px;
         }
 
-        .ctn_el {
-            min-width: 1px;
-            width: 33.33%;
+        .stop_btn {
+            margin-left: auto;
         }
-
-        .ctn_left {
-            text-align: left;
+        .pause_btn {
+            margin-right: auto;
         }
 
         .delete_btn {
-            display: none;
             margin-left: 20px;
+        }
+
+        .delete_btn,
+        .previous_btn,
+        .next_btn {
+            display: none;
+        }
+
+        .delete_btn,
+        .next_btn {
+            margin-right: 10%;
         }
     }
 }

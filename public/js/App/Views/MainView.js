@@ -15,9 +15,10 @@ define(
 
     // App Actions
     'App/Actions/GetRandomPicAction',
-    'App/Actions/DeletePicAction'
+    'App/Actions/DeletePicAction',
+    'App/Actions/HistoryPicAction'
 ],
-function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandomPicAction, DeletePicAction) {
+function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandomPicAction, DeletePicAction, HistoryPicAction) {
     'use strict';
 
     /**
@@ -134,7 +135,18 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
 
                 case 68: // d (as delete)
                     if (GetRandomPicAction.isPausing()) {
-                        DeletePicAction.askDelete();
+                        PlayView.deletePic();
+                    }
+                    break;
+
+                case 37: // left arrow.
+                    if (GetRandomPicAction.isPausing() && !HistoryPicAction.isFirst()) {
+                        PlayView.displayPrevious();
+                    }
+                    break;
+                case 39: // right arrow.
+                    if (GetRandomPicAction.isPausing() && !HistoryPicAction.isLast()) {
+                        PlayView.displayNext();
                     }
                     break;
                 }
@@ -253,8 +265,9 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         if (json.success) {
             pic = json.pic;
 
-            InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
             PlayView.setPic(pic);
+
+            HistoryPicAction.add(pic);
         }
     } // End function onGetRandom()
 
@@ -324,6 +337,23 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
                     onResume: onResume,
                     onBeforeGetRandom: onBeforeGetRandom,
                     onGetRandom: onGetRandom
+                }
+            });
+
+            HistoryPicAction.init({
+                events: {
+                    onFirst: function () {
+                        PlayView.disablePreviousBtn();
+                        PlayView.enableNextBtn();
+                    },
+                    onLast: function () {
+                        PlayView.disableNextBtn();
+                        PlayView.enablePreviousBtn();
+                    },
+                    onMiddle: function () {
+                        PlayView.enablePreviousBtn();
+                        PlayView.enableNextBtn();
+                    }
                 }
             });
 

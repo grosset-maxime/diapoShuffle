@@ -38,8 +38,7 @@ function ($, PM, Notify) {
         _options = {},
         _isPlaying = false,
         _isPausing = false,
-        _isDisabled = false,
-        _currentPicPath;
+        _isDisabled = false;
 
     /**
      *
@@ -201,7 +200,6 @@ function ($, PM, Notify) {
             }
 
             if ($.isFunction(onGetRandom)) {
-                _currentPicPath = json.pic.src;
                 onGetRandom(json);
             }
 
@@ -300,13 +298,6 @@ function ($, PM, Notify) {
         isPausing: function () {
             return _isPausing && _isPlaying;
         }, // End function isPausing()
-
-        /**
-         *
-         */
-        getPicSrc: function () {
-            return _currentPicPath || '';
-        }, // End function getPicSrc()
 
         /**
          *

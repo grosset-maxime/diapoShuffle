@@ -8,26 +8,28 @@ define(
 
     // App Views
     'App/Views/OptionsView',
+    'App/Views/InfosView',
 
     // App Actions
     'App/Actions/GetRandomPicAction',
     'App/Actions/DeletePicAction',
+    'App/Actions/HistoryPicAction',
 
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
+function ($, OptionsView, InfosView, GetRandomPicAction, DeletePicAction, HistoryPicAction) {
     'use strict';
 
     var BTN_PAUSE = 'Pause',
         BTN_RESUME = 'Resume';
 
-    var defaultOptions = {
+    var _defaultOptions = {
             root: null
         },
-        options = {},
-        els = {},
-        viewDimension = {
+        _options = {},
+        _els = {},
+        _viewDimension = {
             width: 0,
             height: 0
         };
@@ -35,40 +37,48 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
     /**
      *
      */
-    function buildSkeleton () {
+    function _buildSkeleton () {
         var mainCtn, cmdCtn, playCtn;
 
         /**
          * @private
          */
         function buildCmd () {
-            var btnStop, btnPause, btnDelete, ctnLeft, ctnCenter, ctnRight;
-
-            ctnLeft = $('<div>', {
-                'class': 'ctn_el ctn_left'
-            });
-
-            ctnCenter = $('<div>', {
-                'class': 'ctn_el ctn_center'
-            });
-
-            ctnRight = $('<div>', {
-                'class': 'ctn_el ctn_right'
-            });
+            var btnStop, btnPrevious, btnNext, btnPause, btnDelete;
 
             // Btn delete
-            btnDelete = els.btnDelete = $('<input>', {
+            btnDelete = _els.btnDelete = $('<input>', {
                 'class': 'btn delete_btn',
                 type: 'button',
                 value: 'Delete',
                 on: {
-                    click: DeletePicAction.askDelete
+                    click: _askDelete
+                }
+            }).button();
+
+            // Btn previous pic
+            btnPrevious = _els.btnPrevious = $('<input>', {
+                'class': 'btn previous_btn',
+                type: 'button',
+                value: '<',
+                on: {
+                    click: _displayPrevious
+                }
+            }).button();
+
+            // Btn next pic
+            btnNext = _els.btnNext = $('<input>', {
+                'class': 'btn next_btn',
+                type: 'button',
+                value: '>',
+                on: {
+                    click: _displayNext
                 }
             }).button();
 
             // Btn stop
             btnStop = $('<input>', {
-                'class': 'btn',
+                'class': 'btn stop_btn',
                 type: 'button',
                 value: 'Stop',
                 on: {
@@ -77,8 +87,8 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
             }).button();
 
             // Btn pause
-            btnPause = els.btnPause = $('<input>', {
-                'class': 'btn',
+            btnPause = _els.btnPause = $('<input>', {
+                'class': 'btn pause_btn',
                 type: 'button',
                 value: BTN_PAUSE,
                 on: {
@@ -86,32 +96,30 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
                 }
             }).button();
 
-            ctnLeft.append(
-                btnDelete
-            );
-
-            ctnCenter.append(
+            cmdCtn.append(
+                btnDelete,
+                btnPrevious,
+                btnNext,
                 btnStop,
                 btnPause
             );
 
-            cmdCtn.append(
-                ctnLeft,
-                ctnCenter,
-                ctnRight
-            );
-
         } // End function buildCmd()
 
-        mainCtn = els.mainCtn = $('<div>', {
+
+        // ==================================
+        // Start of function _buildSkeleton()
+        // ==================================
+
+        mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_play_view'
         });
 
-        cmdCtn = els.cmdCtn = $('<div>', {
+        cmdCtn = _els.cmdCtn = $('<div>', {
             'class': 'cmd_ctn flex'
         });
 
-        playCtn = els.playCtn = $('<div>', {
+        playCtn = _els.playCtn = $('<div>', {
             'class': 'play_ctn'
         });
 
@@ -122,28 +130,28 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
             playCtn
         );
 
-        options.root.append(mainCtn);
-    } // End function buildSkeleton()
+        _options.root.append(mainCtn);
+    } // End function _buildSkeleton()
 
     /**
      *
      */
-    function getViewDimension () {
+    function _getViewDimension () {
         var doc = $(document);
 
-        viewDimension.width = doc.width();
-        viewDimension.height = doc.height();
+        _viewDimension.width = doc.width();
+        _viewDimension.height = doc.height();
     } // End function setViewDimension()
 
     /**
      *
      */
-    function scalePic (picInfos, picEl) {
+    function _scalePic (picInfos, picEl) {
         var cssObj, dw, dh,
             widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
-            widthView = viewDimension.width,
-            heightView = viewDimension.height;
+            widthView = _viewDimension.width,
+            heightView = _viewDimension.height;
 
         if (widthPic >= widthView || heightPic >= heightView) {
             return;
@@ -159,22 +167,22 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
         }
 
         picEl.css(cssObj);
-    } // End function scalePic()
+    } // End function _scalePic()
 
     /**
      *
      */
-    function zoomPic (picInfos, picEl) {
+    function _zoomPic (picInfos, picEl) {
         var widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             zoom = OptionsView.getZoom(),
             newWidth = widthPic * zoom,
             newHeight = heightPic * zoom,
-            widthView = viewDimension.width,
-            heightView = viewDimension.height;
+            widthView = _viewDimension.width,
+            heightView = _viewDimension.height;
 
         if (newWidth >= widthView || newHeight >= heightView) {
-            scalePic(picInfos, picEl);
+            _scalePic(picInfos, picEl);
             return;
         }
 
@@ -182,7 +190,73 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
             width: newWidth,
             height: newHeight
         });
-    } // End function zoomPic()
+    } // End function _zoomPic()
+
+    /**
+     *
+     */
+    function _askDelete () {
+        if (GetRandomPicAction.isPausing()) {
+            DeletePicAction.askDelete({
+                onClose: function () {
+                    GetRandomPicAction.enable();
+                },
+                onOpen: function () {
+                    GetRandomPicAction.disable();
+                },
+                onDelete: function () {
+                    HistoryPicAction.remove();
+                    GetRandomPicAction.enable();
+                    GetRandomPicAction.pause();
+                }
+            });
+        }
+    } // End function _askDelete()
+
+    /**
+     *
+     */
+    function _displayPrevious () {
+        _setPic(HistoryPicAction.getPrevious());
+    } // End function _displayPrevious()
+
+    /**
+     *
+     */
+    function _displayNext () {
+        _setPic(HistoryPicAction.getNext());
+    } // End function _displayNext()
+
+    /**
+     *
+     */
+    function _setPic (pic) {
+        var img = _els.img;
+
+        InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
+
+        if (img) {
+            img.remove();
+        }
+
+        img = _els.img = $('<img>', {
+            'class': 'random_pic',
+            src: pic.src || ''
+        }).css({
+            'max-width': _viewDimension.width,
+            'max-height': _viewDimension.height
+        });
+
+        if (OptionsView.isScaleOn()) {
+            _scalePic(pic, img);
+        } else if (OptionsView.getZoom() > 1) {
+            _zoomPic(pic, img);
+        }
+
+        _els.playCtn.html(img);
+        View.show();
+    } // End function _setPic()
+
 
     var View = {
 
@@ -200,84 +274,132 @@ function ($, OptionsView, GetRandomPicAction, DeletePicAction) {
          *
          */
         init: function (opts) {
-            $.extend(true, options, defaultOptions, opts || {});
+            $.extend(true, _options, _defaultOptions, opts || {});
 
-            if (!options.root) {
-                options.root = $(document.body);
+            if (!_options.root) {
+                _options.root = $(document.body);
             }
 
-            getViewDimension();
+            _getViewDimension();
 
-            buildSkeleton();
+            _buildSkeleton();
         }, // End function init()
 
         /**
          *
          */
         setPic: function (pic) {
-            var img;
-
-            img = $('<img>', {
-                'class': 'random_pic',
-                src: pic.src || ''
-            }).css({
-                'max-width': viewDimension.width,
-                'max-height': viewDimension.height
-            });
-
-            if (OptionsView.isScaleOn()) {
-                scalePic(pic, img);
-            } else if (OptionsView.getZoom() > 1) {
-                zoomPic(pic, img);
-            }
-
-            els.playCtn.html(img);
-            View.show();
+            _setPic(pic);
         }, // End function setPic()
+
+        /**
+         *
+         */
+        deletePic: function () {
+            _askDelete();
+        }, // End function deletePic()
+
+        /**
+         *
+         */
+        displayPrevious: function () {
+            _displayPrevious();
+        }, // End function displayPrevious()
+
+        /**
+         *
+         */
+        displayNext: function () {
+            _displayNext();
+        }, // End function displayNext()
 
         /**
          *
          */
         getViewDimension: function (force) {
             if (force) {
-                getViewDimension();
+                _getViewDimension();
             }
 
-            return viewDimension;
+            return _viewDimension;
         }, // End function getViewDimension()
 
         /**
          *
          */
         show: function () {
-            els.mainCtn.show();
+            _els.mainCtn.show();
         }, // End function show()
 
         /**
          *
          */
         hide: function () {
-            els.mainCtn.hide();
+            _els.mainCtn.hide();
         }, // End function hide()
 
         /**
          *
          */
         toggleStatePauseBtn: function (force) {
-            var btnPause = els.btnPause,
-                btnDelete = els.btnDelete,
+            var btnPause = _els.btnPause,
+                btnDelete = _els.btnDelete,
+                btnPrevious = _els.btnPrevious,
+                btnNext = _els.btnNext,
                 isPaused = GetRandomPicAction.isPausing();
 
             if ((isPaused && !force) || force === BTN_RESUME) {
+
                 btnPause.val(BTN_RESUME);
                 btnDelete.show();
+                btnPrevious.show();
+                btnNext.show();
+                View.disableNextBtn();
+
+                if (HistoryPicAction.isFirst()) {
+                    View.disablePreviousBtn();
+                } else {
+                    View.enablePreviousBtn();
+                }
+
+
             } else if ((!isPaused && !force) || force === BTN_PAUSE) {
+
                 btnPause.val(BTN_PAUSE);
                 btnDelete.hide();
+                btnPrevious.hide();
+                btnNext.hide();
+
             }
         }, // End function toggleStatePauseBtn()
 
+        /**
+         *
+         */
+        enablePreviousBtn: function () {
+            _els.btnPrevious.button('enable');
+        }, // End function enablePreviousBtn()
 
+        /**
+         *
+         */
+        disablePreviousBtn: function () {
+            _els.btnPrevious.button('disable');
+        }, // End function disablePreviousBtn()
+
+        /**
+         *
+         */
+        enableNextBtn: function () {
+            _els.btnNext.button('enable');
+        }, // End function enableNextBtn()
+
+        /**
+         *
+         */
+        disableNextBtn: function () {
+            _els.btnNext.button('disable');
+        } // End function disableNextBtn()
     };
 
     return View;
