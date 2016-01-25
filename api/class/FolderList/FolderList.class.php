@@ -132,6 +132,7 @@ class FolderList extends Root
                     || !$item->isDir()
                     || preg_match('/^[\.].*/i', $fileName)
                     || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
+                    || $fileName === '@eaDir'
                 ) {
                     continue;
                 }

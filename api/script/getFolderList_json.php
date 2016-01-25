@@ -21,7 +21,7 @@ require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 require_once ROOT_DIR . '/api/class/FolderList/FolderList.class.php';
 
 // PHP
-use \DirectoryIterator;
+// use \DirectoryIterator;
 
 // DS
 use DS\ExceptionExtended;

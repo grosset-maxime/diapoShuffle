@@ -136,17 +136,14 @@ class RandomPic extends Root
                 set_time_limit(30);
 
                 $fileName = $item->getFilename();
+                $isDir = $item->isDir();
 
                 if ($item->isDot()
                     || preg_match('/^[\.].*/i', $fileName)
                     || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
+                    || (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp)$/i', $fileName))
+                    || ($isDir && $fileName === '@eaDir')
                 ) {
-                    continue;
-                }
-
-                $isDir = $item->isDir();
-
-                if (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp)$/i', $fileName)) {
                     continue;
                 }
 
