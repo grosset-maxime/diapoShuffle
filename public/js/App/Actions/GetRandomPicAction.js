@@ -201,7 +201,7 @@ function ($, PM, Notify) {
                 return;
             }
 
-            $.isFunction(onGetRandom) && onGetRandom(json, setTheInterval);
+            $.isFunction(onGetRandom) && onGetRandom(json, setTheInterval, getRandomPic);
         });
 
         xhr.fail(function (jqXHR, textStatus, errorThrown) {

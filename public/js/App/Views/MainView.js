@@ -269,7 +269,7 @@ function (
     /**
      *
      */
-    function onGetRandom (json, callback) {
+    function onGetRandom (json, onSuccess, onFailure) {
         var pic;
 
         hideLoading();
@@ -277,7 +277,7 @@ function (
         if (json.success) {
             pic = json.pic;
 
-            PlayView.setPic(pic, callback);
+            PlayView.setPic(pic, onSuccess, onFailure);
 
             HistoryPicAction.add(pic);
         }

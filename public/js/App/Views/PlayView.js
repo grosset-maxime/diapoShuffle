@@ -239,7 +239,7 @@ function (
     /**
      *
      */
-    function _setPic (pic, callback) {
+    function _setPic (pic, onSuccess, onFailure) {
         var img = _els.img;
 
         InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
@@ -255,7 +255,11 @@ function (
             .on({
                 load: function () {
                     View.show();
-                    callback && callback();
+                    onSuccess && onSuccess();
+                },
+                error: function () {
+                    console.error('Cannot display pic: "' + pic.src + '"');
+                    onFailure && onFailure();
                 }
             })
             .css({
