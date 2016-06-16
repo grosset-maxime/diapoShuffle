@@ -18,7 +18,19 @@ define(
     'App/Actions/DeletePicAction',
     'App/Actions/HistoryPicAction'
 ],
-function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandomPicAction, DeletePicAction, HistoryPicAction) {
+function (
+    $,
+
+    HeaderView,
+    FooterView,
+    OptionsView,
+    InfosView,
+    PlayView,
+
+    GetRandomPicAction,
+    DeletePicAction,
+    HistoryPicAction
+) {
     'use strict';
 
     /**
@@ -257,7 +269,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
     /**
      *
      */
-    function onGetRandom (json) {
+    function onGetRandom (json, callback) {
         var pic;
 
         hideLoading();
@@ -265,7 +277,7 @@ function ($, HeaderView, FooterView, OptionsView, InfosView, PlayView, GetRandom
         if (json.success) {
             pic = json.pic;
 
-            PlayView.setPic(pic);
+            PlayView.setPic(pic, callback);
 
             HistoryPicAction.add(pic);
         }

@@ -18,7 +18,16 @@ define(
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, OptionsView, InfosView, GetRandomPicAction, DeletePicAction, HistoryPicAction) {
+function (
+    $,
+
+    OptionsView,
+    InfosView,
+
+    GetRandomPicAction,
+    DeletePicAction,
+    HistoryPicAction
+) {
     'use strict';
 
     var BTN_PAUSE = 'Pause',
@@ -230,7 +239,7 @@ function ($, OptionsView, InfosView, GetRandomPicAction, DeletePicAction, Histor
     /**
      *
      */
-    function _setPic (pic) {
+    function _setPic (pic, callback) {
         var img = _els.img;
 
         InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
@@ -241,11 +250,18 @@ function ($, OptionsView, InfosView, GetRandomPicAction, DeletePicAction, Histor
 
         img = _els.img = $('<img>', {
             'class': 'random_pic',
-            src: pic.src || ''
-        }).css({
-            'max-width': _viewDimension.width,
-            'max-height': _viewDimension.height
-        });
+            src: pic.src || '',
+        })
+            .on({
+                load: function () {
+                    View.show();
+                    callback && callback();
+                }
+            })
+            .css({
+                'max-width': _viewDimension.width,
+                'max-height': _viewDimension.height
+            });
 
         if (OptionsView.isScaleOn()) {
             _scalePic(pic, img);
@@ -254,7 +270,6 @@ function ($, OptionsView, InfosView, GetRandomPicAction, DeletePicAction, Histor
         }
 
         _els.playCtn.html(img);
-        View.show();
     } // End function _setPic()
 
 
@@ -288,9 +303,7 @@ function ($, OptionsView, InfosView, GetRandomPicAction, DeletePicAction, Histor
         /**
          *
          */
-        setPic: function (pic) {
-            _setPic(pic);
-        }, // End function setPic()
+        setPic: _setPic, // End function setPic()
 
         /**
          *

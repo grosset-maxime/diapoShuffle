@@ -44,7 +44,9 @@ function ($, PM, Notify) {
      *
      */
     function setTheInterval () {
-        _idInterval = setInterval(function () {
+        clearTheInterval();
+
+        _idInterval = setTimeout(function () {
             getRandomPic();
         }, _options.interval * 1000);
     } // End function setTheInterval()
@@ -53,7 +55,7 @@ function ($, PM, Notify) {
      *
      */
     function clearTheInterval () {
-        clearInterval(_idInterval);
+        clearTimeout(_idInterval);
         _idInterval = null;
     } // End function clearTheInterval()
 
@@ -199,11 +201,7 @@ function ($, PM, Notify) {
                 return;
             }
 
-            if ($.isFunction(onGetRandom)) {
-                onGetRandom(json);
-            }
-
-            setTheInterval();
+            $.isFunction(onGetRandom) && onGetRandom(json, setTheInterval);
         });
 
         xhr.fail(function (jqXHR, textStatus, errorThrown) {
