@@ -140,6 +140,7 @@ class FolderList extends Root
                 $listFolder[] = $fileName;
             }
 
+            sort($listFolder, SORT_NATURAL | SORT_FLAG_CASE);
             $this->cacheFolderList[$folder] = $listFolder;
             $this->cacheManager->setCacheFolderList($this->cacheFolderList);
         }
