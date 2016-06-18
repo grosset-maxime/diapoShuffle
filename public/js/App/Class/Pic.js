@@ -29,6 +29,16 @@ function (
             height: 0
         },
 
+        customFolderPath: '',
+        randomPublicPath: '',
+        src: '',
+
+        useCache: false,
+
+        width: 0,
+        height: 0,
+
+
         /**
          * @constructor Pic.
          * @param {Object} options - Options values.
@@ -51,6 +61,7 @@ function (
         getFullPath: function () {
             let that = this,
                 currentPath = that.customFolderPath + (that.randomPublicPath || '');
+
             return currentPath.replace('//', '/');
         }
     });

@@ -6,7 +6,11 @@ define(
 [
     'jquery',
 
+    // App Actions
     'App/Actions/HistoryPicAction',
+
+    // App Cmp
+    'App/Cmp/PathChooser',
 
     // Non AMD
     'js!jquery-ui'
@@ -14,19 +18,21 @@ define(
 function (
     $,
 
-    HistoryPicAction
+    HistoryPicAction,
+
+    PathChooser
 ) {
     'use strict';
 
-    let Action;
+    let Action,
+        _insidePath = '';
 
     // Private functions.
     let _buildBody, _getInsidePath;
 
 
-    _buildBody = (opts) => {
-        let body, message,
-            Pic = HistoryPicAction.getCurrent();
+    _buildBody = (opts, Pic) => {
+        let body, message;
 
         if (!opts.isInside) {
             message = 'Go inside of : ';
@@ -39,7 +45,14 @@ function (
                 $('<span>', {
                     text: message
                 }), $('<span>', {
-                    text: Pic.getFullPath()
+                    html: (new PathChooser({
+                        path: Pic.getFullPath(),
+                        events: {
+                            onChoose: (path) => {
+                                _insidePath = path;
+                            }
+                        }
+                    })).build()
                 }).css({
                     'font-weight': 'bold'
                 })
@@ -50,7 +63,7 @@ function (
     };
 
     _getInsidePath = () => {
-        return HistoryPicAction.getCurrent().getFullPath();
+        return _insidePath;
     };
 
 
@@ -60,7 +73,8 @@ function (
          */
         askInside: (options) => {
             let modal, modalOptions,
-                opts = {};
+                opts = {},
+                Pic = HistoryPicAction.getCurrent();
 
             $.extend(
                 true,
@@ -75,6 +89,8 @@ function (
                 },
                 options || {}
             );
+
+            _insidePath = Pic.getFullPath();
 
             modalOptions = {
                 resizable: false,
@@ -121,7 +137,7 @@ function (
 
             modal = $('<div>', {
                 'class': '',
-                html: _buildBody(opts)
+                html: _buildBody(opts, Pic)
             }).dialog(modalOptions);
         }
     };
