@@ -11,7 +11,7 @@
         "indent"       : 4,
         "latedef"      : true,
         "maxdepth"     : 6,
-        "maxparams"    : 0,
+        "maxparams"    : 100,
         "maxlen"       : 200,
         "newcap"       : true,
         "noarg"        : true,
@@ -67,5 +67,7 @@
         "rhino"        : false,
         "worker"       : false,
         "wsh"          : false,
-        "yui"          : false
+        "yui"          : false,
+
+        "esversion"    : 6
 }
