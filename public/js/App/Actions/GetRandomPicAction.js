@@ -262,6 +262,14 @@ function ($, PM, Notify) {
             pause();
         }, // End function pause()
 
+        resume: () => {
+            if (_isDisabled) {
+                return;
+            }
+
+            pause();
+        },
+
         /**
          *
          */

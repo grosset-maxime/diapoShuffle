@@ -1,5 +1,5 @@
 /* global
-    define
+    define, console
 */
 
 define(
@@ -21,19 +21,24 @@ define(
 function (
     $,
 
+    // App Views
     OptionsView,
     InfosView,
 
+    // App Actions
     GetRandomPicAction,
     DeletePicAction,
     HistoryPicAction
 ) {
     'use strict';
 
-    var BTN_PAUSE = 'Pause',
-        BTN_RESUME = 'Resume';
+    const BTN_PAUSE = 'Pause',
+        BTN_RESUME = 'Resume',
+        BTN_INSIDE = 'In',
+        BTN_OUTSIDE = 'Out';
 
-    var _defaultOptions = {
+    var View,
+        _defaultOptions = {
             root: null
         },
         _options = {},
@@ -43,17 +48,33 @@ function (
             height: 0
         };
 
-    /**
-     *
-     */
-    function _buildSkeleton () {
-        var mainCtn, cmdCtn, playCtn;
+    // Private functions.
+    var _askInside, _buildSkeleton, _getViewDimension, _scalePic,
+        _zoomPic, _askDelete, _displayPrevious, _displayNext, _setPic;
 
-        /**
-         * @private
-         */
-        function buildCmd () {
-            var btnStop, btnPrevious, btnNext, btnPause, btnDelete;
+
+    // _askInside = () => {
+    //     if (GetRandomPicAction.isPausing()) {
+    //         InsidePicAction.askInside({
+    //             onClose: () => {
+    //                 GetRandomPicAction.enable();
+    //             },
+    //             onOpen: () => {
+    //                 GetRandomPicAction.disable();
+    //             },
+    //             onInside: () => {
+    //                 GetRandomPicAction.enable();
+    //                 GetRandomPicAction.resume();
+    //             }
+    //         });
+    //     }
+    // };
+
+    _buildSkeleton = () => {
+        let mainCtn, cmdCtn, playCtn;
+
+        let buildCmd = () => {
+            let btnStop, btnPrevious, btnNext, btnPause, btnDelete, btnInside;
 
             // Btn delete
             btnDelete = _els.btnDelete = $('<input>', {
@@ -105,15 +126,25 @@ function (
                 }
             }).button();
 
+            // Btn pause
+            btnInside = _els.btnInside = $('<input>', {
+                'class': 'btn inside_btn',
+                type: 'button',
+                value: BTN_INSIDE,
+                on: {
+                    // click: _askInside
+                }
+            }).button();
+
             cmdCtn.append(
                 btnDelete,
                 btnPrevious,
                 btnNext,
                 btnStop,
-                btnPause
+                btnPause,
+                btnInside
             );
-
-        } // End function buildCmd()
+        }; // End function buildCmd()
 
 
         // ==================================
@@ -140,22 +171,20 @@ function (
         );
 
         _options.root.append(mainCtn);
-    } // End function _buildSkeleton()
+    }; // End function _buildSkeleton()
 
-    /**
-     *
-     */
-    function _getViewDimension () {
+    _getViewDimension = () => {
         var doc = $(document);
 
         _viewDimension.width = doc.width();
         _viewDimension.height = doc.height();
-    } // End function setViewDimension()
+    };
 
     /**
-     *
+     * @param {Object} picInfos -
+     * @param {Element} picEl -
      */
-    function _scalePic (picInfos, picEl) {
+    _scalePic = (picInfos, picEl) => {
         var cssObj, dw, dh,
             widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
@@ -176,12 +205,13 @@ function (
         }
 
         picEl.css(cssObj);
-    } // End function _scalePic()
+    };
 
     /**
-     *
+     * @param {Object} picInfos -
+     * @param {Element} picEl -
      */
-    function _zoomPic (picInfos, picEl) {
+    _zoomPic = (picInfos, picEl) => {
         var widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             zoom = OptionsView.getZoom(),
@@ -199,12 +229,9 @@ function (
             width: newWidth,
             height: newHeight
         });
-    } // End function _zoomPic()
+    };
 
-    /**
-     *
-     */
-    function _askDelete () {
+    _askDelete = () => {
         if (GetRandomPicAction.isPausing()) {
             DeletePicAction.askDelete({
                 onClose: function () {
@@ -216,31 +243,27 @@ function (
                 onDelete: function () {
                     HistoryPicAction.remove();
                     GetRandomPicAction.enable();
-                    GetRandomPicAction.pause();
+                    GetRandomPicAction.resume();
                 }
             });
         }
-    } // End function _askDelete()
+    };
 
-    /**
-     *
-     */
-    function _displayPrevious () {
+    _displayPrevious = () => {
         _setPic(HistoryPicAction.getPrevious());
-    } // End function _displayPrevious()
+    };
 
-    /**
-     *
-     */
-    function _displayNext () {
+    _displayNext = () => {
         _setPic(HistoryPicAction.getNext());
-    } // End function _displayNext()
+    };
 
     /**
-     *
+     * @param {Object} pic -
+     * @param {Function} onSuccess -
+     * @param {Function} onFailure -
      */
-    function _setPic (pic, onSuccess, onFailure) {
-        var img = _els.img;
+    _setPic = (pic, onSuccess, onFailure) => {
+        let img = _els.img;
 
         InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
 
@@ -253,12 +276,12 @@ function (
             src: pic.src || '',
         })
             .on({
-                load: function () {
+                load: () => {
                     View.show();
                     onSuccess && onSuccess();
                 },
-                error: function () {
-                    console.error('Cannot display pic: "' + pic.src + '"');
+                error: () => {
+                    console.error && console.error('Cannot display pic: "' + pic.src + '"');
                     onFailure && onFailure();
                 }
             })
@@ -274,10 +297,10 @@ function (
         }
 
         _els.playCtn.html(img);
-    } // End function _setPic()
+    }; // End function _setPic()
 
 
-    var View = {
+    View = {
 
         /**
          *
@@ -290,9 +313,9 @@ function (
         BTN_RESUME: BTN_RESUME,
 
         /**
-         *
+         * @param {Object} opts -
          */
-        init: function (opts) {
+        init: (opts) => {
             $.extend(true, _options, _defaultOptions, opts || {});
 
             if (!_options.root) {
@@ -302,7 +325,7 @@ function (
             _getViewDimension();
 
             _buildSkeleton();
-        }, // End function init()
+        },
 
         /**
          *
@@ -312,57 +335,58 @@ function (
         /**
          *
          */
-        deletePic: function () {
+        deletePic: () => {
             _askDelete();
-        }, // End function deletePic()
+        },
 
         /**
          *
          */
-        displayPrevious: function () {
+        displayPrevious: () => {
             _displayPrevious();
-        }, // End function displayPrevious()
+        },
 
         /**
          *
          */
-        displayNext: function () {
+        displayNext: () => {
             _displayNext();
-        }, // End function displayNext()
+        },
 
         /**
-         *
+         * @param {Boolean} force -
          */
-        getViewDimension: function (force) {
+        getViewDimension: (force) => {
             if (force) {
                 _getViewDimension();
             }
 
             return _viewDimension;
-        }, // End function getViewDimension()
+        },
 
         /**
          *
          */
-        show: function () {
+        show: () => {
             _els.mainCtn.show();
-        }, // End function show()
+        },
 
         /**
          *
          */
-        hide: function () {
+        hide: () => {
             _els.mainCtn.hide();
-        }, // End function hide()
+        },
 
         /**
-         *
+         * @param {Boolean} force -
          */
-        toggleStatePauseBtn: function (force) {
-            var btnPause = _els.btnPause,
+        toggleStatePauseBtn: (force) => {
+            let btnPause = _els.btnPause,
                 btnDelete = _els.btnDelete,
                 btnPrevious = _els.btnPrevious,
                 btnNext = _els.btnNext,
+                btnInside = _els.btnInside,
                 isPaused = GetRandomPicAction.isPausing();
 
             if ((isPaused && !force) || force === BTN_RESUME) {
@@ -371,6 +395,8 @@ function (
                 btnDelete.show();
                 btnPrevious.show();
                 btnNext.show();
+                btnInside.show();
+
                 View.disableNextBtn();
 
                 if (HistoryPicAction.isFirst()) {
@@ -386,37 +412,38 @@ function (
                 btnDelete.hide();
                 btnPrevious.hide();
                 btnNext.hide();
+                btnInside.hide();
 
             }
-        }, // End function toggleStatePauseBtn()
+        },
 
         /**
          *
          */
-        enablePreviousBtn: function () {
+        enablePreviousBtn: () => {
             _els.btnPrevious.button('enable');
-        }, // End function enablePreviousBtn()
+        },
 
         /**
          *
          */
-        disablePreviousBtn: function () {
+        disablePreviousBtn: () => {
             _els.btnPrevious.button('disable');
-        }, // End function disablePreviousBtn()
+        },
 
         /**
          *
          */
-        enableNextBtn: function () {
+        enableNextBtn: () => {
             _els.btnNext.button('enable');
-        }, // End function enableNextBtn()
+        },
 
         /**
          *
          */
-        disableNextBtn: function () {
+        disableNextBtn: () => {
             _els.btnNext.button('disable');
-        } // End function disableNextBtn()
+        }
     };
 
     return View;
