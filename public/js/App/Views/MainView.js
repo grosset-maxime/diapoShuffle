@@ -151,6 +151,12 @@ function (
                     }
                     break;
 
+                case 73: // i (as inside)
+                    if (GetRandomPicAction.isPausing()) {
+                        PlayView.insidePic();
+                    }
+                    break;
+
                 case 68: // d (as delete)
                     if (GetRandomPicAction.isPausing()) {
                         PlayView.deletePic();

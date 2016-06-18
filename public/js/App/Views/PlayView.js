@@ -343,11 +343,12 @@ function (
          */
         setPic: _setPic, // End function setPic()
 
-        /**
-         *
-         */
         deletePic: () => {
             _askDelete();
+        },
+
+        insidePic: () => {
+            _askInside();
         },
 
         /**
