@@ -16,7 +16,10 @@ define(
     // App Actions
     'App/Actions/GetRandomPicAction',
     'App/Actions/DeletePicAction',
-    'App/Actions/HistoryPicAction'
+    'App/Actions/HistoryPicAction',
+
+    // App Class
+    'App/Class/Pic'
 ],
 function (
     $,
@@ -29,7 +32,10 @@ function (
 
     GetRandomPicAction,
     DeletePicAction,
-    HistoryPicAction
+    HistoryPicAction,
+
+    // App Class
+    PicClass
 ) {
     'use strict';
 
@@ -269,19 +275,19 @@ function (
     /**
      *
      */
-    function onGetRandom (json, onSuccess, onFailure) {
-        var pic;
+    var onGetRandom = (json, onSuccess, onFailure) => {
+        let Pic;
 
         hideLoading();
 
         if (json.success) {
-            pic = json.pic;
+            Pic = new PicClass(json.pic);
 
-            PlayView.setPic(pic, onSuccess, onFailure);
+            PlayView.setPic(Pic, onSuccess, onFailure);
 
-            HistoryPicAction.add(pic);
+            HistoryPicAction.add(Pic);
         }
-    } // End function onGetRandom()
+    }; // End function onGetRandom()
 
     /**
      *

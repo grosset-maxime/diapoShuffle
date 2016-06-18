@@ -11,9 +11,9 @@ function ($) {
 
     var _defaultOptions = {
             events: {
-                onLast: null,
-                onFirst: null,
-                onMiddle: null
+                onLast: () => {},
+                onFirst: () => {},
+                onMiddle: () => {}
             }
         },
         _options = {},
@@ -69,9 +69,9 @@ function ($) {
 
             _navIndex--;
 
-            if (Action.isFirst() && $.isFunction(onFirst)) {
+            if (Action.isFirst()) {
                 onFirst();
-            } else if ($.isFunction(onMiddle)) {
+            } else {
                 onMiddle();
             }
 
@@ -88,9 +88,9 @@ function ($) {
 
             _navIndex++;
 
-            if (Action.isLast() && $.isFunction(onLast)) {
+            if (Action.isLast()) {
                 onLast();
-            } else if ($.isFunction(onMiddle)) {
+            } else {
                 onMiddle();
             }
 

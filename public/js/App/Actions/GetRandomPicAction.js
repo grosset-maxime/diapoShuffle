@@ -13,26 +13,27 @@ define(
 function ($, PM, Notify) {
     'use strict';
 
-    var DEFAULT_INTERVAL = 3,
+    const DEFAULT_INTERVAL = 3,
         DEFAULT_CUSTOM_FOLDERS = [],
         VIEW_MODE_CLASS = 'diapo_shuffle_view_mode',
         NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
 
-    var _idInterval, _errorNotify,
+    let Action, _idInterval, _errorNotify,
         _defaultOptions = {
             interval: DEFAULT_INTERVAL,
             customFolders: DEFAULT_CUSTOM_FOLDERS,
+            insideFolder: '',
             events: {
-                onBeforeStart: null,
-                onStart: null,
-                onBeforePause: null,
-                onPause: null,
-                onBeforeResume: null,
-                onResume: null,
-                onBeforeStop: null,
-                onStop: null,
-                onBeforeGetRandom: null,
-                onGetRandom: null
+                onBeforeStart: () => {},
+                onStart: () => {},
+                onBeforePause: () => {},
+                onPause: () => {},
+                onBeforeResume: () => {},
+                onResume: () => {},
+                onBeforeStop: () => {},
+                onStop: () => {},
+                onBeforeGetRandom: () => {},
+                onGetRandom: () => {}
             }
         },
         _options = {},
@@ -40,38 +41,36 @@ function ($, PM, Notify) {
         _isPausing = false,
         _isDisabled = false;
 
-    /**
-     *
-     */
-    function setTheInterval () {
+
+    let setTheInterval, clearTheInterval, start, stop, pause, getRandomPic;
+
+    // Private functons.
+    let _getCustomFolders;
+
+    _getCustomFolders = () => (_options.insideFolder ? [_options.insideFolder] : '') || _options.customFolders;
+
+
+    setTheInterval = () => {
         clearTheInterval();
 
         _idInterval = setTimeout(function () {
             getRandomPic();
         }, _options.interval * 1000);
-    } // End function setTheInterval()
+    };
 
-    /**
-     *
-     */
-    function clearTheInterval () {
+    clearTheInterval = () => {
         clearTimeout(_idInterval);
         _idInterval = null;
-    } // End function clearTheInterval()
+    };
 
-    /**
-     *
-     */
-    function start () {
+    start = () => {
         var onBeforeStart = _options.events.onBeforeStart;
 
         if (_isPlaying && !_isPausing) {
             return;
         }
 
-        if ($.isFunction(onBeforeStart)) {
-            onBeforeStart();
-        }
+        onBeforeStart();
 
         if (_idInterval) {
             stop();
@@ -81,19 +80,14 @@ function ($, PM, Notify) {
         getRandomPic();
         _isPlaying = true;
         _isPausing = false;
-    } // End function start()
+    };
 
-    /**
-     *
-     */
-    function stop () {
+    stop = () => {
         var events = _options.events,
             onBeforeStop = events.onBeforeStop,
             onStop = events.onStop;
 
-        if ($.isFunction(onBeforeStop)) {
-            onBeforeStop();
-        }
+        onBeforeStop();
 
         clearTheInterval();
 
@@ -101,15 +95,10 @@ function ($, PM, Notify) {
         _isPlaying = false;
         _isPausing = false;
 
-        if ($.isFunction(onStop)) {
-            onStop();
-        }
-    } // End function stop()
+        onStop();
+    };
 
-    /**
-     *
-     */
-    function pause () {
+    pause = () => {
         var events = _options.events,
             onBeforePause = events.onBeforePause,
             onBeforeResume = events.onBeforeResume,
@@ -117,43 +106,29 @@ function ($, PM, Notify) {
             onResume = events.onResume;
 
         if (_idInterval) {
-            if ($.isFunction(onBeforePause)) {
-                onBeforePause();
-            }
+            onBeforePause();
 
             clearTheInterval();
             _isPausing = true;
 
-            if ($.isFunction(onPause)) {
-                onPause();
-            }
+            onPause();
         } else {
-            if ($.isFunction(onBeforeResume)) {
-                onBeforeResume();
-            }
+            onBeforeResume();
 
             start();
             _isPausing = false;
 
-            if ($.isFunction(onResume)) {
-                onResume();
-            }
+            onResume();
         }
-    } // End function pause()
+    };
 
-    /**
-     *
-     */
-    function getRandomPic () {
-        var xhr,
+    getRandomPic = () => {
+        var xhr, displayErrorNotify,
             events = _options.events,
             onBeforeGetRandom = events.onBeforeGetRandom,
             onGetRandom = events.onGetRandom;
 
-        /**
-         *
-         */
-        function displayErrorNotify (message, type) {
+        displayErrorNotify = (message, type) => {
             if (!_errorNotify) {
                 _errorNotify = new Notify({
                     className: 'getRandomPicAction_notify',
@@ -164,13 +139,11 @@ function ($, PM, Notify) {
             }
 
             _errorNotify.setMessage(message, type, true);
-        } // End function displayErrorNotify()
+        };
 
         clearTheInterval();
 
-        if ($.isFunction(onBeforeGetRandom)) {
-            onBeforeGetRandom();
-        }
+        onBeforeGetRandom();
 
         xhr = $.ajax({
             url: '/?r=getRandomPic_s',
@@ -178,7 +151,7 @@ function ($, PM, Notify) {
             dataType: 'json',
             async: true,
             data: {
-                customFolders: _options.customFolders
+                customFolders: _getCustomFolders()
             }
         });
 
@@ -201,7 +174,7 @@ function ($, PM, Notify) {
                 return;
             }
 
-            $.isFunction(onGetRandom) && onGetRandom(json, setTheInterval, getRandomPic);
+            onGetRandom(json, setTheInterval, getRandomPic);
         });
 
         xhr.fail(function (jqXHR, textStatus, errorThrown) {
@@ -212,9 +185,9 @@ function ($, PM, Notify) {
             PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
             stop();
         });
-    } // End function getRandomPic()
+    };
 
-    var Action = {
+    Action = {
 
         /**
          *
@@ -296,21 +269,35 @@ function ($, PM, Notify) {
          */
         isPlaying: function () {
             return _isPlaying;
-        }, // End function isPlaying()
+        },
 
         /**
          *
          */
         isPausing: function () {
             return _isPausing && _isPlaying;
-        }, // End function isPausing()
+        },
 
         /**
          *
          */
-        setCustomFolders: function (customFolders) {
+        isInside: function () {
+            return !!_options.insideFolder;
+        },
+
+        /**
+         *
+         */
+        setCustomFolders: (customFolders = []) => {
             _options.customFolders = customFolders;
-        }, // End function setCustomFolders()
+        },
+
+        /**
+         *
+         */
+        setInsideFolder: (insideFolder = '') => {
+            _options.insideFolder = insideFolder;
+        },
 
         /**
          *

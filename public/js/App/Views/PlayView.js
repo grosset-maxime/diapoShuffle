@@ -13,6 +13,7 @@ define(
     // App Actions
     'App/Actions/GetRandomPicAction',
     'App/Actions/DeletePicAction',
+    'App/Actions/InsidePicAction',
     'App/Actions/HistoryPicAction',
 
     // Non AMD
@@ -28,6 +29,7 @@ function (
     // App Actions
     GetRandomPicAction,
     DeletePicAction,
+    InsidePicAction,
     HistoryPicAction
 ) {
     'use strict';
@@ -53,22 +55,31 @@ function (
         _zoomPic, _askDelete, _displayPrevious, _displayNext, _setPic;
 
 
-    // _askInside = () => {
-    //     if (GetRandomPicAction.isPausing()) {
-    //         InsidePicAction.askInside({
-    //             onClose: () => {
-    //                 GetRandomPicAction.enable();
-    //             },
-    //             onOpen: () => {
-    //                 GetRandomPicAction.disable();
-    //             },
-    //             onInside: () => {
-    //                 GetRandomPicAction.enable();
-    //                 GetRandomPicAction.resume();
-    //             }
-    //         });
-    //     }
-    // };
+    _askInside = () => {
+        if (GetRandomPicAction.isPausing()) {
+            InsidePicAction.askInside({
+                isInside: GetRandomPicAction.isInside(),
+                onClose: () => {
+                    GetRandomPicAction.enable();
+                },
+                onOpen: () => {
+                    GetRandomPicAction.disable();
+                },
+                onInside: (insidePath) => {
+                    _els.btnInside.val(BTN_OUTSIDE);
+                    GetRandomPicAction.setInsideFolder(insidePath);
+                    GetRandomPicAction.enable();
+                    GetRandomPicAction.resume();
+                },
+                onOutside: () => {
+                    _els.btnInside.val(BTN_INSIDE);
+                    GetRandomPicAction.setInsideFolder();
+                    GetRandomPicAction.enable();
+                    GetRandomPicAction.resume();
+                }
+            });
+        }
+    };
 
     _buildSkeleton = () => {
         let mainCtn, cmdCtn, playCtn;
@@ -132,7 +143,7 @@ function (
                 type: 'button',
                 value: BTN_INSIDE,
                 on: {
-                    // click: _askInside
+                    click: _askInside
                 }
             }).button();
 
