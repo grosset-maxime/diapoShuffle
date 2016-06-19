@@ -97,7 +97,7 @@ function (
             modalOptions = {
                 resizable: false,
                 modal: true,
-                width: 400,
+                width: 800,
                 position: {
                     at: 'center top+25%'
                 },
