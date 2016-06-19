@@ -302,6 +302,11 @@ function ($, PM, Notify) {
         /**
          *
          */
+        getInsideFolder: () => _options.insideFolder,
+
+        /**
+         *
+         */
         setTimeInterval: function (timeInterval) {
             _options.interval = timeInterval;
         }, // End function setTimeInterval()

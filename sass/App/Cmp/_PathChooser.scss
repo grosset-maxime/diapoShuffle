@@ -1,0 +1,40 @@
+// ==================
+// App Cmp PathChooser
+// ==================
+
+// global:
+
+$pathchooser_cmp_font_size: 18px;
+$pathchooser_cmp_part_color_selected: #0e79dc;
+$pathchooser_cmp_part_color: #333;
+$pathchooser_cmp_disabled_opacity: 0.3;
+
+.pathchooser_cmp {
+    display: inline-block;
+}
+
+.pathchooser_cmp_part {
+    box-shadow: 0 0 2px $pathchooser_cmp_part_color;
+    padding: 4px 8px;
+    display: inline-block;
+    margin: 0 5px;
+    font-size: $pathchooser_cmp_font_size;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &.selected {
+        box-shadow: 0 0 2px $pathchooser_cmp_part_color_selected;
+    }
+
+    &.disabled {
+        opacity: $pathchooser_cmp_disabled_opacity;
+    }
+}
+
+.pathchooser_cmp_separator {
+    font-size: $pathchooser_cmp_font_size;
+
+    &.disabled {
+        opacity: $pathchooser_cmp_disabled_opacity;
+    }
+}

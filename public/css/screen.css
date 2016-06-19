@@ -225,7 +225,40 @@ body {
   overflow: hidden;
 }
 
-/* line 65, ../../sass/screen.scss */
+/* line 12, ../../sass/App/Cmp/_PathChooser.scss */
+.pathchooser_cmp {
+  display: inline-block;
+}
+
+/* line 16, ../../sass/App/Cmp/_PathChooser.scss */
+.pathchooser_cmp_part {
+  box-shadow: 0 0 2px #333;
+  padding: 4px 8px;
+  display: inline-block;
+  margin: 0 5px;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/* line 25, ../../sass/App/Cmp/_PathChooser.scss */
+.pathchooser_cmp_part.selected {
+  box-shadow: 0 0 2px #0e79dc;
+}
+/* line 29, ../../sass/App/Cmp/_PathChooser.scss */
+.pathchooser_cmp_part.disabled {
+  opacity: 0.3;
+}
+
+/* line 34, ../../sass/App/Cmp/_PathChooser.scss */
+.pathchooser_cmp_separator {
+  font-size: 18px;
+}
+/* line 37, ../../sass/App/Cmp/_PathChooser.scss */
+.pathchooser_cmp_separator.disabled {
+  opacity: 0.3;
+}
+
+/* line 70, ../../sass/screen.scss */
 .diapo_shuffle {
   color: #333;
 }

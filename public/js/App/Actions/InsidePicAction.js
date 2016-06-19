@@ -46,7 +46,8 @@ function (
                     text: message
                 }), $('<span>', {
                     html: (new PathChooser({
-                        path: Pic.getFullPath(),
+                        fullPath: Pic.getFullPath(),
+                        selectedPath: opts.insidePath,
                         events: {
                             onChoose: (path) => {
                                 _insidePath = path;
@@ -81,6 +82,7 @@ function (
                 opts,
                 {
                     isInside: false,
+                    insidePath: '',
                     onOpen: () => {},
                     onCancel: () => {},
                     onClose: () => {},
@@ -90,7 +92,7 @@ function (
                 options || {}
             );
 
-            _insidePath = Pic.getFullPath();
+            _insidePath = opts.insidePath || Pic.getFullPath();
 
             modalOptions = {
                 resizable: false,

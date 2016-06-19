@@ -59,6 +59,7 @@ function (
         if (GetRandomPicAction.isPausing()) {
             InsidePicAction.askInside({
                 isInside: GetRandomPicAction.isInside(),
+                insidePath: GetRandomPicAction.getInsideFolder(),
                 onClose: () => {
                     GetRandomPicAction.enable();
                 },
