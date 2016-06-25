@@ -58,6 +58,7 @@ function (
     _askInside = () => {
         if (GetRandomPicAction.isPausing()) {
             InsidePicAction.askInside({
+                Pic: HistoryPicAction.getCurrent(),
                 isInside: GetRandomPicAction.isInside(),
                 insidePath: GetRandomPicAction.getInsideFolder(),
                 onClose: () => {

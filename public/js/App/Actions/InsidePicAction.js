@@ -6,9 +6,6 @@ define(
 [
     'jquery',
 
-    // App Actions
-    'App/Actions/HistoryPicAction',
-
     // App Cmp
     'App/Cmp/PathChooser',
 
@@ -17,8 +14,6 @@ define(
 ],
 function (
     $,
-
-    HistoryPicAction,
 
     PathChooser
 ) {
@@ -73,14 +68,14 @@ function (
          *
          */
         askInside: (options) => {
-            let modal, modalOptions,
-                opts = {},
-                Pic = HistoryPicAction.getCurrent();
+            let modal, modalOptions, Pic,
+                opts = {};
 
             $.extend(
                 true,
                 opts,
                 {
+                    Pic: {},
                     isInside: false,
                     insidePath: '',
                     onOpen: () => {},
@@ -92,6 +87,7 @@ function (
                 options || {}
             );
 
+            Pic = options.Pic;
             _insidePath = opts.insidePath || Pic.getFullPath();
 
             modalOptions = {
