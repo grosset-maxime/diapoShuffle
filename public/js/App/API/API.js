@@ -55,6 +55,56 @@ function ($) {
 
                 // PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
             });
+        },
+
+        /**
+         * @param {Object} options - Options.
+         * @param {Pic} Pic - Pic to delete.
+         * @param {Function} [onSuccess] - Success callback, returns {Array} - folder list.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        deletePic: (options = {}) => {
+            var xhr,
+                Pic = options.Pic || {},
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (!Pic.src) {
+                onFailure('No Picture to delete.');
+            }
+
+            xhr = $.ajax({
+                url: '/?r=deletePic_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    picPath: Pic.src
+                }
+            });
+
+            xhr.done(function (json) {
+                var error, errorMessage;
+
+                if (json.error || !json.success) {
+                    error = json.error || {};
+
+                    errorMessage = 'Error: ' + error.message || 'Unknown error.';
+
+                    onFailure(errorMessage);
+                    return;
+                }
+
+                onSuccess();
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                // var message = 'deletePicAction._deletePic()';
+
+                onFailure('Server error.');
+
+                // PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+            });
         }
     };
 

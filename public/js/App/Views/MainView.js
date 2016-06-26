@@ -15,7 +15,6 @@ define(
 
     // App Actions
     'App/Actions/GetRandomPicAction',
-    'App/Actions/DeletePicAction',
     'App/Actions/HistoryPicAction',
 
     // App Class
@@ -31,7 +30,6 @@ function (
     PlayView,
 
     GetRandomPicAction,
-    DeletePicAction,
     HistoryPicAction,
 
     // App Class
@@ -165,7 +163,7 @@ function (
 
                 case 68: // d (as delete)
                     if (GetRandomPicAction.isPausing()) {
-                        PlayView.deletePic();
+                        PlayView.askDeletePic();
                     }
                     break;
 
@@ -301,20 +299,6 @@ function (
         }
     }; // End function onGetRandom()
 
-    /**
-     *
-     */
-    function onBeforeDelete () {
-        els.pauseIconCtn.hide();
-        showLoading();
-    } // End function onBeforeDelete()
-
-    /**
-     *
-     */
-    function onDelete () {
-        hideLoading();
-    } // End function onDelete()
 
     var View = {
         /**
@@ -349,14 +333,8 @@ function (
             });
 
             PlayView.init({
-                root:mainCtn
-            });
-
-            DeletePicAction.init({
-                events: {
-                    onBeforeDelete: onBeforeDelete,
-                    onDelete: onDelete
-                }
+                root: mainCtn,
+                mainView: View
             });
 
             GetRandomPicAction.init({
@@ -388,6 +366,15 @@ function (
             });
 
             attachEvents();
+        },
+
+        onBeforeDelete: () => {
+            els.pauseIconCtn.hide();
+            showLoading();
+        },
+
+        onDelete: () => {
+            hideLoading();
         }
     };
 

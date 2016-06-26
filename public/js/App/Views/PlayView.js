@@ -6,18 +6,24 @@ define(
 [
     'jquery',
 
+    // PM
+    'PM/Cmp/Notify',
+
+    // App API
+    'App/API/API',
+
     // App Views
     'App/Views/OptionsView',
     'App/Views/InfosView',
 
     // App Actions
     'App/Actions/GetRandomPicAction',
-    'App/Actions/DeletePicAction',
     'App/Actions/HistoryPicAction',
 
     // App Modals
     'App/Modals/AddFolderModal',
     'App/Modals/InsideFolderModal',
+    'App/Modals/DeletePicModal',
 
     // Non AMD
     'js!jquery-ui'
@@ -25,18 +31,24 @@ define(
 function (
     $,
 
+    // PM
+    Notify,
+
+    // App API
+    API,
+
     // App Views
     OptionsView,
     InfosView,
 
     // App Actions
     GetRandomPicAction,
-    DeletePicAction,
     HistoryPicAction,
 
     // App Modals
     AddFolderModal,
-    InsideFolderModal
+    InsideFolderModal,
+    DeletePicModal
 ) {
     'use strict';
 
@@ -54,11 +66,12 @@ function (
         _viewDimension = {
             width: 0,
             height: 0
-        };
+        },
+        _notifyEl;
 
     // Private functions.
-    var _buildSkeleton, _getViewDimension, _scalePic,
-        _zoomPic, _askDelete, _displayPrevious, _displayNext, _setPic;
+    var _buildSkeleton, _getViewDimension, _scalePic, _notify,
+        _zoomPic, _displayPrevious, _displayNext, _setPic;
 
 
     _buildSkeleton = () => {
@@ -73,7 +86,7 @@ function (
                 type: 'button',
                 value: 'Delete',
                 on: {
-                    click: _askDelete
+                    click: View.askDeletePic
                 }
             }).button();
 
@@ -233,24 +246,6 @@ function (
         });
     };
 
-    _askDelete = () => {
-        if (GetRandomPicAction.isPausing()) {
-            DeletePicAction.askDelete({
-                onClose: function () {
-                    GetRandomPicAction.enable();
-                },
-                onOpen: function () {
-                    GetRandomPicAction.disable();
-                },
-                onDelete: function () {
-                    HistoryPicAction.remove();
-                    GetRandomPicAction.enable();
-                    GetRandomPicAction.resume();
-                }
-            });
-        }
-    };
-
     _displayPrevious = () => {
         _setPic(HistoryPicAction.getPrevious());
     };
@@ -301,6 +296,32 @@ function (
         _els.playCtn.html(img);
     }; // End function _setPic()
 
+    _notify = (options = {}) => {
+        let opts;
+
+        $.extend(
+            true,
+            opts,
+            {
+                message: '',
+                type: Notify.TYPE_ERROR,
+                autoHide: true,
+                duration: 3
+            },
+            options || {}
+        );
+
+        if (!_notifyEl) {
+            _notifyEl = new Notify({
+                className: 'ds_play_view-notify',
+                container: $(document.body),
+                autoHide: opts.autoHide,
+                duration: opts.duration
+            });
+        }
+
+        _notify.setMessage(opts.message, opts.type, true);
+    };
 
     View = {
 
@@ -329,13 +350,39 @@ function (
             _buildSkeleton();
         },
 
-        /**
-         *
-         */
-        setPic: _setPic, // End function setPic()
+        setPic: _setPic,
 
-        deletePic: () => {
-            _askDelete();
+        askDeletePic: () => {
+            if (GetRandomPicAction.isPausing()) {
+                DeletePicModal.ask({
+                    onClose: function () {
+                        GetRandomPicAction.enable();
+                    },
+                    onOpen: function () {
+                        GetRandomPicAction.disable();
+                    },
+                    onDelete: function () {
+                        _options.mainView.onBeforeDelete();
+
+                        API.deletePic({
+                            Pic: HistoryPicAction.getCurrent(),
+                            onSuccess: () => {
+                                HistoryPicAction.remove();
+                                GetRandomPicAction.enable();
+                                GetRandomPicAction.resume();
+
+                                _options.mainView.onDelete();
+                            },
+                            onFailure: (error) => {
+                                _notify({
+                                    message: error
+                                });
+                            }
+                        });
+
+                    }
+                });
+            }
         },
 
         askInsideFolder: () => {
@@ -385,16 +432,10 @@ function (
             }
         },
 
-        /**
-         *
-         */
         displayPrevious: () => {
             _displayPrevious();
         },
 
-        /**
-         *
-         */
         displayNext: () => {
             _displayNext();
         },
@@ -410,16 +451,10 @@ function (
             return _viewDimension;
         },
 
-        /**
-         *
-         */
         show: () => {
             _els.mainCtn.show();
         },
 
-        /**
-         *
-         */
         hide: () => {
             _els.mainCtn.hide();
         },
@@ -463,30 +498,18 @@ function (
             }
         },
 
-        /**
-         *
-         */
         enablePreviousBtn: () => {
             _els.btnPrevious.button('enable');
         },
 
-        /**
-         *
-         */
         disablePreviousBtn: () => {
             _els.btnPrevious.button('disable');
         },
 
-        /**
-         *
-         */
         enableNextBtn: () => {
             _els.btnNext.button('enable');
         },
 
-        /**
-         *
-         */
         disableNextBtn: () => {
             _els.btnNext.button('disable');
         }

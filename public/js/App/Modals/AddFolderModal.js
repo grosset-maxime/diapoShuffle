@@ -19,7 +19,7 @@ function (
 ) {
     'use strict';
 
-    let Action,
+    let Modal,
         _addPath = '';
 
     // Private functions.
@@ -58,7 +58,7 @@ function (
     };
 
 
-    Action = {
+    Modal = {
         /**
          *
          */
@@ -123,6 +123,6 @@ function (
         }
     };
 
-    return Action;
+    return Modal;
 });
 
