@@ -16,6 +16,9 @@ define(
     'App/Actions/InsidePicAction',
     'App/Actions/HistoryPicAction',
 
+    // App Modals
+    'App/Modals/AddFolderModal',
+
     // Non AMD
     'js!jquery-ui'
 ],
@@ -30,7 +33,10 @@ function (
     GetRandomPicAction,
     DeletePicAction,
     InsidePicAction,
-    HistoryPicAction
+    HistoryPicAction,
+
+    // App Modals
+    AddFolderModal
 ) {
     'use strict';
 
@@ -87,7 +93,7 @@ function (
         let mainCtn, cmdCtn, playCtn;
 
         let buildCmd = () => {
-            let btnStop, btnPrevious, btnNext, btnPause, btnDelete, btnInside;
+            let btnStop, btnPrevious, btnNext, btnPause, btnDelete, btnInside, btnAddFolder;
 
             // Btn delete
             btnDelete = _els.btnDelete = $('<input>', {
@@ -149,13 +155,24 @@ function (
                 }
             }).button();
 
+            // Btn pause
+            btnAddFolder = _els.btnAddFolder = $('<input>', {
+                'class': 'btn addfolder_btn',
+                type: 'button',
+                value: 'Add',
+                on: {
+                    click: View.askAddFolder
+                }
+            }).button();
+
             cmdCtn.append(
                 btnDelete,
                 btnPrevious,
                 btnNext,
                 btnStop,
                 btnPause,
-                btnInside
+                btnInside,
+                btnAddFolder
             );
         }; // End function buildCmd()
 
@@ -351,6 +368,25 @@ function (
 
         insidePic: () => {
             _askInside();
+        },
+
+        askAddFolder: () => {
+            if (GetRandomPicAction.isPausing()) {
+                AddFolderModal.ask({
+                    Pic: HistoryPicAction.getCurrent(),
+                    onClose: () => {
+                        GetRandomPicAction.enable();
+                    },
+                    onOpen: () => {
+                        GetRandomPicAction.disable();
+                    },
+                    onAdd: (addPath) => {
+                        GetRandomPicAction.addCustomFolder(addPath);
+                        GetRandomPicAction.enable();
+                        GetRandomPicAction.resume();
+                    }
+                });
+            }
         },
 
         /**

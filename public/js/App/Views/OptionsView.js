@@ -348,7 +348,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         }
 
         btnUnSelectAll.show();
-    } // End function onCloseFolderFinder()
+    }
 
     /**
      *
@@ -364,7 +364,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
 
         nbSelectedCtn.text('Selected: ' + nbCustomFolderSelected);
         nbSelectedCtn.show();
-    } // End function updateNbCustomFolderSelected()
+    }
 
 
     var View = {

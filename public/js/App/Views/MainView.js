@@ -124,7 +124,7 @@ function (
                 PlayView.getViewDimension(true);
             }, 500);
         });
-    } // End function attachEvents()
+    }
 
     /**
      *
@@ -154,6 +154,12 @@ function (
                 case 73: // i (as inside)
                     if (GetRandomPicAction.isPausing()) {
                         PlayView.insidePic();
+                    }
+                    break;
+
+                case 65: // a (as add)
+                    if (GetRandomPicAction.isPausing()) {
+                        PlayView.askAddFolder();
                     }
                     break;
 

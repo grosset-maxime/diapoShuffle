@@ -9,8 +9,20 @@ define(
     // PM
     'PM/Core',
     'PM/Cmp/Notify',
+
+    // App API
+    'App/API/API'
 ],
-function ($, PM, Notify) {
+function (
+    $,
+
+    // PM
+    PM,
+    Notify,
+
+    // App API
+    API
+) {
     'use strict';
 
     const DEFAULT_INTERVAL = 3,
@@ -204,7 +216,7 @@ function ($, PM, Notify) {
          */
         init: function (opts) {
             $.extend(true, _options, _defaultOptions, opts || {});
-        }, // End function init()
+        },
 
         /**
          *
@@ -215,14 +227,14 @@ function ($, PM, Notify) {
             }
 
             start(opts);
-        }, // End function start()
+        },
 
         /**
          *
          */
         stop: function  () {
             stop();
-        }, // End function stop()
+        },
 
         /**
          *
@@ -233,7 +245,7 @@ function ($, PM, Notify) {
             }
 
             pause();
-        }, // End function pause()
+        },
 
         resume: () => {
             if (_isDisabled) {
@@ -248,21 +260,21 @@ function ($, PM, Notify) {
          */
         disable: function () {
             _isDisabled = true;
-        }, // End function disable()
+        },
 
         /**
          *
          */
         enable: function () {
             _isDisabled = false;
-        }, // End function enable()
+        },
 
         /**
          *
          */
         isDisabled: function () {
             return _isDisabled;
-        }, // End function isDisabled()
+        },
 
         /**
          *
@@ -286,6 +298,34 @@ function ($, PM, Notify) {
         },
 
         /**
+         * @param {String} customFolders - Custom folder to add.
+         */
+        addCustomFolder: (customFolder = '') => {
+            let customFolders = _options.customFolders;
+
+            if (!customFolder || customFolders.indexOf(customFolder) !== -1) {
+                return;
+            }
+
+            // If no custom folder, get all folders at root.
+            if (!customFolders.length) {
+                API.getFolderList({
+                    folder: '/',
+                    onSuccess: (folders) => {
+                        let i,
+                            nbFolders = folders.length;
+
+                        for (i = 0; i < nbFolders; i++) {
+                            customFolders.push('/' + folders[i] + '/');
+                        }
+                    }
+                });
+            }
+
+            customFolders.push(customFolder);
+        },
+
+        /**
          *
          */
         setCustomFolders: (customFolders = []) => {
@@ -300,16 +340,16 @@ function ($, PM, Notify) {
         },
 
         /**
-         *
+         * @returns {String} Inside folder path.
          */
         getInsideFolder: () => _options.insideFolder,
 
         /**
          *
          */
-        setTimeInterval: function (timeInterval) {
+        setTimeInterval: (timeInterval) => {
             _options.interval = timeInterval;
-        }, // End function setTimeInterval()
+        },
 
         /**
          *
@@ -317,7 +357,7 @@ function ($, PM, Notify) {
         setOptions: function (opts) {
             $.extend(true, _options, opts || {});
             _options.customFolders = opts.customFolders || [];
-        } // End function setOptions()
+        }
     };
 
     return Action;
