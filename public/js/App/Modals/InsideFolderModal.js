@@ -67,7 +67,7 @@ function (
         /**
          *
          */
-        askInside: (options) => {
+        ask: (options) => {
             let modal, modalOptions, Pic,
                 opts = {};
 

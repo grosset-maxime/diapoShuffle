@@ -153,7 +153,7 @@ function (
 
                 case 73: // i (as inside)
                     if (GetRandomPicAction.isPausing()) {
-                        PlayView.insidePic();
+                        PlayView.askInsideFolder();
                     }
                     break;
 

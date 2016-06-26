@@ -13,11 +13,11 @@ define(
     // App Actions
     'App/Actions/GetRandomPicAction',
     'App/Actions/DeletePicAction',
-    'App/Actions/InsidePicAction',
     'App/Actions/HistoryPicAction',
 
     // App Modals
     'App/Modals/AddFolderModal',
+    'App/Modals/InsideFolderModal',
 
     // Non AMD
     'js!jquery-ui'
@@ -32,11 +32,11 @@ function (
     // App Actions
     GetRandomPicAction,
     DeletePicAction,
-    InsidePicAction,
     HistoryPicAction,
 
     // App Modals
-    AddFolderModal
+    AddFolderModal,
+    InsideFolderModal
 ) {
     'use strict';
 
@@ -57,37 +57,9 @@ function (
         };
 
     // Private functions.
-    var _askInside, _buildSkeleton, _getViewDimension, _scalePic,
+    var _buildSkeleton, _getViewDimension, _scalePic,
         _zoomPic, _askDelete, _displayPrevious, _displayNext, _setPic;
 
-
-    _askInside = () => {
-        if (GetRandomPicAction.isPausing()) {
-            InsidePicAction.askInside({
-                Pic: HistoryPicAction.getCurrent(),
-                isInside: GetRandomPicAction.isInside(),
-                insidePath: GetRandomPicAction.getInsideFolder(),
-                onClose: () => {
-                    GetRandomPicAction.enable();
-                },
-                onOpen: () => {
-                    GetRandomPicAction.disable();
-                },
-                onInside: (insidePath) => {
-                    _els.btnInside.val(BTN_OUTSIDE);
-                    GetRandomPicAction.setInsideFolder(insidePath);
-                    GetRandomPicAction.enable();
-                    GetRandomPicAction.resume();
-                },
-                onOutside: () => {
-                    _els.btnInside.val(BTN_INSIDE);
-                    GetRandomPicAction.setInsideFolder();
-                    GetRandomPicAction.enable();
-                    GetRandomPicAction.resume();
-                }
-            });
-        }
-    };
 
     _buildSkeleton = () => {
         let mainCtn, cmdCtn, playCtn;
@@ -151,7 +123,7 @@ function (
                 type: 'button',
                 value: BTN_INSIDE,
                 on: {
-                    click: _askInside
+                    click: View.askInsideFolder
                 }
             }).button();
 
@@ -366,8 +338,32 @@ function (
             _askDelete();
         },
 
-        insidePic: () => {
-            _askInside();
+        askInsideFolder: () => {
+            if (GetRandomPicAction.isPausing()) {
+                InsideFolderModal.ask({
+                    Pic: HistoryPicAction.getCurrent(),
+                    isInside: GetRandomPicAction.isInside(),
+                    insidePath: GetRandomPicAction.getInsideFolder(),
+                    onClose: () => {
+                        GetRandomPicAction.enable();
+                    },
+                    onOpen: () => {
+                        GetRandomPicAction.disable();
+                    },
+                    onInside: (insidePath) => {
+                        _els.btnInside.val(BTN_OUTSIDE);
+                        GetRandomPicAction.setInsideFolder(insidePath);
+                        GetRandomPicAction.enable();
+                        GetRandomPicAction.resume();
+                    },
+                    onOutside: () => {
+                        _els.btnInside.val(BTN_INSIDE);
+                        GetRandomPicAction.setInsideFolder();
+                        GetRandomPicAction.enable();
+                        GetRandomPicAction.resume();
+                    }
+                });
+            }
         },
 
         askAddFolder: () => {
