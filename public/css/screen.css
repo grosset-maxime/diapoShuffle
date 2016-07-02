@@ -523,6 +523,17 @@ body {
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn .thumb {
   margin: 0 6px 6px 0;
 }
+/* line 126, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .inside_folder_ctn {
+  display: none;
+}
+/* line 129, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .inside_folder_ctn .inside_folder {
+  display: inline-block;
+  margin-left: 11px;
+  font-size: 0.8em;
+  word-break: break-all;
+}
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {
   display: none;

@@ -122,4 +122,15 @@
             margin: 0 6px 6px 0;
         }
     }
+
+    .inside_folder_ctn {
+        display: none;
+
+        .inside_folder {
+            display: inline-block;
+            margin-left: 11px;
+            font-size: 0.8em;
+            word-break: break-all;
+        }
+    }
 } // End .ds_options_view

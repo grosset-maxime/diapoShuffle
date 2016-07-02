@@ -375,12 +375,16 @@ function (
                         GetRandomPicAction.setInsideFolder(insidePath);
                         GetRandomPicAction.enable();
                         GetRandomPicAction.resume();
+
+                        OptionsView.setInsideFolder(insidePath);
                     },
                     onOutside: () => {
                         _els.btnInside.val(BTN_INSIDE);
                         GetRandomPicAction.setInsideFolder();
                         GetRandomPicAction.enable();
                         GetRandomPicAction.resume();
+
+                        OptionsView.resetInsideFolder();
                     }
                 });
             }

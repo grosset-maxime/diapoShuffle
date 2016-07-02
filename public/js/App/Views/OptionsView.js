@@ -46,12 +46,12 @@ function (
             footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic, btnUnSelectAll,
-            nbSelectedCtn;
+            nbSelectedCtn, insideFolderCtn, keyUpInput;
 
         /**
          * @private
          */
-        function keyUpInput (e) {
+        keyUpInput = (e) => {
             let keyPressed = e.which,
                 doPreventDefault = false;
             // console.log(keyPressed);
@@ -65,7 +65,7 @@ function (
             if (doPreventDefault) {
                 e.preventDefault();
             }
-        }
+        };
 
 
         mainCtn = _els.mainCtn = $('<div>', {
@@ -99,7 +99,7 @@ function (
             'class': 'nb_selected'
         });
 
-        customFolderCtn = $('<div>', {
+        customFolderCtn = _els.customFolderCtn = $('<div>', {
             'class': 'el_ctn flex'
         }).append(
             $('<label>', {
@@ -122,6 +122,19 @@ function (
 
         selectedCustomFolderCtn = _els.selectedCustomFolderCtn = $('<div>', {
             'class': 'el_ctn selected_custom_folder_ctn'
+        });
+
+        insideFolderCtn = _els.insideFolderCtn = $('<div>', {
+            'class': 'el_ctn inside_folder_ctn',
+            html: [
+                $('<label>', {
+                    'class': 'title title_inside_folder',
+                    text: 'Inside folder :'
+                }),
+                _els.insideFolder = $('<div>', {
+                    'class': 'inside_folder'
+                })
+            ]
         });
 
         // Btn start
@@ -259,6 +272,7 @@ function (
         mainCtn.append(
             customFolderCtn,
             selectedCustomFolderCtn,
+            insideFolderCtn,
             intervalCtn,
             zoomCtn,
             scaleCtn,
@@ -382,6 +396,42 @@ function (
 
         closeFolderFinder: () => {
             FolderFinderView.close();
+        },
+
+        setInsideFolder: (path) => {
+            let css = {
+                opacity: 0.3
+            };
+
+            _els.insideFolder.html(
+                $('<div>', {
+                    'class': 'btn btn_inside_folder',
+                    text: path,
+                    on: {
+                        click: () => {
+                            GetRandomPicAction.setInsideFolder(); // Remove Inside folder
+                            View.resetInsideFolder();
+                        }
+                    }
+                }).button()
+            );
+
+            _els.insideFolderCtn.show();
+
+            _els.selectedCustomFolderCtn.css(css);
+            _els.customFolderCtn.css(css);
+        },
+
+        resetInsideFolder: () => {
+            let css = {
+                opacity: 1
+            };
+
+            _els.insideFolderCtn.hide();
+            _els.insideFolder.empty();
+
+            _els.selectedCustomFolderCtn.css(css);
+            _els.customFolderCtn.css(css);
         },
 
         isScaleOn: () => !!_els.inputScale[0].checked,
