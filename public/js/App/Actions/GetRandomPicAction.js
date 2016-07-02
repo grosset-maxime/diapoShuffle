@@ -141,10 +141,23 @@ function (
                 onGetRandom(Pic, _setTheInterval, _getRandomPic);
             },
             onFailure: (error) => {
-                _stop();
-                Utils.notify({
-                    message: error
-                });
+                if (Action.isInside()) {
+
+                    Utils.notify({
+                        message: 'No more pic into: "' + Action.getInsideFolder() + '"',
+                        type: 'info'
+                    });
+
+                    // Remove inside folder.
+                    Action.setInsideFolder();
+
+                    _getRandomPic();
+                } else {
+                    _stop();
+                    Utils.notify({
+                        message: error
+                    });
+                }
             }
         });
     };
