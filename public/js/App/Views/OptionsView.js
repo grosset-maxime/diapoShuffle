@@ -410,7 +410,6 @@ function (
                     on: {
                         click: () => {
                             GetRandomPicAction.setInsideFolder(); // Remove Inside folder
-                            View.resetInsideFolder();
                         }
                     }
                 }).button()

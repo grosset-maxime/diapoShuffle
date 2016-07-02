@@ -305,7 +305,8 @@ function (
                     onPause: _onPause,
                     onResume: _onResume,
                     onBeforeGetRandom: _onBeforeGetRandom,
-                    onGetRandom: _onGetRandom
+                    onGetRandom: _onGetRandom,
+                    onResetInsideFolder: OptionsView.resetInsideFolder
                 }
             });
 

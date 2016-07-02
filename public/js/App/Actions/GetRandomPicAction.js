@@ -38,7 +38,8 @@ function (
                 onBeforeStop: () => {},
                 onStop: () => {},
                 onBeforeGetRandom: () => {},
-                onGetRandom: () => {}
+                onGetRandom: () => {},
+                onResetInsideFolder: () => {}
             }
         },
         _options = {},
@@ -300,6 +301,10 @@ function (
          */
         setInsideFolder: (insideFolder = '') => {
             _options.insideFolder = insideFolder;
+
+            if (!insideFolder) {
+                _options.events.onResetInsideFolder();
+            }
         },
 
         /**
