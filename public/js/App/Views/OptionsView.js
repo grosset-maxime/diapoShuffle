@@ -6,9 +6,9 @@ define(
 [
     'jquery',
 
-    // PM
-    'PM/Core',
-    'PM/Cmp/Notify',
+    // App API
+    'App/API/API',
+    'App/Utils/Utils',
 
     // App
     'App/Actions/GetRandomPicAction',
@@ -17,26 +17,32 @@ define(
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
+function (
+    $,
+
+    // App API
+    API,
+    Utils,
+
+    GetRandomPicAction,
+    FolderFinderView
+) {
     'use strict';
 
-    var DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
-        DEFAULT_ZOOM = 1,
-        NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR,
+    const DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
+        DEFAULT_ZOOM = 1;
 
-        _defaultOptions = {
-            root: null
-        },
+    let View,
         _options = {},
         _els = {},
-        _hasFocus = false,
-        _notify = null;
+        _hasFocus = false;
 
-    /**
-     *
-     */
-    function buildSkeleton () {
-        var mainCtn, customFolderCtn, selectedCustomFolderCtn,
+    // Private functions.
+    let _buildSkeleton, _clearCache, _onCloseFolderFinder, _updateNbCustomFolderSelected;
+
+
+    _buildSkeleton = () => {
+        let mainCtn, customFolderCtn, selectedCustomFolderCtn,
             footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic, btnUnSelectAll,
@@ -46,7 +52,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
          * @private
          */
         function keyUpInput (e) {
-            var keyPressed = e.which,
+            let keyPressed = e.which,
                 doPreventDefault = false;
             // console.log(keyPressed);
             switch (keyPressed) {
@@ -59,68 +65,8 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             if (doPreventDefault) {
                 e.preventDefault();
             }
-        } // End function keyUpInput()
+        }
 
-        /**
-         * @private
-         */
-        function clearCache () {
-            var xhr,
-                errorMessage = 'Server error while trying to clear cache.';
-
-            /**
-             * @private
-             */
-            function displayNotify (message, type) {
-                if (!_notify) {
-                    _notify = new Notify({
-                        className: 'optionsView_notify',
-                        container: $(document.body),
-                        autoHide: true,
-                        duration: 3
-                    });
-                }
-
-                _notify.setMessage(message, type, true);
-            } // End function displayErrorNotify()
-
-            xhr = $.ajax({
-                url: '/?r=clearCache_s',
-                type: 'POST',
-                dataType: 'json',
-                async: true
-            });
-
-            xhr.done(function (json) {
-                var error;
-
-                if (json.success) {
-
-                    FolderFinderView.clear();
-                    displayNotify('Cache has been cleared successfully.', Notify.TYPE_INFO);
-
-                } else {
-
-                    error = json.error || {};
-                    displayNotify(errorMessage + ' ' + (error.publicMessage || ''), NOTIFY_TYPE_ERROR);
-                    PM.log(error.message || 'Undefined error.');
-
-                }
-            });
-
-            xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                var message = 'OptionsView.clearCache()';
-
-                displayNotify(errorMessage, NOTIFY_TYPE_ERROR);
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
-            });
-        } // End function clearCache()
-
-
-        // =================================
-        // Start of function buildSkeleton()
-        // =================================
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_options_view flex',
@@ -301,7 +247,7 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             'class': 'clear_cache_btn',
             text: 'Clear cache',
             on: {
-                click: clearCache
+                click: _clearCache
             }
         });
 
@@ -331,16 +277,30 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
             min: 1,
             max: 99
         });
-    } // End function buildSkeleton()
+    };
 
-    /**
-     *
-     */
-    function onCloseFolderFinder () {
-        var nbCustomFolderSelected = View.getCustomFolders().length,
+    _clearCache = () => {
+        API.clearCache({
+            onSuccess: () => {
+                FolderFinderView.clear();
+                Utils.notify({
+                    message: 'Cache has been cleared successfully.',
+                    type: 'info'
+                });
+            },
+            onFailure: (error) => {
+                Utils.notify({
+                    message: error
+                });
+            }
+        });
+    };
+
+    _onCloseFolderFinder = () => {
+        let nbCustomFolderSelected = View.getCustomFolders().length,
             btnUnSelectAll = _els.btnUnSelectAll;
 
-        updateNbCustomFolderSelected();
+        _updateNbCustomFolderSelected();
 
         if (!nbCustomFolderSelected) {
             btnUnSelectAll.hide();
@@ -348,12 +308,9 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
         }
 
         btnUnSelectAll.show();
-    }
+    };
 
-    /**
-     *
-     */
-    function updateNbCustomFolderSelected () {
+    _updateNbCustomFolderSelected = () => {
         var nbCustomFolderSelected = View.getCustomFolders().length,
             nbSelectedCtn = _els.nbSelectedCtn;
 
@@ -364,110 +321,78 @@ function ($, PM, Notify, GetRandomPicAction, FolderFinderView) {
 
         nbSelectedCtn.text('Selected: ' + nbCustomFolderSelected);
         nbSelectedCtn.show();
-    }
+    };
 
 
-    var View = {
-        /**
-         *
-         */
-        init: function (opts) {
-            $.extend(true, _options, _defaultOptions, opts || {});
+    View = {
+
+        init: (opts) => {
+            $.extend(
+                true,
+                _options,
+                {
+                    root: null
+                },
+                opts || {}
+            );
 
             if (!_options.root) {
                 _options.root = $(document.body);
             }
 
-            buildSkeleton();
+            _buildSkeleton();
 
             FolderFinderView.init({
                 root: opts.root,
                 selectedFolderCtn: _els.selectedCustomFolderCtn,
                 events: {
-                    onClose: onCloseFolderFinder,
-                    onNonSelected: onCloseFolderFinder,
-                    onSelect: updateNbCustomFolderSelected,
-                    onUnselect: updateNbCustomFolderSelected
+                    onClose: _onCloseFolderFinder,
+                    onNonSelected: _onCloseFolderFinder,
+                    onSelect: _updateNbCustomFolderSelected,
+                    onUnselect: _updateNbCustomFolderSelected
                 }
             });
-        }, // End function init()
+        },
 
-        /**
-         *
-         */
-        hasFocus: function () {
-            return _hasFocus;
-        }, // End function hasFocus()
-
-        /**
-         *
-         */
-        getTimeInterval: function () {
-            var inputInterval = _els.inputInterval,
+        getTimeInterval: () => {
+            let inputInterval = _els.inputInterval,
                 interval = inputInterval.spinner('value') || DEFAULT_INTERVAL;
 
             inputInterval.spinner('value', interval);
 
             return interval;
-        }, // End function getTimeInterval()
+        },
 
-        /**
-         *
-         */
-        getZoom: function () {
-            var inputZoom = _els.inputZoom,
+        getZoom: () => {
+            let inputZoom = _els.inputZoom,
                 zoom = inputZoom.spinner('value') || DEFAULT_ZOOM;
 
             inputZoom.spinner('value', zoom);
 
             return zoom;
-        }, // End function getZoom()
+        },
 
-        /**
-         *
-         */
-        getCustomFolders: function () {
-            return FolderFinderView.getSelectedPath();
-        }, // End function getCustomFolders()
-
-        /**
-         *
-         */
-        toggleFolderFinder: function () {
+        toggleFolderFinder: () => {
             if (FolderFinderView.isOpen()) {
                 FolderFinderView.close();
             } else {
                 FolderFinderView.open();
             }
-        }, // End function toggleFolderFinder()
+        },
 
-        /**
-         *
-         */
-        closeFolderFinder: function () {
+        closeFolderFinder: () => {
             FolderFinderView.close();
-        }, // End function closeFolderFinder()
+        },
 
-        /**
-         *
-         */
-        isScaleOn: function () {
-            return !!_els.inputScale[0].checked;
-        }, // End function getScale()
+        isScaleOn: () => !!_els.inputScale[0].checked,
 
-        /**
-         *
-         */
-        isPublicPathOn: function () {
-            return !!_els.inputPathPic[0].checked;
-        }, // End function isPublicPathOn()
+        isPublicPathOn: () => !!_els.inputPathPic[0].checked,
 
-        /**
-         *
-         */
-        isFolderFinderOpen: function () {
-            return FolderFinderView.isOpen();
-        } // End function isFolderFinderOpen()
+        isFolderFinderOpen: () => FolderFinderView.isOpen(),
+
+        hasFocus: () => _hasFocus,
+
+        getCustomFolders: () => FolderFinderView.getSelectedPath()
     };
 
     return View;

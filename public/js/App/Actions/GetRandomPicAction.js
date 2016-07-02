@@ -6,31 +6,24 @@ define(
 [
     'jquery',
 
-    // PM
-    'PM/Core',
-    'PM/Cmp/Notify',
-
     // App API
-    'App/API/API'
+    'App/API/API',
+    'App/Utils/Utils'
 ],
 function (
     $,
 
-    // PM
-    PM,
-    Notify,
-
     // App API
-    API
+    API,
+    Utils
 ) {
     'use strict';
 
     const DEFAULT_INTERVAL = 3,
         DEFAULT_CUSTOM_FOLDERS = [],
-        VIEW_MODE_CLASS = 'diapo_shuffle_view_mode',
-        NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR;
+        VIEW_MODE_CLASS = 'diapo_shuffle_view_mode';
 
-    let Action, _idInterval, _errorNotify,
+    let Action, _idInterval,
         _defaultOptions = {
             interval: DEFAULT_INTERVAL,
             customFolders: DEFAULT_CUSTOM_FOLDERS,
@@ -54,29 +47,28 @@ function (
         _isDisabled = false;
 
 
-    let setTheInterval, clearTheInterval, start, stop, pause, getRandomPic;
-
     // Private functons.
-    let _getCustomFolders;
+    let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _getRandomPic;
 
     _getCustomFolders = () => (_options.insideFolder ? [_options.insideFolder] : '') || _options.customFolders;
 
 
-    setTheInterval = () => {
-        clearTheInterval();
+    _setTheInterval = () => {
+        _clearTheInterval();
 
-        _idInterval = setTimeout(function () {
-            getRandomPic();
-        }, _options.interval * 1000);
+        _idInterval = setTimeout(
+            _getRandomPic,
+            _options.interval * 1000
+        );
     };
 
-    clearTheInterval = () => {
+    _clearTheInterval = () => {
         clearTimeout(_idInterval);
         _idInterval = null;
     };
 
-    start = () => {
-        var onBeforeStart = _options.events.onBeforeStart;
+    _start = () => {
+        let onBeforeStart = _options.events.onBeforeStart;
 
         if (_isPlaying && !_isPausing) {
             return;
@@ -85,23 +77,23 @@ function (
         onBeforeStart();
 
         if (_idInterval) {
-            stop();
+            _stop();
         }
 
         $(document.body).addClass(VIEW_MODE_CLASS);
-        getRandomPic();
+        _getRandomPic();
         _isPlaying = true;
         _isPausing = false;
     };
 
-    stop = () => {
-        var events = _options.events,
+    _stop = () => {
+        let events = _options.events,
             onBeforeStop = events.onBeforeStop,
             onStop = events.onStop;
 
         onBeforeStop();
 
-        clearTheInterval();
+        _clearTheInterval();
 
         $(document.body).removeClass(VIEW_MODE_CLASS);
         _isPlaying = false;
@@ -110,8 +102,8 @@ function (
         onStop();
     };
 
-    pause = () => {
-        var events = _options.events,
+    _pause = () => {
+        let events = _options.events,
             onBeforePause = events.onBeforePause,
             onBeforeResume = events.onBeforeResume,
             onPause = events.onPause,
@@ -120,82 +112,40 @@ function (
         if (_idInterval) {
             onBeforePause();
 
-            clearTheInterval();
+            _clearTheInterval();
             _isPausing = true;
 
             onPause();
         } else {
             onBeforeResume();
 
-            start();
+            _start();
             _isPausing = false;
 
             onResume();
         }
     };
 
-    getRandomPic = () => {
-        var xhr, displayErrorNotify,
-            events = _options.events,
+    _getRandomPic = () => {
+        let events = _options.events,
             onBeforeGetRandom = events.onBeforeGetRandom,
             onGetRandom = events.onGetRandom;
 
-        displayErrorNotify = (message, type) => {
-            if (!_errorNotify) {
-                _errorNotify = new Notify({
-                    className: 'getRandomPicAction_notify',
-                    container: $(document.body),
-                    autoHide: true,
-                    duration: 3
-                });
-            }
-
-            _errorNotify.setMessage(message, type, true);
-        };
-
-        clearTheInterval();
+        _clearTheInterval();
 
         onBeforeGetRandom();
 
-        xhr = $.ajax({
-            url: '/?r=getRandomPic_s',
-            type: 'POST',
-            dataType: 'json',
-            async: true,
-            data: {
-                customFolders: _getCustomFolders()
+        API.getRandomPic({
+            customFolders: _getCustomFolders(),
+            onSuccess: (Pic) => {
+                onGetRandom(Pic, _setTheInterval, _getRandomPic);
+            },
+            onFailure: (error) => {
+                _stop();
+                Utils.notify({
+                    message: error
+                });
             }
-        });
-
-        xhr.done(function (json) {
-            var error,
-                unknownErrorMessage = 'Unknown error.';
-
-            if (json.error || !json.success) {
-                error = json.error || {};
-
-                displayErrorNotify(
-                    error.publicMessage || unknownErrorMessage,
-                    error.severity || Notify.TYPE_ERROR
-                );
-
-                PM.log('Error : ' + error.message || unknownErrorMessage);
-                PM.log(error);
-
-                stop();
-                return;
-            }
-
-            onGetRandom(json, setTheInterval, getRandomPic);
-        });
-
-        xhr.fail(function (jqXHR, textStatus, errorThrown) {
-            var message = 'getRandomPicAction.getRandomPic()';
-
-            displayErrorNotify('Server error.', NOTIFY_TYPE_ERROR);
-
-            PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
-            stop();
         });
     };
 
@@ -214,37 +164,37 @@ function (
         /**
          *
          */
-        init: function (opts) {
+        init: (opts) => {
             $.extend(true, _options, _defaultOptions, opts || {});
         },
 
         /**
          *
          */
-        start: function (opts) {
+        start: (opts) => {
             if (_isDisabled) {
                 return;
             }
 
-            start(opts);
+            _start(opts);
         },
 
         /**
          *
          */
-        stop: function  () {
-            stop();
+        stop: () => {
+            _stop();
         },
 
         /**
          *
          */
-        pause: function () {
+        pause: () => {
             if (_isDisabled) {
                 return;
             }
 
-            pause();
+            _pause();
         },
 
         resume: () => {
@@ -252,48 +202,48 @@ function (
                 return;
             }
 
-            pause();
+            _pause();
         },
 
         /**
          *
          */
-        disable: function () {
+        disable: () => {
             _isDisabled = true;
         },
 
         /**
          *
          */
-        enable: function () {
+        enable: () => {
             _isDisabled = false;
         },
 
         /**
          *
          */
-        isDisabled: function () {
+        isDisabled: () => {
             return _isDisabled;
         },
 
         /**
          *
          */
-        isPlaying: function () {
+        isPlaying: () => {
             return _isPlaying;
         },
 
         /**
          *
          */
-        isPausing: function () {
+        isPausing: () => {
             return _isPausing && _isPlaying;
         },
 
         /**
          *
          */
-        isInside: function () {
+        isInside: () => {
             return !!_options.insideFolder;
         },
 
@@ -354,7 +304,7 @@ function (
         /**
          *
          */
-        setOptions: function (opts) {
+        setOptions: (opts) => {
             $.extend(true, _options, opts || {});
             _options.customFolders = opts.customFolders || [];
         }

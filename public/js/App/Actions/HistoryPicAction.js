@@ -9,37 +9,42 @@ define(
 function ($) {
     'use strict';
 
-    var _defaultOptions = {
-            events: {
-                onLast: () => {},
-                onFirst: () => {},
-                onMiddle: () => {}
-            }
-        },
+    let Action,
         _options = {},
         _navIndex = -1,
         _history = [];
 
-    var Action = {
+    Action = {
 
         /**
          *
          */
-        init: function (opts) {
-            $.extend(true, _options, _defaultOptions, opts || {});
-        }, // End function init()
+        init: (opts = {}) => {
+            $.extend(
+                true,
+                _options,
+                {
+                    events: {
+                        onLast: () => {},
+                        onFirst: () => {},
+                        onMiddle: () => {}
+                    }
+                },
+                opts
+            );
+        }, // End init()
 
         /**
          *
          */
-        setOptions: function (opts) {
+        setOptions: (opts) => {
             $.extend(true, _options, opts || {});
-        }, // End function setOptions()
+        }, // End setOptions()
 
         /**
          *
          */
-        add: function (pic) {
+        add: (pic) => {
             _history.push(pic);
             _navIndex = _history.length - 1;
         },
@@ -47,7 +52,7 @@ function ($) {
         /**
          *
          */
-        remove: function () {
+        remove: () => {
             _history.splice(_navIndex, 1);
             _navIndex--;
         },
@@ -55,15 +60,15 @@ function ($) {
         /**
          *
          */
-        getCurrent: function () {
+        getCurrent: () => {
             return _history[_navIndex];
         },
 
         /**
          *
          */
-        getPrevious: function () {
-            var events = _options.events,
+        getPrevious: () => {
+            let events = _options.events,
                 onMiddle = events.onMiddle,
                 onFirst = events.onFirst;
 
@@ -81,8 +86,8 @@ function ($) {
         /**
          *
          */
-        getNext: function () {
-            var events = _options.events,
+        getNext: () => {
+            let events = _options.events,
                 onMiddle = events.onMiddle,
                 onLast = events.onLast;
 
@@ -100,14 +105,14 @@ function ($) {
         /**
          *
          */
-        isFirst: function () {
+        isFirst: () => {
             return _navIndex <= 0;
         },
 
         /**
          *
          */
-        isLast: function () {
+        isLast: () => {
             return _navIndex >= (_history.length - 1);
         }
     };

@@ -6,25 +6,14 @@ define(
 [
     'jquery',
 
-    // PM
-    'PM/Core',
-    'PM/Cmp/Notify'
+    // App API
+    'App/API/API',
+    'App/Utils/Utils'
 ],
-function ($, PM, Notify) {
+function ($, API, Utils) {
     'use strict';
 
-    var NOTIFY_TYPE_ERROR = Notify.TYPE_ERROR,
-
-        _defaultOptions = {
-            root: null,
-            selectedFolderCtn: null,
-            events: {
-                onClose: null,
-                onNonSelected: null,
-                onSelect: null,
-                onUnselect: null
-            }
-        },
+    let View,
         _defaultModel = {
             level: 0,
             parent: null,
@@ -36,7 +25,6 @@ function ($, PM, Notify) {
         },
         _options = {},
         _els = {},
-        _notify = null,
         _isBuilt = false,
         _isOpen = false,
         _rootModel = $.extend(true, {}, _defaultModel),
@@ -44,11 +32,14 @@ function ($, PM, Notify) {
         _selectedItems = [],
         _selectedFolderCtn = null;
 
-    /**
-     *
-     */
-    function buildSkeleton () {
-        var mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn,
+
+    // Private functions.
+    let _buildSkeleton, _updateNbSelected, _fillFolderCtn, _onCheckItem,
+        _onUncheckItem, _getFolderList, _getBtnText, _setBtnText;
+
+
+    _buildSkeleton = () => {
+        let mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn,
             nbSelectedCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
@@ -72,7 +63,7 @@ function ($, PM, Notify) {
             type: 'button',
             value: 'Unselect All',
             on: {
-                click: function () {
+                click: () => {
                     View.unSelectAll();
                 }
             }
@@ -83,7 +74,7 @@ function ($, PM, Notify) {
             type: 'button',
             value: 'Close',
             on: {
-                click: function () {
+                click: () => {
                     View.close();
                 }
             }
@@ -105,14 +96,11 @@ function ($, PM, Notify) {
         _options.root.append(mainCtn);
         _isBuilt = true;
 
-        fillFolderCtn(_rootModel);
-    } // End function buildSkeleton()
+        _fillFolderCtn(_rootModel);
+    };
 
-    /**
-     *
-     */
-    function updateNbSelected () {
-        var onNonSelected,
+    _updateNbSelected = () => {
+        let onNonSelected,
             nbSelectedCtn = _els.nbSelectedCtn,
             btnUnSelectAll = _els.btnUnSelectAll,
             nbSelected = _selectedItems.length;
@@ -132,21 +120,22 @@ function ($, PM, Notify) {
         nbSelectedCtn.text('Selected: ' + nbSelected);
         nbSelectedCtn.show();
         btnUnSelectAll.button('enable');
-    } // End function updateNbSelected()
+    };
 
     /**
      *
      */
-    function fillFolderCtn (model) {
-        var modelChild = model.child,
+    _fillFolderCtn = (model) => {
+        let buildItem,
+            modelChild = model.child,
             modelChildCtn = model.childCtn,
             modelPath = model.path;
 
         /**
          * @private
          */
-        function buildItem (el) {
-            var item, expand, label, checkbox, newModel, childCtn,
+        buildItem = (el) => {
+            let item, expand, label, checkbox, newModel, childCtn,
                 btnSelectAllChild,
                 currentLevel = model.level + 1;
 
@@ -154,18 +143,16 @@ function ($, PM, Notify) {
                 'class': 'expand_btn btn small',
                 text: '+',
                 on: {
-                    click: function () {
-                        var btn = $(this);
+                    click: () => {
+                        _fillFolderCtn(newModel);
 
-                        fillFolderCtn(newModel);
-
-                        if (getBtnText(btn) === '+') {
-                            setBtnText(btn, '-');
-                            btn.addClass('minus');
+                        if (_getBtnText(expand) === '+') {
+                            _setBtnText(expand, '-');
+                            expand.addClass('minus');
                             btnSelectAllChild.show();
                         } else {
-                            setBtnText(btn, '+');
-                            btn.removeClass('minus');
+                            _setBtnText(expand, '+');
+                            expand.removeClass('minus');
                             btnSelectAllChild.hide();
                         }
                     }
@@ -177,11 +164,11 @@ function ($, PM, Notify) {
                 type: 'checkbox',
                 id: 'folder_' + el + '_' + currentLevel,
                 on: {
-                    change: function () {
-                        if ($(this).prop('checked')) {
-                            onCheckItem(newModel);
+                    change: () => {
+                        if (checkbox.prop('checked')) {
+                            _onCheckItem(newModel);
                         } else {
-                            onUncheckItem(newModel);
+                            _onUncheckItem(newModel);
                         }
                     }
                 }
@@ -198,24 +185,23 @@ function ($, PM, Notify) {
                 type: 'button',
                 value: 'Select all',
                 on: {
-                    click: function () {
-                        var btn = $(this),
-                            children = newModel.child || [];
+                    click: () => {
+                        let children = newModel.child || [];
 
                         if (!children.length) {
                             return;
                         }
 
-                        if (getBtnText(btn) === 'Select all') {
-                            children.forEach(function (child) {
-                                onCheckItem(child);
+                        if (_getBtnText(btnSelectAllChild) === 'Select all') {
+                            children.forEach ((child) =>{
+                                _onCheckItem(child);
                             });
-                            setBtnText(btn, 'Unselect all');
+                            _setBtnText(btnSelectAllChild, 'Unselect all');
                         } else {
-                            children.forEach(function (child) {
-                                onUncheckItem(child);
+                            children.forEach((child) => {
+                                _onUncheckItem(child);
                             });
-                            setBtnText(btn, 'Select all');
+                            _setBtnText(btnSelectAllChild, 'Select all');
                         }
                     }
                 }
@@ -226,10 +212,10 @@ function ($, PM, Notify) {
             item = $('<div>', {
                 'class': 'item',
                 on: {
-                    check: function () {
+                    check: () => {
                         checkbox.prop('checked', true);
                     },
-                    uncheck: function () {
+                    uncheck: () => {
                         checkbox.prop('checked', false);
                     }
                 }
@@ -258,11 +244,11 @@ function ($, PM, Notify) {
             };
 
             modelChild.push(newModel);
-        } // End function buildItem()
+        };
 
 
         // ==============================
-        // Start function fillFolderCtn()
+        // Start fillFolderCtn()
         // ==============================
 
         if (modelChild && modelChild.length) {
@@ -270,8 +256,8 @@ function ($, PM, Notify) {
             return;
         }
 
-        getFolderList(modelPath, function (folderList) {
-            var modelCtn = model.ctn;
+        _getFolderList(modelPath, (folderList) => {
+            let modelCtn = model.ctn;
 
             if (!folderList.length) {
                 modelCtn.addClass('empty');
@@ -282,13 +268,13 @@ function ($, PM, Notify) {
 
             folderList.forEach(buildItem);
         });
-    } // End function fillFolderCtn()
+    };
 
     /**
      *
      */
-    function onCheckItem (model) {
-        var item,
+    _onCheckItem = (model) => {
+        let item,
             onSelect = _options.events.onSelect;
 
         _selectedItems.push(model);
@@ -303,8 +289,8 @@ function ($, PM, Notify) {
                 'class': 'thumb btn',
                 text: model.path,
                 on: {
-                    click: function () {
-                        onUncheckItem(model);
+                    click: () => {
+                        _onUncheckItem(model);
                     }
                 }
             }).button();
@@ -312,19 +298,19 @@ function ($, PM, Notify) {
             _selectedFolderCtn.append(item);
         }
 
-        updateNbSelected();
+        _updateNbSelected();
 
         if ($.isFunction(onSelect)) {
             onSelect();
         }
-    }
+    };
 
     /**
      *
      */
-    function onUncheckItem (model) {
-        var index = $.inArray(model.path, _selectedPaths),
-            onUnselect = _options.events.onUnselect;
+    _onUncheckItem = (model) => {
+        let index = $.inArray(model.path, _selectedPaths),
+            onUnselect = _options.events.onUnselect || (() => {});
 
         _selectedItems.splice(index, 1);
         _selectedPaths.splice(index, 1);
@@ -335,103 +321,62 @@ function ($, PM, Notify) {
             model.thumb.hide();
         }
 
-        updateNbSelected();
-
-        if ($.isFunction(onUnselect)) {
-            onUnselect();
-        }
-    }
+        _updateNbSelected();
+        onUnselect();
+    };
 
     /**
      *
      */
-    function getFolderList (folder, callback) {
-        var xhr;
-
-        /**
-         * @private
-         */
-        function displayNotify (message, type) {
-            if (!_notify) {
-                _notify = new Notify({
-                    className: 'fillFolderCtn_notify',
-                    container: $(document.body),
-                    autoHide: true,
-                    duration: 3
+    _getFolderList = (folder, callback) => {
+        API.getFolderList({
+            folder: folder,
+            onSuccess: (folders) => {
+                callback(folders);
+            },
+            onFailure: (error) => {
+                Utils.notify({
+                    message: error
                 });
             }
-
-            _notify.setMessage(message, type, true);
-        } // End function displayNotify()
-
-
-        // ==============================
-        // Start function getFolderList()
-        // ==============================
-
-        xhr = $.ajax({
-            url: '/?r=getFolderList_s',
-            type: 'POST',
-            dataType: 'json',
-            async: true,
-            data: {
-                folder: folder || ''
-            }
         });
-
-        xhr.done(function (json) {
-            var error,
-                unknownErrorMessage = 'Unknown error.';
-
-            if (json.error || !json.success) {
-                error = json.error || {};
-
-                displayNotify(
-                    error.publicMessage || unknownErrorMessage,
-                    error.severity || Notify.TYPE_ERROR
-                );
-
-                PM.log('Error : ' + error.message || unknownErrorMessage);
-                PM.log(error);
-
-                return;
-            }
-
-            if ($.isFunction(callback)) {
-                callback(json.folderList);
-            }
-        });
-
-        xhr.fail(function (jqXHR, textStatus, errorThrown) {
-            var message = 'getRandomPicAction.getRandomPic()';
-
-            displayNotify('Server error.', NOTIFY_TYPE_ERROR);
-
-            PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
-        });
-    } // End function getFolderList()
+    };
 
     /**
      *
      */
-    function getBtnText (btn) {
+    _getBtnText = (btn) => {
         return btn.button('option', 'label');
-    } // End function getBtnText()
+    };
 
     /**
      *
      */
-    function setBtnText (btn, text) {
+    _setBtnText = (btn, text) => {
         btn.button('option', 'label', text);
-    } // End function setBtnText()
+    };
 
 
-    var View = {
+    View = {
         /**
          *
          */
-        init: function (opts) {
-            $.extend(true, _options, _defaultOptions, opts || {});
+        init: (opts) => {
+            $.extend(
+                true,
+                _options,
+                {
+                    root: null,
+                    selectedFolderCtn: null,
+                    events: {
+                        onClose: null,
+                        onNonSelected: null,
+                        onSelect: null,
+                        onUnselect: null
+                    }
+                },
+                opts || {}
+            );
 
             if (!_options.root) {
                 _options.root = $(document.body);
@@ -440,25 +385,25 @@ function ($, PM, Notify) {
             if (_options.selectedFolderCtn) {
                 _selectedFolderCtn = _options.selectedFolderCtn;
             }
-        }, // End function init()
+        }, // End init()
 
         /**
          *
          */
-        open: function () {
+        open: () => {
             if (!_isBuilt) {
-                buildSkeleton();
+                _buildSkeleton();
             }
 
             _els.mainCtn.show();
             _isOpen = true;
-        }, // End function show()
+        }, // End show()
 
         /**
          *
          */
-        close: function () {
-            var onClose = _options.events.onClose;
+        close: () => {
+            let onClose = _options.events.onClose;
 
             if (!_isBuilt) {
                 return;
@@ -470,41 +415,41 @@ function ($, PM, Notify) {
             if ($.isFunction(onClose)) {
                 onClose();
             }
-        }, // End function close()
+        }, // End close()
 
         /**
          *
          */
-        unSelectAll: function () {
-            var i;
+        unSelectAll: () => {
+            let i;
 
             for (i = _selectedItems.length - 1; i >= 0; i--) {
-                onUncheckItem(_selectedItems[i]);
+                _onUncheckItem(_selectedItems[i]);
             }
-        },// End function unSelectAll()
+        },// End unSelectAll()
 
         /**
          *
          */
-        getSelectedPath: function () {
+        getSelectedPath: () => {
             return _selectedPaths;
-        }, // End function getSelectedPath()
+        }, // End getSelectedPath()
 
         /**
          *
          */
-        isOpen: function () {
+        isOpen: () => {
             return _isOpen;
-        }, // End function isOpen()
+        }, // End isOpen()
 
         /**
          *
          */
-        clear: function () {
-            var onNonSelected = _options.events.onNonSelected;
+        clear: () => {
+            let onNonSelected = _options.events.onNonSelected;
 
             if (_isBuilt) {
-                this.close();
+                View.close();
 
                 _els.mainCtn.remove();
                 _rootModel = $.extend(true, {}, _defaultModel);
@@ -520,7 +465,7 @@ function ($, PM, Notify) {
             if ($.isFunction(onNonSelected)) {
                 onNonSelected();
             }
-        } // End function clear()
+        } // End clear()
     };
 
     return View;

@@ -145,7 +145,7 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
         <!-- JS //-->
         <script type="text/javascript">
         var curl = {
-            baseUrl: "/js",
+            baseUrl: '/js',
             paths: {
                 'jquery': '<?php echo $_jQueryPath ?>',
                 'jquery-ui': '<?php echo $_jQueryUIPath; ?>',

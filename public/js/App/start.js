@@ -15,13 +15,15 @@ curl(
 function ($, PM, MainView) {
     'use strict';
 
-    function initView () {
+    let _initView;
+
+    _initView = () => {
         MainView.init({
             root: $(document.body)
         });
-    }
+    };
 
     PM.setDebug(true);
 
-    initView();
+    _initView();
 });

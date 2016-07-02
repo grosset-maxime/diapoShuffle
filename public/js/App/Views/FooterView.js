@@ -9,19 +9,18 @@ define(
 function ($) {
     'use strict';
 
-    var defaultOptions = {
-            root: null
-        },
-        options = {},
-        els = {};
+    let View,
+        _options = {},
+        _els = {};
 
-    /**
-     *
-     */
-    function buildSkeleton () {
-        var mainCtn;
+    // Private functions.
+    let _buildSkeleton;
 
-        mainCtn = els.mainCtn = $('<div>', {
+
+    _buildSkeleton = () => {
+        let mainCtn;
+
+        mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_footer_view',
             html: $('<div>', {
                 'class': 'app_title',
@@ -32,36 +31,43 @@ function ($) {
         // mainCtn.append(
         // );
 
-        options.root.append(mainCtn);
-    } // End function buildSkeleton()
+        _options.root.append(mainCtn);
+    };
 
-    var View = {
+    View = {
         /**
          *
          */
-        init: function (opts) {
-            $.extend(true, options, defaultOptions, opts || {});
+        init: (opts) => {
+            $.extend(
+                true,
+                _options,
+                {
+                    root: null
+                },
+                opts || {}
+            );
 
-            if (!options.root) {
-                options.root = $(document.body);
+            if (!_options.root) {
+                _options.root = $(document.body);
             }
 
-            buildSkeleton();
-        }, // End function init()
+            _buildSkeleton();
+        },
 
         /**
          *
          */
-        show: function () {
-            els.mainCtn.show();
-        }, // End function show()
+        show: () => {
+            _els.mainCtn.show();
+        },
 
         /**
          *
          */
-        hide: function () {
-            els.mainCtn.hide();
-        } // End function hide()
+        hide: () => {
+            _els.mainCtn.hide();
+        }
     };
 
     return View;

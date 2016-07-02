@@ -6,11 +6,9 @@ define(
 [
     'jquery',
 
-    // PM
-    'PM/Cmp/Notify',
-
     // App API
     'App/API/API',
+    'App/Utils/Utils',
 
     // App Views
     'App/Views/OptionsView',
@@ -31,11 +29,9 @@ define(
 function (
     $,
 
-    // PM
-    Notify,
-
     // App API
     API,
+    Utils,
 
     // App Views
     OptionsView,
@@ -57,20 +53,16 @@ function (
         BTN_INSIDE = 'In',
         BTN_OUTSIDE = 'Out';
 
-    var View,
-        _defaultOptions = {
-            root: null
-        },
+    let View,
         _options = {},
         _els = {},
         _viewDimension = {
             width: 0,
             height: 0
-        },
-        _notifyEl;
+        };
 
     // Private functions.
-    var _buildSkeleton, _getViewDimension, _scalePic, _notify,
+    let _buildSkeleton, _getViewDimension, _scalePic,
         _zoomPic, _displayPrevious, _displayNext, _setPic;
 
 
@@ -189,7 +181,7 @@ function (
     }; // End function _buildSkeleton()
 
     _getViewDimension = () => {
-        var doc = $(document);
+        let doc = $(document);
 
         _viewDimension.width = doc.width();
         _viewDimension.height = doc.height();
@@ -200,7 +192,7 @@ function (
      * @param {Element} picEl -
      */
     _scalePic = (picInfos, picEl) => {
-        var cssObj, dw, dh,
+        let cssObj, dw, dh,
             widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             widthView = _viewDimension.width,
@@ -227,7 +219,7 @@ function (
      * @param {Element} picEl -
      */
     _zoomPic = (picInfos, picEl) => {
-        var widthPic = picInfos.width || 0,
+        let widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             zoom = OptionsView.getZoom(),
             newWidth = widthPic * zoom,
@@ -296,32 +288,6 @@ function (
         _els.playCtn.html(img);
     }; // End function _setPic()
 
-    _notify = (options = {}) => {
-        let opts;
-
-        $.extend(
-            true,
-            opts,
-            {
-                message: '',
-                type: Notify.TYPE_ERROR,
-                autoHide: true,
-                duration: 3
-            },
-            options || {}
-        );
-
-        if (!_notifyEl) {
-            _notifyEl = new Notify({
-                className: 'ds_play_view-notify',
-                container: $(document.body),
-                autoHide: opts.autoHide,
-                duration: opts.duration
-            });
-        }
-
-        _notify.setMessage(opts.message, opts.type, true);
-    };
 
     View = {
 
@@ -339,7 +305,14 @@ function (
          * @param {Object} opts -
          */
         init: (opts) => {
-            $.extend(true, _options, _defaultOptions, opts || {});
+            $.extend(
+                true,
+                _options,
+                {
+                    root: null
+                },
+                opts || {}
+            );
 
             if (!_options.root) {
                 _options.root = $(document.body);
@@ -374,7 +347,7 @@ function (
                                 _options.mainView.onDelete();
                             },
                             onFailure: (error) => {
-                                _notify({
+                                Utils.notify({
                                     message: error
                                 });
                             }

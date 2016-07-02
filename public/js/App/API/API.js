@@ -4,9 +4,15 @@
 
 define(
 [
-    'jquery'
+    'jquery',
+
+    // PM
+    'PM/Core',
+
+   // App Class
+   'App/Class/Pic'
 ],
-function ($) {
+function ($, PM, PicClass) {
     'use strict';
 
     let API;
@@ -34,26 +40,27 @@ function ($) {
                 }
             });
 
-            xhr.done(function (json) {
-                var error,
+            xhr.done((json) => {
+                let error,
                     unknownErrorMessage = 'Unknown error.';
 
                 if (json.error || !json.success) {
                     error = json.error || {};
 
                     onFailure(error.publicMessage || unknownErrorMessage);
-                    return;
-                }
 
-                onSuccess(json.folderList);
+                    PM.log(error.message || 'Undefined error.');
+                } else {
+                    onSuccess(json.folderList);
+                }
             });
 
-            xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                // var message = 'getRandomPicAction.getRandomPic()';
+            xhr.fail((jqXHR, textStatus, errorThrown) => {
+                let message = 'API.getFolderList()';
 
                 onFailure('Server error.');
 
-                // PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
             });
         },
 
@@ -64,7 +71,7 @@ function ($) {
          * @param {Function} [onFailure] - Failure callback.
          */
         deletePic: (options = {}) => {
-            var xhr,
+            let xhr,
                 Pic = options.Pic || {},
                 onSuccess = options.onSuccess || (() => {}),
                 onFailure = options.onFailure || (() => {});
@@ -83,8 +90,8 @@ function ($) {
                 }
             });
 
-            xhr.done(function (json) {
-                var error, errorMessage;
+            xhr.done((json) => {
+                let error, errorMessage;
 
                 if (json.error || !json.success) {
                     error = json.error || {};
@@ -92,18 +99,105 @@ function ($) {
                     errorMessage = 'Error: ' + error.message || 'Unknown error.';
 
                     onFailure(errorMessage);
-                    return;
-                }
 
-                onSuccess();
+                    PM.log(error.message || 'Undefined error.');
+                } else {
+                    onSuccess();
+                }
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                // var message = 'deletePicAction._deletePic()';
+                let message = 'API.deletePic()';
 
                 onFailure('Server error.');
 
-                // PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+            });
+        },
+
+        /**
+         * @param {Object} options - Options.
+         * @param {Array}  [customFolders=[]] - Custom folders list.
+         * @param {Function} [onSuccess] - Success callback, returns {Pic} - Random Pic info.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        getRandomPic: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            xhr = $.ajax({
+                url: '/?r=getRandomPic_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    customFolders: options.customFolders
+                }
+            });
+
+            xhr.done((json) => {
+                let error,
+                    unknownErrorMessage = 'Unknown error.';
+
+                if (json.error || !json.success) {
+                    error = json.error || {};
+
+                    onFailure(error.publicMessage || unknownErrorMessage);
+
+                    PM.log(error.message || 'Undefined error.');
+                } else {
+                    onSuccess(new PicClass(json.pic));
+                }
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                let message = 'API.getRandomPic()';
+
+                onFailure('Server error.');
+
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+            });
+        },
+
+        /**
+         * @param {Object} options - Options.
+         * @param {Function} [onSuccess] - Success callback.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        clearCache: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {}),
+                errorMessage = 'Server error while trying to clear cache.';
+
+            xhr = $.ajax({
+                url: '/?r=clearCache_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true
+            });
+
+            xhr.done((json) => {
+                let error;
+
+                if (json.success) {
+                    onSuccess();
+                } else {
+                    error = json.error || {};
+
+                    onFailure(errorMessage + ' ' + (error.publicMessage || ''));
+
+                    PM.log(error.message || 'Undefined error.');
+                }
+            });
+
+            xhr.fail((jqXHR, textStatus, errorThrown) => {
+                let message = 'API.clearCache()';
+
+                onFailure(errorMessage);
+
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
             });
         }
     };

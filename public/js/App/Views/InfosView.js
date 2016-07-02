@@ -12,47 +12,54 @@ define(
 function ($, OptionsView) {
     'use strict';
 
-    var defaultOptions = {
-            root: null
-        },
-        options = {},
-        els = {};
+    let View,
+        _options = {},
+        _els = {};
 
-    /**
-     *
-     */
-    function buildSkeleton () {
-        var mainCtn;
 
-        mainCtn = els.mainCtn = $('<div>', {
+    // Private functions.
+    let _buildSkeleton;
+
+
+    _buildSkeleton = () => {
+        let mainCtn;
+
+        mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_infos_view'
         });
 
         // mainCtn.append(
         // );
 
-        options.root.append(mainCtn);
-    } // End function buildSkeleton()
+        _options.root.append(mainCtn);
+    };
 
-    var View = {
+    View = {
         /**
          *
          */
-        init: function (opts) {
-            $.extend(true, options, defaultOptions, opts || {});
+        init: (opts) => {
+            $.extend(
+                true,
+                _options,
+                {
+                    root: null
+                },
+                opts || {}
+            );
 
-            if (!options.root) {
-                options.root = $(document.body);
+            if (!_options.root) {
+                _options.root = $(document.body);
             }
 
-            buildSkeleton();
-        }, // End function init()
+            _buildSkeleton();
+        },
 
         /**
          *
          */
-        setPicFolderPath: function (customFolderPath, randomPublicPath) {
-            var customFolderPathCtn, randomPublicPathCtn;
+        setPicFolderPath: (customFolderPath, randomPublicPath) => {
+            let customFolderPathCtn, randomPublicPathCtn;
 
             customFolderPathCtn = $('<span>', {
                 'class': 'custom_folder_path',
@@ -64,31 +71,25 @@ function ($, OptionsView) {
                 html: randomPublicPath
             });
 
-            els.mainCtn.html(
+            _els.mainCtn.html(
                 $('<div>').append(customFolderPathCtn, randomPublicPathCtn)
             );
 
             View.show();
-        }, // End function setPicPath()
+        },
 
-        /**
-         *
-         */
-        show: function () {
+        show: () => {
             if (!OptionsView.isPublicPathOn()) {
                 View.hide();
                 return;
             }
 
-            els.mainCtn.show();
-        }, // End function show()
+            _els.mainCtn.show();
+        },
 
-        /**
-         *
-         */
-        hide: function () {
-            els.mainCtn.hide();
-        } // End function hide()
+        hide: () => {
+            _els.mainCtn.hide();
+        }
     };
 
     return View;

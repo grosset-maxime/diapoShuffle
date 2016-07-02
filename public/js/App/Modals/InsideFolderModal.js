@@ -67,7 +67,7 @@ function (
         /**
          *
          */
-        ask: (options) => {
+        ask: (options = {}) => {
             let modal, modalOptions, Pic,
                 opts = {};
 
@@ -84,7 +84,7 @@ function (
                     onInside: () => {},
                     onOutside: () => {}
                 },
-                options || {}
+                options
             );
 
             Pic = options.Pic;

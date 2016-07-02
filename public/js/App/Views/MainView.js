@@ -15,10 +15,7 @@ define(
 
     // App Actions
     'App/Actions/GetRandomPicAction',
-    'App/Actions/HistoryPicAction',
-
-    // App Class
-    'App/Class/Pic'
+    'App/Actions/HistoryPicAction'
 ],
 function (
     $,
@@ -30,47 +27,43 @@ function (
     PlayView,
 
     GetRandomPicAction,
-    HistoryPicAction,
-
-    // App Class
-    PicClass
+    HistoryPicAction
 ) {
     'use strict';
 
-    /**
-     *
-     */
-    var defaultOptions = {
-            root: null
-        },
-        options = {},
-        els = {};
 
-    /**
-     *
-     */
-    function buildSkeleton () {
-        var mainCtn, loadingCtn, pauseIconCtn;
+    let View,
+        _options = {},
+        _els = {};
 
-        mainCtn = els.mainCtn = $('<div>', {
+    // Private functions.
+    let _buildSkeleton, _attachEvents, _attachKeyboardShorcuts,
+        _showLoading, _hideLoading, _onBeforeStart, _onStop, _onPause,
+        _onResume, _onBeforeGetRandom, _onGetRandom;
+
+
+    _buildSkeleton = () => {
+        let mainCtn, loadingCtn, pauseIconCtn;
+
+        mainCtn = _els.mainCtn = $('<div>', {
             'class': 'diapo_shuffle flex'
         });
 
-        els.headerCtn = $('<div>', {
+        _els.headerCtn = $('<div>', {
             'class': 'ds_header_ctn flex'
         }).appendTo(mainCtn);
 
-        els.middleCtn = $('<div>', {
+        _els.middleCtn = $('<div>', {
             'class': 'ds_middle_ctn flex'
         }).appendTo(mainCtn);
 
-        els.footerCtn = $('<div>', {
+        _els.footerCtn = $('<div>', {
             'class': 'ds_footer_ctn flex'
         }).appendTo(mainCtn);
 
         // Loading
         // -------
-        loadingCtn = els.loadingCtn = $('<div>', {
+        loadingCtn = _els.loadingCtn = $('<div>', {
             'class': 'ctn_loading'
         }).append(
             $('<span>', {
@@ -86,7 +79,7 @@ function (
 
         // Pause icon
         // ----------
-        pauseIconCtn = els.pauseIconCtn = $('<div>', {
+        pauseIconCtn = _els.pauseIconCtn = $('<div>', {
             'class': 'ctn_icon_pause'
         }).append(
             $('<span>', {
@@ -102,34 +95,26 @@ function (
             pauseIconCtn
         );
 
-        options.root.append(mainCtn);
-    } // End function buildSkeleton()
+        _options.root.append(mainCtn);
+    };
 
-    /**
-     *
-     */
-    function attachEvents () {
-        var resizeTimeout;
+    _attachEvents = () => {
+        let resizeTimeout;
 
-        attachKeyboardShorcuts();
+        _attachKeyboardShorcuts();
 
-        $(window).resize(function () {
-            if (resizeTimeout) {
-                clearTimeout(resizeTimeout);
-            }
+        $(window).resize(() => {
+            clearTimeout(resizeTimeout);
 
-            resizeTimeout = setTimeout(function () {
+            resizeTimeout = setTimeout(() => {
                 PlayView.getViewDimension(true);
             }, 500);
         });
-    }
+    };
 
-    /**
-     *
-     */
-    function attachKeyboardShorcuts () {
-        $(document).on('keydown', function (e) {
-            var keyPressed = e.which,
+    _attachKeyboardShorcuts = () => {
+        $(document).on('keydown', (e) => {
+            let keyPressed = e.which,
                 doPreventDefault = false;
 
             // console.log(keyPressed);
@@ -214,26 +199,17 @@ function (
                 e.preventDefault();
             }
         });
-    } // End function attachKeyboardShorcuts()
+    };
 
-    /**
-     *
-     */
-    function showLoading () {
-        els.loadingCtn.show();
-    } // End function showLoading()
+    _showLoading = () => {
+        _els.loadingCtn.show();
+    };
 
-    /**
-     *
-     */
-    function hideLoading () {
-        els.loadingCtn.hide();
-    } // End function hideLoading()
+    _hideLoading = () => {
+        _els.loadingCtn.hide();
+    };
 
-    /**
-     *
-     */
-    function onBeforeStart () {
+    _onBeforeStart = () => {
         InfosView.hide();
 
         GetRandomPicAction.setOptions({
@@ -242,90 +218,75 @@ function (
         });
 
         PlayView.toggleStatePauseBtn(PlayView.BTN_PAUSE);
-        els.pauseIconCtn.hide();
-    } // End function onBeforeStart()
+        _els.pauseIconCtn.hide();
+    };
 
-    /**
-     *
-     */
-    function onStop () {
+    _onStop = () => {
         PlayView.hide();
         InfosView.hide();
 
-        els.pauseIconCtn.hide();
-        els.loadingCtn.hide();
+        _els.pauseIconCtn.hide();
+        _els.loadingCtn.hide();
 
         PlayView.toggleStatePauseBtn(PlayView.BTN_RESUME);
-    } // End function onBeforeStop(),
+    };
 
-    /**
-     *
-     */
-    function onPause () {
+    _onPause = () => {
         PlayView.toggleStatePauseBtn();
-        els.pauseIconCtn.show();
-    } // End function onBeforePause()
+        _els.pauseIconCtn.show();
+    };
 
-    /**
-     *
-     */
-    function onResume () {
+    _onResume = () => {
         PlayView.toggleStatePauseBtn();
 
-        els.pauseIconCtn.hide();
-    } // End function onBeforeResume()
+        _els.pauseIconCtn.hide();
+    };
 
-    /**
-     *
-     */
-    function onBeforeGetRandom () {
-        showLoading();
-    } // End function onBeforeGetRandom()
+    _onBeforeGetRandom = () => {
+        _showLoading();
+    };
 
-    /**
-     *
-     */
-    var onGetRandom = (json, onSuccess, onFailure) => {
-        let Pic;
+    _onGetRandom = (Pic, onSuccess, onFailure) => {
+        _hideLoading();
 
-        hideLoading();
-
-        if (json.success) {
-            Pic = new PicClass(json.pic);
-
+        if (Pic) {
             PlayView.setPic(Pic, onSuccess, onFailure);
-
             HistoryPicAction.add(Pic);
         }
-    }; // End function onGetRandom()
+    };
 
 
-    var View = {
-        /**
-         *
-         */
-        init: function (opts) {
-            var mainCtn;
+    View = {
 
-            $.extend(true, options, defaultOptions, opts || {});
+        init: (opts) => {
+            let mainCtn;
 
-            if (!options.root) {
-                options.root = $(document.body);
+            $.extend(
+                true,
+                _options,
+                {
+                    root: null
+                },
+                opts || {}
+            );
+
+            if (!_options.root) {
+                _options.root = $(document.body);
             }
 
-            buildSkeleton();
-            mainCtn = els.mainCtn;
+            _buildSkeleton();
+            mainCtn = _els.mainCtn;
 
             HeaderView.init({
-                root: els.headerCtn
+                root: _els.headerCtn
             });
 
             FooterView.init({
-                root: els.footerCtn
+                root: _els.footerCtn
             });
 
             OptionsView.init({
-                root: els.middleCtn
+                root: _els.middleCtn
             });
 
             InfosView.init({
@@ -339,42 +300,42 @@ function (
 
             GetRandomPicAction.init({
                 events: {
-                    onBeforeStart: onBeforeStart,
-                    onStop: onStop,
-                    onPause: onPause,
-                    onResume: onResume,
-                    onBeforeGetRandom: onBeforeGetRandom,
-                    onGetRandom: onGetRandom
+                    onBeforeStart: _onBeforeStart,
+                    onStop: _onStop,
+                    onPause: _onPause,
+                    onResume: _onResume,
+                    onBeforeGetRandom: _onBeforeGetRandom,
+                    onGetRandom: _onGetRandom
                 }
             });
 
             HistoryPicAction.init({
                 events: {
-                    onFirst: function () {
+                    onFirst: () => {
                         PlayView.disablePreviousBtn();
                         PlayView.enableNextBtn();
                     },
-                    onLast: function () {
+                    onLast: () => {
                         PlayView.disableNextBtn();
                         PlayView.enablePreviousBtn();
                     },
-                    onMiddle: function () {
+                    onMiddle: () => {
                         PlayView.enablePreviousBtn();
                         PlayView.enableNextBtn();
                     }
                 }
             });
 
-            attachEvents();
+            _attachEvents();
         },
 
         onBeforeDelete: () => {
-            els.pauseIconCtn.hide();
-            showLoading();
+            _els.pauseIconCtn.hide();
+            _showLoading();
         },
 
         onDelete: () => {
-            hideLoading();
+            _hideLoading();
         }
     };
 

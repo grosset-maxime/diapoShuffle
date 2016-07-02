@@ -62,7 +62,7 @@ function (
         /**
          *
          */
-        ask: (options) => {
+        ask: (options = {}) => {
             let modal, modalOptions, Pic,
                 opts = {};
 
@@ -76,7 +76,7 @@ function (
                     onClose: () => {},
                     onAdd: () => {}
                 },
-                options || {}
+                options
             );
 
             Pic = options.Pic;

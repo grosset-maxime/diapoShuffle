@@ -17,7 +17,7 @@ function ($) {
         /**
          *
          */
-        ask: function (options) {
+        ask: (options = {}) => {
             let modal, modalOptions,
                 opts = {};
 
@@ -30,7 +30,7 @@ function ($) {
                     onClose: () => {},
                     onDelete: () => {}
                 },
-                options || {}
+                options
             );
 
             modalOptions = {
