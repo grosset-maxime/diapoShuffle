@@ -158,8 +158,13 @@ function (
                     }
                     break;
                 case 39: // right arrow.
-                    if (GetRandomPicAction.isPausing() && !HistoryPicAction.isLast()) {
+                    let isPausing = GetRandomPicAction.isPausing();
+
+                    if (isPausing && !HistoryPicAction.isLast()) {
                         PlayView.displayNext();
+                    } else if (!isPausing) {
+                        GetRandomPicAction.pause();
+                        GetRandomPicAction.start();
                     }
                     break;
                 }
