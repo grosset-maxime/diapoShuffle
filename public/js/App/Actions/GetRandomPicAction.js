@@ -39,7 +39,8 @@ function (
                 onStop: () => {},
                 onBeforeGetRandom: () => {},
                 onGetRandom: () => {},
-                onResetInsideFolder: () => {}
+                onResetInsideFolder: () => {},
+                onAddCustomFolder: () => {}
             }
         },
         _options = {},
@@ -276,17 +277,25 @@ function (
                 API.getFolderList({
                     folder: '/',
                     onSuccess: (folders) => {
-                        let i,
+                        let i, folder,
                             nbFolders = folders.length;
 
                         for (i = 0; i < nbFolders; i++) {
-                            customFolders.push('/' + folders[i] + '/');
+                            folder = '/' + folders[i] + '/';
+
+                            folders[i] = customFolders.indexOf(folder) < 0 ? folder : '';
                         }
+
+                        folders = folders.filter(function (folder) {
+                            return folder;
+                        });
+
+                        _options.events.onAddCustomFolder(folders);
                     }
                 });
             }
 
-            customFolders.push(customFolder);
+            _options.events.onAddCustomFolder(customFolder);
         },
 
         /**

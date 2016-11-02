@@ -306,7 +306,8 @@ function (
                     onResume: _onResume,
                     onBeforeGetRandom: _onBeforeGetRandom,
                     onGetRandom: _onGetRandom,
-                    onResetInsideFolder: OptionsView.resetInsideFolder
+                    onResetInsideFolder: OptionsView.resetInsideFolder,
+                    onAddCustomFolder: OptionsView.addCustomFolder
                 }
             });
 
