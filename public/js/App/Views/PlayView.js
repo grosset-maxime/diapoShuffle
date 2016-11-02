@@ -13,6 +13,7 @@ define(
     // App Views
     'App/Views/OptionsView',
     'App/Views/InfosView',
+    'App/Views/FolderFinderView',
 
     // App Actions
     'App/Actions/GetRandomPicAction',
@@ -36,6 +37,7 @@ function (
     // App Views
     OptionsView,
     InfosView,
+    FolderFinderView,
 
     // App Actions
     GetRandomPicAction,
@@ -401,6 +403,7 @@ function (
                         GetRandomPicAction.disable();
                     },
                     onAdd: (addPath) => {
+                        FolderFinderView.clearUI();
                         GetRandomPicAction.addCustomFolder(addPath);
                         GetRandomPicAction.enable();
                         GetRandomPicAction.resume();

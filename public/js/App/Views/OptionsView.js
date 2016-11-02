@@ -433,6 +433,10 @@ function (
             _els.customFolderCtn.css(css);
         },
 
+        addCustomFolder: (folder) => {
+            FolderFinderView.addFolders(folder);
+        },
+
         isScaleOn: () => !!_els.inputScale[0].checked,
 
         isPublicPathOn: () => !!_els.inputPathPic[0].checked,

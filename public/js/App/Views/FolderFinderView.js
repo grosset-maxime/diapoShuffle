@@ -97,11 +97,16 @@ function ($, API, Utils) {
         _isBuilt = true;
 
         _fillFolderCtn(_rootModel);
+
+        _updateNbSelected();
     };
 
     _updateNbSelected = () => {
-        let onNonSelected,
-            nbSelectedCtn = _els.nbSelectedCtn,
+        if (!_isBuilt) {
+            return;
+        }
+
+        let nbSelectedCtn = _els.nbSelectedCtn,
             btnUnSelectAll = _els.btnUnSelectAll,
             nbSelected = _selectedItems.length;
 
@@ -109,10 +114,7 @@ function ($, API, Utils) {
             nbSelectedCtn.hide();
             btnUnSelectAll.button('disable');
 
-            onNonSelected = _options.events.onNonSelected;
-            if ($.isFunction(onNonSelected)) {
-                onNonSelected();
-            }
+            _options.events.onNonSelected();
 
             return;
         }
@@ -137,7 +139,10 @@ function ($, API, Utils) {
         buildItem = (el) => {
             let item, expand, label, checkbox, newModel, childCtn,
                 btnSelectAllChild,
-                currentLevel = model.level + 1;
+                currentLevel = model.level + 1,
+                completePathTemp = (modelPath ? '/' : '') + modelPath + '/' + el + '/',
+                completePath = completePathTemp.replace(new RegExp('//', 'g'), '/'),
+                isSelected = _selectedPaths.indexOf(completePath) >= 0;
 
             expand = $('<div>', {
                 'class': 'expand_btn btn small',
@@ -163,6 +168,7 @@ function ($, API, Utils) {
                 'class': 'checkbox',
                 type: 'checkbox',
                 id: 'folder_' + el + '_' + currentLevel,
+                checked: isSelected,
                 on: {
                     change: () => {
                         if (checkbox.prop('checked')) {
@@ -240,10 +246,25 @@ function ($, API, Utils) {
                 child: [],
                 childCtn: childCtn,
                 ctn: item,
-                path: modelPath ? modelPath + '/' + el : el
+                path: completePath
             };
 
             modelChild.push(newModel);
+
+            if (isSelected) {
+                let i, selectedItem, thumb;
+
+                for (i = _selectedItems.length - 1; i >= 0; i--) {
+                    selectedItem = _selectedItems[i];
+
+                    if (selectedItem.path === completePath) {
+                        thumb = selectedItem.thumb;
+                        newModel.thumb = thumb;
+                        _selectedItems[i] = newModel;
+                        break;
+                    }
+                }
+            }
         };
 
 
@@ -275,16 +296,17 @@ function ($, API, Utils) {
      */
     _onCheckItem = (model) => {
         let item,
-            onSelect = _options.events.onSelect;
+            onSelect = _options.events.onSelect,
+            thumb = model.thumb,
+            modelCtn = model.ctn;
 
         _selectedItems.push(model);
         _selectedPaths.push(model.path);
 
-        model.ctn.trigger('check');
+        if (modelCtn) { modelCtn.trigger('check'); }
 
-        if (model.thumb) {
-            model.thumb.show();
-        } else {
+        if (thumb) { thumb.show(); }
+        else {
             item = model.thumb = $('<div>', {
                 'class': 'thumb btn',
                 text: model.path,
@@ -300,9 +322,7 @@ function ($, API, Utils) {
 
         _updateNbSelected();
 
-        if ($.isFunction(onSelect)) {
-            onSelect();
-        }
+        if ($.isFunction(onSelect)) { onSelect(); }
     };
 
     /**
@@ -310,16 +330,16 @@ function ($, API, Utils) {
      */
     _onUncheckItem = (model) => {
         let index = $.inArray(model.path, _selectedPaths),
-            onUnselect = _options.events.onUnselect || (() => {});
+            onUnselect = _options.events.onUnselect || (() => {}),
+            thumb = model.thumb,
+            modelCtn = model.ctn;
 
         _selectedItems.splice(index, 1);
         _selectedPaths.splice(index, 1);
 
-        model.ctn.trigger('uncheck');
+        if (modelCtn) { modelCtn.trigger('uncheck'); }
 
-        if (model.thumb) {
-            model.thumb.hide();
-        }
+        if (thumb) { thumb.hide(); }
 
         _updateNbSelected();
         onUnselect();
@@ -385,19 +405,17 @@ function ($, API, Utils) {
             if (_options.selectedFolderCtn) {
                 _selectedFolderCtn = _options.selectedFolderCtn;
             }
-        }, // End init()
+        },
 
         /**
          *
          */
         open: () => {
-            if (!_isBuilt) {
-                _buildSkeleton();
-            }
+            if (!_isBuilt) { _buildSkeleton(); }
 
             _els.mainCtn.show();
             _isOpen = true;
-        }, // End show()
+        },
 
         /**
          *
@@ -405,17 +423,13 @@ function ($, API, Utils) {
         close: () => {
             let onClose = _options.events.onClose;
 
-            if (!_isBuilt) {
-                return;
-            }
+            if (!_isBuilt) { return; }
 
             _els.mainCtn.hide();
             _isOpen = false;
 
-            if ($.isFunction(onClose)) {
-                onClose();
-            }
-        }, // End close()
+            if ($.isFunction(onClose)) { onClose(); }
+        },
 
         /**
          *
@@ -426,26 +440,37 @@ function ($, API, Utils) {
             for (i = _selectedItems.length - 1; i >= 0; i--) {
                 _onUncheckItem(_selectedItems[i]);
             }
-        },// End unSelectAll()
+        },
 
         /**
          *
          */
         getSelectedPath: () => {
-            return _selectedPaths;
-        }, // End getSelectedPath()
+            return _selectedPaths.slice();
+        },
 
         /**
          *
          */
         isOpen: () => {
             return _isOpen;
-        }, // End isOpen()
+        },
 
         /**
          *
          */
         clear: () => {
+            _selectedPaths = [];
+            _selectedItems = [];
+
+            if (_selectedFolderCtn) {
+                _selectedFolderCtn.empty();
+            }
+
+            View.clearUI();
+        },
+
+        clearUI: () => {
             let onNonSelected = _options.events.onNonSelected;
 
             if (_isBuilt) {
@@ -454,18 +479,28 @@ function ($, API, Utils) {
                 _els.mainCtn.remove();
                 _rootModel = $.extend(true, {}, _defaultModel);
                 _isBuilt = false;
-                _selectedPaths = [];
-                _selectedItems = [];
-            }
-
-            if (_selectedFolderCtn) {
-                _selectedFolderCtn.empty();
             }
 
             if ($.isFunction(onNonSelected)) {
                 onNonSelected();
             }
-        } // End clear()
+        },
+
+        addFolders: (folderList) => {
+            let addFolder = (folder) => {
+                let model = {
+                    path: folder
+                };
+
+                _onCheckItem(model);
+            };
+
+            if ($.type(folderList) === 'array') {
+                folderList.forEach(addFolder);
+            } else {
+                addFolder(folderList);
+            }
+        }
     };
 
     return View;
