@@ -11,11 +11,7 @@ define(
     'App/Views/FooterView',
     'App/Views/OptionsView',
     'App/Views/InfosView',
-    'App/Views/PlayView',
-
-    // App Actions
-    'App/Actions/GetRandomPicAction',
-    'App/Actions/HistoryPicAction'
+    'App/Views/PlayView'
 ],
 function (
     $,
@@ -24,10 +20,7 @@ function (
     FooterView,
     OptionsView,
     InfosView,
-    PlayView,
-
-    GetRandomPicAction,
-    HistoryPicAction
+    PlayView
 ) {
     'use strict';
 
@@ -37,13 +30,11 @@ function (
         _els = {};
 
     // Private functions.
-    let _buildSkeleton, _attachEvents, _attachKeyboardShorcuts,
-        _showLoading, _hideLoading, _onBeforeStart, _onStop, _onPause,
-        _onResume, _onBeforeGetRandom, _onGetRandom;
+    let _buildSkeleton, _attachEvents, _attachKeyboardShorcuts;
 
 
     _buildSkeleton = () => {
-        let mainCtn, loadingCtn, pauseIconCtn;
+        let mainCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'diapo_shuffle flex'
@@ -60,40 +51,6 @@ function (
         _els.footerCtn = $('<div>', {
             'class': 'ds_footer_ctn flex'
         }).appendTo(mainCtn);
-
-        // Loading
-        // -------
-        loadingCtn = _els.loadingCtn = $('<div>', {
-            'class': 'ctn_loading'
-        }).append(
-            $('<span>', {
-                'class': 'el_loading_1 el_loading'
-            }),
-            $('<span>', {
-                'class': 'el_loading_2 el_loading'
-            }),
-            $('<span>', {
-                    'class': 'el_loading_3 el_loading'
-                })
-        );
-
-        // Pause icon
-        // ----------
-        pauseIconCtn = _els.pauseIconCtn = $('<div>', {
-            'class': 'ctn_icon_pause'
-        }).append(
-            $('<span>', {
-                'class': 'el_icon_pause'
-            }),
-            $('<span>', {
-                'class': 'el_icon_pause'
-            })
-        );
-
-        mainCtn.append(
-            loadingCtn,
-            pauseIconCtn
-        );
 
         _options.root.append(mainCtn);
     };
@@ -119,53 +76,37 @@ function (
 
             // console.log(keyPressed);
 
-            if (GetRandomPicAction.isPlaying()) {
+            if (PlayView.isPlaying()) {
 
                 switch (keyPressed) {
                 case 27: // ESC
-                    GetRandomPicAction.stop();
+                    PlayView.stop();
                     break;
 
                 case 32: // SPACE
                 case 80: // p (as pause)
-                    if (!GetRandomPicAction.isDisabled()) {
-                        GetRandomPicAction.pause();
-                        doPreventDefault = true;
-                    }
+                    PlayView.pause();
+                    doPreventDefault = true;
                     break;
 
                 case 73: // i (as inside)
-                    if (GetRandomPicAction.isPausing()) {
-                        PlayView.askInsideFolder();
-                    }
+                    PlayView.askInsideFolder();
                     break;
 
                 case 65: // a (as add)
-                    if (GetRandomPicAction.isPausing()) {
-                        PlayView.askAddFolder();
-                    }
+                    PlayView.askAddFolder();
                     break;
 
                 case 68: // d (as delete)
-                    if (GetRandomPicAction.isPausing()) {
-                        PlayView.askDeletePic();
-                    }
+                    PlayView.askDeletePic();
                     break;
 
                 case 37: // left arrow.
-                    if (GetRandomPicAction.isPausing() && !HistoryPicAction.isFirst()) {
-                        PlayView.displayPrevious();
-                    }
+                    PlayView.displayPrevious();
                     break;
-                case 39: // right arrow.
-                    let isPausing = GetRandomPicAction.isPausing();
 
-                    if (isPausing && !HistoryPicAction.isLast()) {
-                        PlayView.displayNext();
-                    } else if (!isPausing) {
-                        GetRandomPicAction.pause();
-                        GetRandomPicAction.start();
-                    }
+                case 39: // right arrow.
+                    PlayView.displayNext();
                     break;
                 }
 
@@ -188,7 +129,7 @@ function (
                 case 32: // SPACE
                 case 80: // p (as pause)
                     if (!OptionsView.hasFocus()) {
-                        GetRandomPicAction.start();
+                        PlayView.play();
                         doPreventDefault = true;
                     }
                     break;
@@ -205,61 +146,6 @@ function (
             }
         });
     };
-
-    _showLoading = () => {
-        _els.loadingCtn.show();
-    };
-
-    _hideLoading = () => {
-        _els.loadingCtn.hide();
-    };
-
-    _onBeforeStart = () => {
-        InfosView.hide();
-
-        GetRandomPicAction.setOptions({
-            interval: OptionsView.getTimeInterval(),
-            customFolders: OptionsView.getCustomFolders() || []
-        });
-
-        PlayView.toggleStatePauseBtn(PlayView.BTN_PAUSE);
-        _els.pauseIconCtn.hide();
-    };
-
-    _onStop = () => {
-        PlayView.hide();
-        InfosView.hide();
-
-        _els.pauseIconCtn.hide();
-        _els.loadingCtn.hide();
-
-        PlayView.toggleStatePauseBtn(PlayView.BTN_RESUME);
-    };
-
-    _onPause = () => {
-        PlayView.toggleStatePauseBtn();
-        _els.pauseIconCtn.show();
-    };
-
-    _onResume = () => {
-        PlayView.toggleStatePauseBtn();
-
-        _els.pauseIconCtn.hide();
-    };
-
-    _onBeforeGetRandom = () => {
-        _showLoading();
-    };
-
-    _onGetRandom = (Pic, onSuccess, onFailure) => {
-        _hideLoading();
-
-        if (Pic) {
-            PlayView.setPic(Pic, onSuccess, onFailure);
-            HistoryPicAction.add(Pic);
-        }
-    };
-
 
     View = {
 
@@ -303,46 +189,7 @@ function (
                 mainView: View
             });
 
-            GetRandomPicAction.init({
-                events: {
-                    onBeforeStart: _onBeforeStart,
-                    onStop: _onStop,
-                    onPause: _onPause,
-                    onResume: _onResume,
-                    onBeforeGetRandom: _onBeforeGetRandom,
-                    onGetRandom: _onGetRandom,
-                    onResetInsideFolder: OptionsView.resetInsideFolder,
-                    onAddCustomFolder: OptionsView.addCustomFolder
-                }
-            });
-
-            HistoryPicAction.init({
-                events: {
-                    onFirst: () => {
-                        PlayView.disablePreviousBtn();
-                        PlayView.enableNextBtn();
-                    },
-                    onLast: () => {
-                        PlayView.disableNextBtn();
-                        PlayView.enablePreviousBtn();
-                    },
-                    onMiddle: () => {
-                        PlayView.enablePreviousBtn();
-                        PlayView.enableNextBtn();
-                    }
-                }
-            });
-
             _attachEvents();
-        },
-
-        onBeforeDelete: () => {
-            _els.pauseIconCtn.hide();
-            _showLoading();
-        },
-
-        onDelete: () => {
-            _hideLoading();
         }
     };
 

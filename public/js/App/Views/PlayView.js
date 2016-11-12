@@ -64,12 +64,13 @@ function (
         };
 
     // Private functions.
-    let _buildSkeleton, _getViewDimension, _scalePic,
-        _zoomPic, _displayPrevious, _displayNext, _setPic;
+    let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
+        _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause, _onGetRandom,
+        _onBeforeGetRandom, _onResume, _hideLoading, _showLoading;
 
 
     _buildSkeleton = () => {
-        let mainCtn, cmdCtn, playCtn;
+        let mainCtn, cmdCtn, playCtn, pauseIconCtn, loadingCtn;
 
         let buildCmd = () => {
             let btnStop, btnPrevious, btnNext, btnPause, btnDelete, btnInside, btnAddFolder;
@@ -172,12 +173,43 @@ function (
             'class': 'play_ctn'
         });
 
-        buildCmd();
+        // Loading
+        // -------
+        loadingCtn = _els.loadingCtn = $('<div>', {
+            'class': 'ctn_loading'
+        }).append(
+            $('<span>', {
+                'class': 'el_loading_1 el_loading'
+            }),
+            $('<span>', {
+                'class': 'el_loading_2 el_loading'
+            }),
+            $('<span>', {
+                    'class': 'el_loading_3 el_loading'
+                })
+        );
+
+        // Pause icon
+        // ----------
+        pauseIconCtn = _els.pauseIconCtn = $('<div>', {
+            'class': 'ctn_icon_pause'
+        }).append(
+            $('<span>', {
+                'class': 'el_icon_pause'
+            }),
+            $('<span>', {
+                'class': 'el_icon_pause'
+            })
+        );
 
         mainCtn.append(
+            loadingCtn,
+            pauseIconCtn,
             cmdCtn,
             playCtn
         );
+
+        buildCmd();
 
         _options.root.append(mainCtn);
     }; // End function _buildSkeleton()
@@ -241,11 +273,26 @@ function (
     };
 
     _displayPrevious = () => {
+        if (HistoryPicAction.isFirst()) {
+            return;
+        }
+
+        if (!GetRandomPicAction.isPausing()) {
+            GetRandomPicAction.pause();
+        }
+
         _setPic(HistoryPicAction.getPrevious());
     };
 
     _displayNext = () => {
-        _setPic(HistoryPicAction.getNext());
+        if (HistoryPicAction.isLast()) {
+
+            GetRandomPicAction.pause();
+            GetRandomPicAction.start();
+
+        } else {
+            _setPic(HistoryPicAction.getNext());
+        }
     };
 
     /**
@@ -290,6 +337,59 @@ function (
         _els.playCtn.html(img);
     }; // End function _setPic()
 
+    _showLoading = () => {
+        _els.loadingCtn.show();
+    };
+
+    _hideLoading = () => {
+        _els.loadingCtn.hide();
+    };
+
+    _onBeforeStart = () => {
+        GetRandomPicAction.setOptions({
+            interval: OptionsView.getTimeInterval(),
+            customFolders: OptionsView.getCustomFolders() || []
+        });
+
+        View.toggleStatePauseBtn(View.BTN_PAUSE);
+
+        InfosView.hide();
+        _els.pauseIconCtn.hide();
+    };
+
+    _onStop = () => {
+        View.hide();
+        InfosView.hide();
+
+        _els.pauseIconCtn.hide();
+        _els.loadingCtn.hide();
+
+        View.toggleStatePauseBtn(View.BTN_RESUME);
+    };
+
+    _onPause = () => {
+        View.toggleStatePauseBtn();
+        _els.pauseIconCtn.show();
+    };
+
+    _onResume = () => {
+        View.toggleStatePauseBtn();
+
+        _els.pauseIconCtn.hide();
+    };
+
+    _onBeforeGetRandom = () => {
+        _showLoading();
+    };
+
+    _onGetRandom = (Pic, onSuccess, onFailure) => {
+        _hideLoading();
+
+        if (Pic) {
+            View.setPic(Pic, onSuccess, onFailure);
+            HistoryPicAction.add(Pic);
+        }
+    };
 
     View = {
 
@@ -323,102 +423,153 @@ function (
             _getViewDimension();
 
             _buildSkeleton();
+
+            GetRandomPicAction.init({
+                events: {
+                    onBeforeStart: _onBeforeStart,
+                    onStop: _onStop,
+                    onPause: _onPause,
+                    onResume: _onResume,
+                    onBeforeGetRandom: _onBeforeGetRandom,
+                    onGetRandom: _onGetRandom,
+                    onResetInsideFolder: OptionsView.resetInsideFolder,
+                    onAddCustomFolder: OptionsView.addCustomFolder
+                }
+            });
+
+            HistoryPicAction.init({
+                events: {
+                    onFirst: () => {
+                        View.disablePreviousBtn();
+                        View.enableNextBtn();
+                    },
+                    onLast: () => {
+                        View.disableNextBtn();
+                        View.enablePreviousBtn();
+                    },
+                    onMiddle: () => {
+                        View.enablePreviousBtn();
+                        View.enableNextBtn();
+                    }
+                }
+            });
         },
 
         setPic: _setPic,
 
         askDeletePic: () => {
-            if (GetRandomPicAction.isPausing()) {
-                DeletePicModal.ask({
-                    onClose: function () {
-                        GetRandomPicAction.enable();
-                    },
-                    onOpen: function () {
-                        GetRandomPicAction.disable();
-                    },
-                    onDelete: function () {
-                        _options.mainView.onBeforeDelete();
-
-                        API.deletePic({
-                            Pic: HistoryPicAction.getCurrent(),
-                            onSuccess: () => {
-                                HistoryPicAction.remove();
-                                GetRandomPicAction.enable();
-                                GetRandomPicAction.resume();
-
-                                _options.mainView.onDelete();
-                            },
-                            onFailure: (error) => {
-                                Utils.notify({
-                                    message: error
-                                });
-                            }
-                        });
-
-                    }
-                });
+            if (!GetRandomPicAction.isPausing()) {
+                GetRandomPicAction.pause();
             }
+
+            DeletePicModal.ask({
+                onClose: function () {
+                    GetRandomPicAction.enable();
+                },
+                onOpen: function () {
+                    GetRandomPicAction.disable();
+                },
+                onDelete: function () {
+                    _els.pauseIconCtn.hide();
+                    _showLoading();
+
+                    API.deletePic({
+                        Pic: HistoryPicAction.getCurrent(),
+                        onSuccess: () => {
+                            HistoryPicAction.remove();
+                            GetRandomPicAction.enable();
+                            GetRandomPicAction.resume();
+
+                            _hideLoading();
+                        },
+                        onFailure: (error) => {
+                            Utils.notify({
+                                message: error
+                            });
+                        }
+                    });
+
+                }
+            });
         },
 
         askInsideFolder: () => {
-            if (GetRandomPicAction.isPausing()) {
-                InsideFolderModal.ask({
-                    Pic: HistoryPicAction.getCurrent(),
-                    isInside: GetRandomPicAction.isInside(),
-                    insidePath: GetRandomPicAction.getInsideFolder(),
-                    onClose: () => {
-                        GetRandomPicAction.enable();
-                    },
-                    onOpen: () => {
-                        GetRandomPicAction.disable();
-                    },
-                    onInside: (insidePath) => {
-                        _els.btnInside.val(BTN_OUTSIDE);
-                        GetRandomPicAction.setInsideFolder(insidePath);
-                        GetRandomPicAction.enable();
-                        GetRandomPicAction.resume();
-
-                        OptionsView.setInsideFolder(insidePath);
-                    },
-                    onOutside: () => {
-                        _els.btnInside.val(BTN_INSIDE);
-                        GetRandomPicAction.setInsideFolder();
-                        GetRandomPicAction.enable();
-                        GetRandomPicAction.resume();
-
-                        OptionsView.resetInsideFolder();
-                    }
-                });
+            if (!GetRandomPicAction.isPausing()) {
+                GetRandomPicAction.pause();
             }
+
+            InsideFolderModal.ask({
+                Pic: HistoryPicAction.getCurrent(),
+                isInside: GetRandomPicAction.isInside(),
+                insidePath: GetRandomPicAction.getInsideFolder(),
+                onClose: () => {
+                    GetRandomPicAction.enable();
+                },
+                onOpen: () => {
+                    GetRandomPicAction.disable();
+                },
+                onInside: (insidePath) => {
+                    _els.btnInside.val(BTN_OUTSIDE);
+                    GetRandomPicAction.setInsideFolder(insidePath);
+                    GetRandomPicAction.enable();
+                    GetRandomPicAction.resume();
+
+                    OptionsView.setInsideFolder(insidePath);
+                },
+                onOutside: () => {
+                    _els.btnInside.val(BTN_INSIDE);
+                    GetRandomPicAction.setInsideFolder();
+                    GetRandomPicAction.enable();
+                    GetRandomPicAction.resume();
+
+                    OptionsView.resetInsideFolder();
+                }
+            });
         },
 
         askAddFolder: () => {
-            if (GetRandomPicAction.isPausing()) {
-                AddFolderModal.ask({
-                    Pic: HistoryPicAction.getCurrent(),
-                    onClose: () => {
-                        GetRandomPicAction.enable();
-                    },
-                    onOpen: () => {
-                        GetRandomPicAction.disable();
-                    },
-                    onAdd: (addPath) => {
-                        FolderFinderView.clearUI();
-                        GetRandomPicAction.addCustomFolder(addPath);
-                        GetRandomPicAction.enable();
-                        GetRandomPicAction.resume();
-                    }
-                });
+            if (!GetRandomPicAction.isPausing()) {
+                GetRandomPicAction.pause();
             }
+
+            AddFolderModal.ask({
+                Pic: HistoryPicAction.getCurrent(),
+                onClose: () => {
+                    GetRandomPicAction.enable();
+                },
+                onOpen: () => {
+                    GetRandomPicAction.disable();
+                },
+                onAdd: (addPath) => {
+                    FolderFinderView.clearUI();
+                    GetRandomPicAction.addCustomFolder(addPath);
+                    GetRandomPicAction.enable();
+                    GetRandomPicAction.resume();
+                }
+            });
         },
 
-        displayPrevious: () => {
-            _displayPrevious();
+        displayPrevious: _displayPrevious,
+
+        displayNext: _displayNext,
+
+        pause: () => {
+            if (GetRandomPicAction.isDisabled()) {
+                return;
+            }
+
+            GetRandomPicAction.pause();
         },
 
-        displayNext: () => {
-            _displayNext();
+        stop: () => {
+            GetRandomPicAction.stop();
         },
+
+        play: () => {
+            GetRandomPicAction.start();
+        },
+
+        isPlaying: GetRandomPicAction.isPlaying,
 
         /**
          * @param {Boolean} force -

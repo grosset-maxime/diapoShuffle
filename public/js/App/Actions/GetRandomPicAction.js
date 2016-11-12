@@ -83,7 +83,9 @@ function (
         }
 
         $(document.body).addClass(VIEW_MODE_CLASS);
+
         _getRandomPic();
+
         _isPlaying = true;
         _isPausing = false;
     };
@@ -98,6 +100,7 @@ function (
         _clearTheInterval();
 
         $(document.body).removeClass(VIEW_MODE_CLASS);
+
         _isPlaying = false;
         _isPausing = false;
 
@@ -115,6 +118,7 @@ function (
             onBeforePause();
 
             _clearTheInterval();
+
             _isPausing = true;
 
             onPause();

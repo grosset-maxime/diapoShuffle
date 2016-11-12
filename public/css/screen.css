@@ -298,82 +298,6 @@ body {
   min-height: 44px;
   max-height: 44px;
 }
-/* line 46, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_loading {
-  display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 550;
-  text-align: center;
-  width: 38px;
-  height: 20px;
-}
-/* line 56, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_loading .el_loading {
-  width: 4px;
-  height: 4px;
-  margin: 10px auto;
-  background: #aaa;
-  border: 1px solid #555;
-  -moz-animation: ds_loading_anim 1.3s infinite alternate;
-  -webkit-animation: ds_loading_anim 1.3s infinite alternate;
-  -ms-animation: ds_loading_anim 1.3s infinite alternate;
-  animation: ds_loading_anim 1.3s infinite alternate;
-  display: inline-block;
-  vertical-align: middle;
-  *vertical-align: auto;
-  *zoom: 1;
-  *display: inline;
-  -moz-border-radius: 20px;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
-}
-/* line 70, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_loading .el_loading_1 {
-  -moz-animation-delay: 0s;
-  -webkit-animation-delay: 0s;
-  -ms-animation-delay: 0s;
-  animation-delay: 0s;
-}
-/* line 77, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_loading .el_loading_2 {
-  -moz-animation-delay: 0.39s;
-  -webkit-animation-delay: 0.39s;
-  -ms-animation-delay: 0.39s;
-  animation-delay: 0.39s;
-}
-/* line 84, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_loading .el_loading_3 {
-  -moz-animation-delay: 0.78s;
-  -webkit-animation-delay: 0.78s;
-  -ms-animation-delay: 0.78s;
-  animation-delay: 0.78s;
-}
-/* line 92, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_icon_pause {
-  display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 550;
-  text-align: center;
-  width: 18px;
-  height: 16px;
-}
-/* line 102, ../../sass/App/Views/_MainView.scss */
-.diapo_shuffle .ctn_icon_pause .el_icon_pause {
-  width: 4px;
-  height: 14px;
-  margin: auto 1px;
-  background-color: rgba(240, 240, 240, 0.8);
-  border: 1px solid #555;
-  display: inline-block;
-  vertical-align: middle;
-  *vertical-align: auto;
-  *zoom: 1;
-  *display: inline;
-}
 /* line 10, ../../sass/App/Views/_HeaderView.scss */
 .diapo_shuffle .ds_header_view {
   width: 100%;
@@ -643,6 +567,82 @@ body {
 .diapo_shuffle .ds_play_view .cmd_ctn .delete_btn,
 .diapo_shuffle .ds_play_view .cmd_ctn .next_btn {
   margin-right: 10%;
+}
+/* line 82, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_loading {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 550;
+  text-align: center;
+  width: 38px;
+  height: 20px;
+}
+/* line 92, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_loading .el_loading {
+  width: 4px;
+  height: 4px;
+  margin: 10px auto;
+  background: #aaa;
+  border: 1px solid #555;
+  -moz-animation: ds_loading_anim 1.3s infinite alternate;
+  -webkit-animation: ds_loading_anim 1.3s infinite alternate;
+  -ms-animation: ds_loading_anim 1.3s infinite alternate;
+  animation: ds_loading_anim 1.3s infinite alternate;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+}
+/* line 106, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_loading .el_loading_1 {
+  -moz-animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  animation-delay: 0s;
+}
+/* line 113, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_loading .el_loading_2 {
+  -moz-animation-delay: 0.39s;
+  -webkit-animation-delay: 0.39s;
+  -ms-animation-delay: 0.39s;
+  animation-delay: 0.39s;
+}
+/* line 120, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_loading .el_loading_3 {
+  -moz-animation-delay: 0.78s;
+  -webkit-animation-delay: 0.78s;
+  -ms-animation-delay: 0.78s;
+  animation-delay: 0.78s;
+}
+/* line 128, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_icon_pause {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 550;
+  text-align: center;
+  width: 18px;
+  height: 16px;
+}
+/* line 138, ../../sass/App/Views/_PlayView.scss */
+.diapo_shuffle .ds_play_view .ctn_icon_pause .el_icon_pause {
+  width: 4px;
+  height: 14px;
+  margin: auto 1px;
+  background-color: rgba(240, 240, 240, 0.8);
+  border: 1px solid #555;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  *zoom: 1;
+  *display: inline;
 }
 /* line 15, ../../sass/App/Views/_FolderFinderView.scss */
 .diapo_shuffle .ds_folder_finder {

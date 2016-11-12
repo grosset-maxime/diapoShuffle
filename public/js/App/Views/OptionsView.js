@@ -54,7 +54,9 @@ function (
         keyUpInput = (e) => {
             let keyPressed = e.which,
                 doPreventDefault = false;
+
             // console.log(keyPressed);
+
             switch (keyPressed) {
             case 13: // Enter
                 doPreventDefault = true;
