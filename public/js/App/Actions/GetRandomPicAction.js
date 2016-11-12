@@ -8,14 +8,20 @@ define(
 
     // App API
     'App/API/API',
-    'App/Utils/Utils'
+    'App/Utils/Utils',
+
+    // App
+    'App/Actions/PinPicAction',
 ],
 function (
     $,
 
     // App API
     API,
-    Utils
+    Utils,
+
+    // App
+    PinPicAction
 ) {
     'use strict';
 
@@ -28,6 +34,7 @@ function (
             interval: DEFAULT_INTERVAL,
             customFolders: DEFAULT_CUSTOM_FOLDERS,
             insideFolder: '',
+            playPined: false,
             events: {
                 onBeforeStart: () => {},
                 onStart: () => {},
@@ -141,31 +148,39 @@ function (
 
         onBeforeGetRandom();
 
-        API.getRandomPic({
-            customFolders: _getCustomFolders(),
-            onSuccess: (Pic) => {
-                onGetRandom(Pic, _setTheInterval, _getRandomPic);
-            },
-            onFailure: (error) => {
-                if (Action.isInside()) {
+        if (_options.playPined) {
+            onGetRandom(
+                PinPicAction.getRandom(),
+                _setTheInterval,
+                _getRandomPic
+            );
+        } else {
+            API.getRandomPic({
+                customFolders: _getCustomFolders(),
+                onSuccess: (Pic) => {
+                    onGetRandom(Pic, _setTheInterval, _getRandomPic);
+                },
+                onFailure: (error) => {
+                    if (Action.isInside()) {
 
-                    Utils.notify({
-                        message: 'No more pic into: "' + Action.getInsideFolder() + '"',
-                        type: 'info'
-                    });
+                        Utils.notify({
+                            message: 'No more pic into: "' + Action.getInsideFolder() + '"',
+                            type: 'info'
+                        });
 
-                    // Remove inside folder.
-                    Action.setInsideFolder();
+                        // Remove inside folder.
+                        Action.setInsideFolder();
 
-                    _getRandomPic();
-                } else {
-                    _stop();
-                    Utils.notify({
-                        message: error
-                    });
+                        _getRandomPic();
+                    } else {
+                        _stop();
+                        Utils.notify({
+                            message: error
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
     };
 
     Action = {

@@ -12,6 +12,7 @@ define(
 
     // App
     'App/Actions/GetRandomPicAction',
+    'App/Actions/PinPicAction',
     'App/Views/FolderFinderView',
 
     // Non AMD
@@ -25,6 +26,7 @@ function (
     Utils,
 
     GetRandomPicAction,
+    PinPicAction,
     FolderFinderView
 ) {
     'use strict';
@@ -46,7 +48,8 @@ function (
             footerCtn, btnStart, inputInterval, btnClearCache,
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic, btnUnSelectAll,
-            nbSelectedCtn, insideFolderCtn, keyUpInput;
+            nbSelectedCtn, insideFolderCtn, keyUpInput, inputPinPic,
+            pinPicCtn;
 
         /**
          * @private
@@ -235,7 +238,7 @@ function (
             inputZoom
         );
 
-                // Checkbox scale
+        // Checkbox scale
         inputPathPic = _els.inputPathPic = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
@@ -258,8 +261,49 @@ function (
             })
         );
 
+        // Checkbox pin
+        inputPinPic = _els.inputPinPic = $('<input>', {
+            'class': 'input_text',
+            type: 'checkbox',
+            checked: false,
+            on: {
+                click: function () {
+                    if (inputPinPic.parent().hasClass('disabled')) {
+                        inputPinPic.attr('checked', false);
+                    }
+                }
+            }
+        });
+
+        // Ctn pin
+        pinPicCtn = $('<div>', {
+            'class': 'el_ctn disabled'
+        }).append(
+            inputPinPic,
+            $('<span>', {
+                'class': 'title label',
+                text: 'Display picture from pined',
+                on: {
+                    click: function () {
+                        inputPinPic[0].checked = !pinPicCtn.hasClass('disabled') && !inputPinPic[0].checked;
+                    }
+                }
+            }),
+            $('<span>', {
+                'class': 'title count',
+                text: ''
+            }),
+            $('<span>', {
+                'class': 'title clear_btn text_btn',
+                text: 'clear',
+                on: {
+                    click: PinPicAction.clear
+                }
+            }).hide()
+        );
+
         btnClearCache = $('<div>', {
-            'class': 'clear_cache_btn',
+            'class': 'clear_cache_btn text_btn',
             text: 'Clear cache',
             on: {
                 click: _clearCache
@@ -279,6 +323,7 @@ function (
             zoomCtn,
             scaleCtn,
             pathPicCtn,
+            pinPicCtn,
             footerCtn
         );
 
@@ -388,6 +433,8 @@ function (
             return zoom;
         },
 
+        isPlayPinedOn: () => !!_els.inputPinPic[0].checked,
+
         toggleFolderFinder: () => {
             if (FolderFinderView.isOpen()) {
                 FolderFinderView.close();
@@ -447,7 +494,41 @@ function (
 
         hasFocus: () => _hasFocus,
 
-        getCustomFolders: () => FolderFinderView.getSelectedPath()
+        getCustomFolders: () => FolderFinderView.getSelectedPath(),
+
+        onClearPined: () => {
+            let inputPinPic = _els.inputPinPic,
+                parent = inputPinPic.parent();
+
+            parent.find('.count').text('');
+            parent.addClass('disabled');
+            parent.find('.clear_btn').hide();
+
+            inputPinPic[0].checked = false;
+        },
+
+        onAddPined: () => {
+            let inputPinPic = _els.inputPinPic,
+                parent = inputPinPic.parent();
+
+            parent.find('.count').text('(' + PinPicAction.getNbPined() + ')');
+            parent.removeClass('disabled');
+            parent.find('.clear_btn').show();
+        },
+
+        onRemovePined: () => {
+            let inputPinPic = _els.inputPinPic,
+                parent = inputPinPic.parent(),
+                nbPined = PinPicAction.getNbPined();
+
+            parent.find('.count').text('(' + nbPined + ')');
+
+            if (!nbPined) {
+                parent.addClass('disabled');
+                parent.find('.clear_btn').hide();
+                inputPinPic[0].checked = false;
+            }
+        }
     };
 
     return View;

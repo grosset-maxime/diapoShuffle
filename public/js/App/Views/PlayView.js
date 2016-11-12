@@ -18,6 +18,7 @@ define(
     // App Actions
     'App/Actions/GetRandomPicAction',
     'App/Actions/HistoryPicAction',
+    'App/Actions/PinPicAction',
 
     // App Modals
     'App/Modals/AddFolderModal',
@@ -42,6 +43,7 @@ function (
     // App Actions
     GetRandomPicAction,
     HistoryPicAction,
+    PinPicAction,
 
     // App Modals
     AddFolderModal,
@@ -73,7 +75,8 @@ function (
         let mainCtn, cmdCtn, playCtn, pauseIconCtn, loadingCtn;
 
         let buildCmd = () => {
-            let btnStop, btnPrevious, btnNext, btnPause, btnDelete, btnInside, btnAddFolder;
+            let btnStop, btnPrevious, btnNext, btnPause, btnDelete,
+                btnInside, btnAddFolder, btnPin, btnUnPin;
 
             // Btn delete
             btnDelete = _els.btnDelete = $('<input>', {
@@ -145,14 +148,36 @@ function (
                 }
             }).button();
 
+            // Btn pin
+            btnPin = _els.btnPin = $('<input>', {
+                'class': 'btn pin_btn',
+                type: 'button',
+                value: 'Pin',
+                on: {
+                    click: View.pin
+                }
+            }).button();
+
+            btnUnPin = _els.btnUnPin = $('<input>', {
+                'class': 'btn unpin_btn',
+                type: 'button',
+                value: 'Unpin',
+                on: {
+                    click: View.unPin
+                }
+            })
+                .button()
+                .hide();
+
             cmdCtn.append(
-                btnDelete,
-                btnPrevious,
+                btnDelete, btnPrevious,
                 btnNext,
                 btnStop,
                 btnPause,
                 btnInside,
-                btnAddFolder
+                btnAddFolder,
+                btnPin,
+                btnUnPin
             );
         }; // End function buildCmd()
 
@@ -335,7 +360,9 @@ function (
         }
 
         _els.playCtn.html(img);
-    }; // End function _setPic()
+
+        View.currentPic = pic;
+    };
 
     _showLoading = () => {
         _els.loadingCtn.show();
@@ -346,15 +373,24 @@ function (
     };
 
     _onBeforeStart = () => {
+        let isPlayPined = OptionsView.isPlayPinedOn();
+
         GetRandomPicAction.setOptions({
             interval: OptionsView.getTimeInterval(),
-            customFolders: OptionsView.getCustomFolders() || []
+            customFolders: OptionsView.getCustomFolders() || [],
+            playPined: isPlayPined
         });
 
         View.toggleStatePauseBtn(View.BTN_PAUSE);
 
         InfosView.hide();
         _els.pauseIconCtn.hide();
+
+        if (isPlayPined) {
+            _els.btnUnPin.show();
+        } else {
+            _els.btnUnPin.hide();
+        }
     };
 
     _onStop = () => {
@@ -392,6 +428,8 @@ function (
     };
 
     View = {
+
+        currentPic: null,
 
         /**
          *
@@ -451,6 +489,26 @@ function (
                         View.enablePreviousBtn();
                         View.enableNextBtn();
                     }
+                }
+            });
+
+            PinPicAction.init({
+                events: {
+                    onFirst: () => {
+                        View.disablePreviousBtn();
+                        View.enableNextBtn();
+                    },
+                    onLast: () => {
+                        View.disableNextBtn();
+                        View.enablePreviousBtn();
+                    },
+                    onMiddle: () => {
+                        View.enablePreviousBtn();
+                        View.enableNextBtn();
+                    },
+                    onAdd: OptionsView.onAddPined,
+                    onRemove: OptionsView.onRemovePined,
+                    onClear: OptionsView.onClearPined
                 }
             });
         },
@@ -567,6 +625,14 @@ function (
 
         play: () => {
             GetRandomPicAction.start();
+        },
+
+        pin: () => {
+            PinPicAction.add(View.currentPic);
+        },
+
+        unPin: () => {
+            PinPicAction.remove();
         },
 
         isPlaying: GetRandomPicAction.isPlaying,

@@ -22,3 +22,21 @@ $ORANGE_LIGHT: #FCF3E5;
     box-shadow: 2px 2px 8px -3px #aaa;
     padding: 20px;
 }
+
+.hide {
+    display: none !important;
+}
+
+.disabled {
+    opacity: 0.3;
+}
+
+.text_btn {
+    color: #bbb;
+    transition: .3s;
+    cursor: pointer;
+
+    &:hover {
+        color: #666;
+    }
+}

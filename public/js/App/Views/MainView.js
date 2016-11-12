@@ -84,7 +84,6 @@ function (
                     break;
 
                 case 32: // SPACE
-                case 80: // p (as pause)
                     PlayView.pause();
                     doPreventDefault = true;
                     break;
@@ -99,6 +98,10 @@ function (
 
                 case 68: // d (as delete)
                     PlayView.askDeletePic();
+                    break;
+
+                case 80: // p (as pin)
+                    PlayView.pin();
                     break;
 
                 case 37: // left arrow.
