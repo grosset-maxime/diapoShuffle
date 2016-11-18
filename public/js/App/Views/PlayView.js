@@ -637,6 +637,8 @@ function (
 
         isPlaying: GetRandomPicAction.isPlaying,
 
+        isDisabled: GetRandomPicAction.isDisabled,
+
         /**
          * @param {Boolean} force -
          */

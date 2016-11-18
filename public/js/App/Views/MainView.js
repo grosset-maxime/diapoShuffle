@@ -72,11 +72,13 @@ function (
     _attachKeyboardShorcuts = () => {
         $(document).on('keydown', (e) => {
             let keyPressed = e.which,
-                doPreventDefault = false;
+                doPreventDefault = false,
+                isPlaying = PlayView.isPlaying(),
+                isDisabled = PlayView.isDisabled();
 
             // console.log(keyPressed);
 
-            if (PlayView.isPlaying()) {
+            if (isPlaying && !isDisabled) {
 
                 switch (keyPressed) {
                 case 27: // ESC
@@ -113,7 +115,7 @@ function (
                     break;
                 }
 
-            } else {
+            } else if (!isPlaying && !isDisabled) {
 
                 switch (keyPressed) {
                 case 13: // Enter
