@@ -534,11 +534,11 @@ function (
                     API.deletePic({
                         Pic: HistoryPicAction.getCurrent(),
                         onSuccess: () => {
+                            _hideLoading();
+                            _els.pauseIconCtn.show();
                             HistoryPicAction.remove();
                             GetRandomPicAction.enable();
-                            GetRandomPicAction.resume();
-
-                            _hideLoading();
+                            _displayNext();
                         },
                         onFailure: (error) => {
                             Utils.notify({
@@ -602,7 +602,7 @@ function (
                     FolderFinderView.clearUI();
                     GetRandomPicAction.addCustomFolder(addPath);
                     GetRandomPicAction.enable();
-                    GetRandomPicAction.resume();
+                    _displayNext();
                 }
             });
         },
