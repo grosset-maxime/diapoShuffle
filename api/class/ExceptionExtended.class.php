@@ -35,6 +35,7 @@ class ExceptionExtended extends Exception
 
     protected $publicMessage = '';
     protected $severity;
+    protected $log;
 
     /**
      * Exception constructor.
@@ -50,12 +51,14 @@ class ExceptionExtended extends Exception
     {
         $publicMessage = !empty($data['publicMessage']) ? $data['publicMessage'] : '';
         $severity = !empty($data['severity']) ? $data['severity'] : '';
+        $log = !empty($data['log']) ? $data['log'] : '';
         $message = !empty($data['message']) ? $data['message'] : '';
         $code = !empty($data['code']) ? $data['code'] : 0;
         $previous = !empty($data['previous']) ? $data['previous'] : null;
 
         $this->setPublicMessage($publicMessage);
         $this->setSeverity($severity);
+        $this->setLog($log);
 
         parent::__construct($message, $code, $previous);
     }
@@ -82,7 +85,7 @@ class ExceptionExtended extends Exception
         $this->publicMessage = $publicMessage;
     }
 
-        /**
+    /**
      * Getter severity.
      *
      * @return {String} Return severity.
@@ -90,6 +93,28 @@ class ExceptionExtended extends Exception
     public function getSeverity()
     {
         return $this->severity;
+    }
+
+    /**
+     * Getter log.
+     *
+     * @return {String} Return loc.
+     */
+    public function getLog()
+    {
+        return $this->log;
+    }
+
+    /**
+     * Setter log.
+     *
+     * @param {String} $log : log.
+     *
+     * @return null
+     */
+    public function setLog($log = '')
+    {
+        $this->log = $log;
     }
 
     /**

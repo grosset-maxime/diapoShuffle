@@ -46,6 +46,10 @@ class CacheManager extends Root
             $_SESSION['cacheFolderUpdate'] = 0;
         }
 
+        if (empty($_SESSION['cacheEmptyFolderUpdate'])) {
+            $_SESSION['cacheEmptyFolderUpdate'] = 0;
+        }
+
         if (empty($_SESSION['cacheFolderListUpdate'])) {
             $_SESSION['cacheFolderListUpdate'] = 0;
         }
@@ -65,6 +69,22 @@ class CacheManager extends Root
         }
 
         return $cacheFolder;
+    }
+
+    /**
+     * Get cache empty folder.
+     *
+     * @return {array} Cache empty folder.
+     */
+    public function getCacheEmptyFolder()
+    {
+        $cacheEmptyFolder = apc_fetch('cacheEmptyFolder');
+
+        if (!is_array($cacheEmptyFolder)) {
+            $cacheEmptyFolder = !empty($_SESSION['cacheEmptyFolder']) ? $_SESSION['cacheEmptyFolder'] : array();
+        }
+
+        return $cacheEmptyFolder;
     }
 
     /**
@@ -101,6 +121,23 @@ class CacheManager extends Root
     }
 
     /**
+     * Store cache empty folder.
+     *
+     * @param {array} $cacheEmptyFolder : Cache empty folder.
+     *
+     * @return null
+     */
+    public function setCacheEmptyFolder($cacheEmptyFolder = array())
+    {
+        apc_store('cacheEmptyFolder', $cacheEmptyFolder);
+
+        if (!$_SESSION['cacheEmptyFolderUpdate']--) {
+            $_SESSION['cacheEmptyFolder'] = $cacheEmptyFolder;
+            $_SESSION['cacheEmptyFolderUpdate'] = 5;
+        }
+    }
+
+    /**
      * Store cache folder list (only folders).
      *
      * @param {array} $cacheFolderList : Cache folder list.
@@ -126,6 +163,17 @@ class CacheManager extends Root
     {
         apc_delete('cacheFolder');
         unset($_SESSION['cacheFolder']);
+    }
+
+    /**
+     * Delete cache empty folder.
+     *
+     * @return null
+     */
+    public function deleteCacheEmptyFolder()
+    {
+        apc_delete('cacheEmptyFolder');
+        unset($_SESSION['cacheEmptyFolder']);
     }
 
     /**

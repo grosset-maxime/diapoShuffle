@@ -62,6 +62,7 @@ try {
     $jsonResult['error']['message'] = $e->getMessage();
     $jsonResult['error']['publicMessage'] = $e->getPublicMessage();
     $jsonResult['error']['severity'] = $e->getSeverity();
+    $jsonResult['error']['log'] = $e->getLog();
     print json_encode($jsonResult);
     die;
 } catch (Exception $e) {

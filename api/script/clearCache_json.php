@@ -37,6 +37,7 @@ $jsonResult = array(
 session_unset();
 $cacheManager = new CacheManager();
 $cacheManager->deleteCacheFolder();
+$cacheManager->deleteCacheEmptyFolder();
 $cacheManager->deleteCacheFolderList();
 
 $jsonResult['success'] = true;

@@ -52,14 +52,15 @@ class RandomPic extends Root
     protected $WIN_SEP = '\\';
     protected $UNIX_SEP = '/';
 
-    protected $customFolders = array();  // List of custom path folder choose by user where to get random pic.
+    protected $customFolders = array(); // List of custom path folder choose by user where to get random pic.
     protected $picFileName = '';        // Random pic file name.
 
     protected $absolutePathFolder = ''; // Complete path of the random pic's folder.
     protected $publicPathFolder = '';   // Relative path from pic folder of the random pic's folder.
     protected $levelMax = 25;           // Maximum folder depth.
-    protected $tryMax = 10;             // Maximum try before to raise folder empty exception.
+    protected $tryMax = 3;              // Maximum try before to raise folder empty exception.
     protected $cacheFolder = array();
+    protected $cacheEmptyFolder = array();
     protected $needUpdateCache = false;
     protected $useCache = false;
 
@@ -78,6 +79,42 @@ class RandomPic extends Root
 
         $this->cacheManager = new CacheManager();
         $this->cacheFolder = $this->cacheManager->getCacheFolder();
+        $this->cacheEmptyFolder = $this->cacheManager->getCacheEmptyFolder();
+    }
+
+    /**
+     * replaceWinSlaches
+     *
+     * @param {String} $folder : Folder to remove from cache.
+     *
+     * @return null.
+     */
+    protected function removeEmptyFolderFromCache($folderPath)
+    {
+        // Init vars
+        $folderName;
+        $explodedPath;
+        $parentFolderPath;
+        $listItems;
+
+        $explodedPath = explode('/', $folderPath);
+
+        // Get folder name.
+        $folderName = end($explodedPath);
+
+        // Get parent folder path.
+        unset($explodedPath[count($explodedPath) - 1]);
+        $parentFolderPath = implode('/', $explodedPath);
+
+        // Remove empty folder name from parent folder list.
+        $listItems = $this->cacheFolder[$parentFolderPath];
+        unset($listItems[$folderName]);
+        $this->cacheFolder[$parentFolderPath] = $listItems;
+
+        // Remove empty folder path from cache.
+        unset($this->cacheFolder[$folderPath]);
+        unset($this->cacheEmptyFolder[$folderPath]);
+        $this->needUpdateCache = true;
     }
 
     /**
@@ -106,12 +143,14 @@ class RandomPic extends Root
         $min;
         $max;
         $nb;
+        $nbItems;
         $item;
         $itemType;
         $fileName;
         $randomItem;
         $dir;
         $isDir;
+        $folderPath;
         $listItems = array();
         $useCache = false;
 
@@ -150,20 +189,50 @@ class RandomPic extends Root
                 $listItems[$fileName] = $isDir;
             }
 
-            $this->cacheFolder[$folder] = $listItems;
             $this->needUpdateCache = true;
+
+            if (count($listItems) > 0) {
+                $this->cacheFolder[$folder] = $listItems;
+            } else {
+                $this->cacheEmptyFolder[$folder] = 1;
+                return null;
+            }
+        }
+
+        $nbItems = count($listItems);
+
+        if ($nbItems <= 0) {
+            $this->removeEmptyFolderFromCache($folder);
+            return null;
         }
 
         $min = 0;
-        $max = count($listItems) - 1;
+        $max = $nbItems - 1;
+
+        do {
+            $nb = mt_rand($min, $max);
+            $fileName = array_keys($listItems)[$nb];
+            $itemType = $listItems[$fileName] ? Item::TYPE_FOLDER : Item::TYPE_FILE;
+
+            $folderPath = $folder . '/' . $fileName;
+
+            if (
+                $itemType === Item::TYPE_FOLDER &&
+                (
+                    isset($this->cacheEmptyFolder[$folderPath]) ||
+                    array_key_exists($folderPath, $this->cacheEmptyFolder)
+                )
+            ) {
+                $this->removeEmptyFolderFromCache($folderPath);
+                $max--;
+            } else {
+                break;
+            }
+        } while ($max >= 0);
 
         if ($max < 0) {
             return null;
         }
-
-        $nb = mt_rand($min, $max);
-        $fileName = array_keys($listItems)[$nb];
-        $itemType = $listItems[$fileName] ? Item::TYPE_FOLDER : Item::TYPE_FILE;
 
         $this->useCache = $useCache && $itemType === Item::TYPE_FILE;
 
@@ -290,7 +359,8 @@ class RandomPic extends Root
                 array(
                     'publicMessage' => $errorMessage,
                     'message' => $errorMessage,
-                    'severity' => ExceptionExtended::SEVERITY_INFO
+                    'severity' => ExceptionExtended::SEVERITY_INFO,
+                    'log' =>  $_BASE_PIC_PATH . $randomCustomFolder
                 )
             );
         }
@@ -328,6 +398,7 @@ class RandomPic extends Root
         if ($this->needUpdateCache) {
             $this->needUpdateCache = false;
             $this->cacheManager->setCacheFolder($this->cacheFolder);
+            $this->cacheManager->setCacheEmptyFolder($this->cacheEmptyFolder);
         }
 
         return $result;
