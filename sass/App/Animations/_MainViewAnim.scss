@@ -2,42 +2,6 @@
 // App Main View Animations
 // ==========================
 
-@-moz-keyframes ds_loading_anim {
-    0% {
-        width: 4px;
-        height: 4px;
-        background-color:#aaa;
-        border-color: #aaa;
-        -moz-transform: translateY(0);
-    }
-
-    100% {
-        width: 10px;
-        height: 10px;
-        background-color:#fff;
-        border-color: #555;
-        -moz-transform: translateY(-8px);
-    }
-}
-
-@-webkit-keyframes ds_loading_anim {
-    0% {
-        width: 4px;
-        height: 4px;
-        background-color:#aaa;
-        border-color: #aaa;
-        -webkit-transform: translateY(0);
-    }
-
-    100% {
-        width: 10px;
-        height: 10px;
-        background-color:#fff;
-        border-color: #555;
-        -webkit-transform: translateY(-8px);
-    }
-}
-
 @keyframes ds_loading_anim {
     0% {
         width: 4px;
@@ -53,5 +17,17 @@
         background-color:#fff;
         border-color: #555;
         transform: translateY(-8px);
+    }
+}
+
+@keyframes ds_action_anim {
+    0% {
+        opacity: 1;
+        transform: scale(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(100);
     }
 }

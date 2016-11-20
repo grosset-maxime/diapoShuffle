@@ -67,12 +67,16 @@ function (
 
     // Private functions.
     let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
-        _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause, _onGetRandom,
-        _onBeforeGetRandom, _onResume, _hideLoading, _showLoading;
+        _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause,
+        _onGetRandom, _setNbPinBtn, _onBeforeGetRandom, _onResume,
+        _hideLoading, _showLoading, _doActionAnim;
+
+    // Private vars.
+    let _doActionTimeout;
 
 
     _buildSkeleton = () => {
-        let mainCtn, cmdCtn, playCtn, pauseIconCtn, loadingCtn;
+        let mainCtn, cmdCtn, playCtn, pauseIconCtn, loadingCtn, actionIconCtn;
 
         let buildCmd = () => {
             let btnStop, btnPrevious, btnNext, btnPause, btnDelete,
@@ -227,9 +231,14 @@ function (
             })
         );
 
+        actionIconCtn = _els.actionIconCtn = $('<div>', {
+            'class': 'ctn_icon_action'
+        });
+
         mainCtn.append(
             loadingCtn,
             pauseIconCtn,
+            actionIconCtn,
             cmdCtn,
             playCtn
         );
@@ -427,6 +436,25 @@ function (
         }
     };
 
+    _setNbPinBtn = (nb) => {
+        _els.btnPin.attr('value', 'pin (' + nb + ')');
+    };
+
+    _doActionAnim = () => {
+        let actionIconCtn = _els.actionIconCtn;
+
+        clearTimeout(_doActionTimeout);
+        actionIconCtn.removeClass('anim');
+
+        setTimeout(() => {
+            actionIconCtn.addClass('anim');
+        });
+
+        _doActionTimeout = setTimeout(() => {
+            actionIconCtn.removeClass('anim');
+        }, 1000);
+    };
+
     View = {
 
         currentPic: null,
@@ -508,7 +536,10 @@ function (
                     },
                     onAdd: OptionsView.onAddPined,
                     onRemove: OptionsView.onRemovePined,
-                    onClear: OptionsView.onClearPined
+                    onClear: () => {
+                        _setNbPinBtn(0);
+                        OptionsView.onClearPined();
+                    }
                 }
             });
         },
@@ -629,10 +660,15 @@ function (
 
         pin: () => {
             PinPicAction.add(View.currentPic);
+            _setNbPinBtn(PinPicAction.getNbPined());
+            _doActionAnim();
         },
 
         unPin: () => {
             PinPicAction.remove();
+            _setNbPinBtn(PinPicAction.getNbPined());
+            _displayNext();
+            _doActionAnim();
         },
 
         isPlaying: GetRandomPicAction.isPlaying,
