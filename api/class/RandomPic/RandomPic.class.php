@@ -57,8 +57,8 @@ class RandomPic extends Root
 
     protected $absolutePathFolder = ''; // Complete path of the random pic's folder.
     protected $publicPathFolder = '';   // Relative path from pic folder of the random pic's folder.
-    protected $levelMax = 25;           // Maximum folder depth.
-    protected $tryMax = 3;              // Maximum try before to raise folder empty exception.
+    protected $levelMax = 50;           // Maximum folder depth.
+    protected $tryMax = 100;            // Maximum try before to raise folder empty exception.
     protected $cacheFolder = array();
     protected $cacheEmptyFolder = array();
     protected $needUpdateCache = false;
