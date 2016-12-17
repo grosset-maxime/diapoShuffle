@@ -49,7 +49,6 @@ if (!$picPath) {
     die;
 }
 
-// if ()
 $success = false;
 $picPath = substr($picPath, strlen('/' . $_BASE_PIC_FOLDER_NAME));
 

@@ -12,16 +12,22 @@
  */
 
 /* global
-    $_BASE_PIC_PATH, $_BASE_PIC_FOLDER_NAME
+    $_BASE_PIC_PATH, $_BASE_PIC_FOLDER_NAME, $_config
 */
 
 namespace RandomPic;
 
+// DS
+require_once dirname(__FILE__) . '/../../../config/config.inc.php';
 require_once dirname(__FILE__) . '/../../globals.php';
-
 require_once dirname(__FILE__) . '/../Root.class.php';
 require_once dirname(__FILE__) . '/../CacheManager.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
+
+// DeleteItem
+require_once dirname(__FILE__) . '/../DeleteItem/DeleteItem.class.php';
+
+// RandomPic
 require_once dirname(__FILE__) . '/Item.class.php';
 
 
@@ -31,8 +37,11 @@ use \Exception;
 
 // DS
 use DS\Root;
-use DS\ExceptionExtended;
 use DS\CacheManager;
+use DS\ExceptionExtended;
+
+// DeleteItem
+use DeleteItem\DeleteItem;
 
 // RandomPic
 use RandomPic\Item;
@@ -83,38 +92,35 @@ class RandomPic extends Root
     }
 
     /**
-     * replaceWinSlaches
+     * Remove the folder (from cache and delete it).
      *
-     * @param {String} $folder : Folder to remove from cache.
+     * @param {String} $folderPath : Folder to remove from cache.
      *
      * @return null.
      */
-    protected function removeEmptyFolderFromCache($folderPath)
+    protected function removeEmptyFolder($folderPath)
     {
         // Init vars
-        $folderName;
-        $explodedPath;
-        $parentFolderPath;
-        $listItems;
+        global $_config;
+        $result;
+        $deleteFromDisk = isset($_config['deleteEmptyFolder']) ? $_config['deleteEmptyFolder'] : false;
 
-        $explodedPath = explode('/', $folderPath);
+        try {
 
-        // Get folder name.
-        $folderName = end($explodedPath);
+            $result = (new DeleteItem())->deleteFolder(
+                $folderPath,
+                $deleteFromDisk,
+                $this->cacheFolder,
+                $this->cacheEmptyFolder
+            );
 
-        // Get parent folder path.
-        unset($explodedPath[count($explodedPath) - 1]);
-        $parentFolderPath = implode('/', $explodedPath);
+        } catch (ExceptionExtended $e) { throw $e; }
 
-        // Remove empty folder name from parent folder list.
-        $listItems = $this->cacheFolder[$parentFolderPath];
-        unset($listItems[$folderName]);
-        $this->cacheFolder[$parentFolderPath] = $listItems;
-
-        // Remove empty folder path from cache.
-        unset($this->cacheFolder[$folderPath]);
-        unset($this->cacheEmptyFolder[$folderPath]);
-        $this->needUpdateCache = true;
+        if (is_array($result)) {
+            $this->cacheFolder = $result['cacheFolder'];
+            $this->cacheEmptyFolder = $result['cacheEmptyFolder'];
+            $this->needUpdateCache = true;
+        }
     }
 
     /**
@@ -202,7 +208,7 @@ class RandomPic extends Root
         $nbItems = count($listItems);
 
         if ($nbItems <= 0) {
-            $this->removeEmptyFolderFromCache($folder);
+            $this->removeEmptyFolder($folder);
             return null;
         }
 
@@ -223,7 +229,7 @@ class RandomPic extends Root
                     array_key_exists($folderPath, $this->cacheEmptyFolder)
                 )
             ) {
-                $this->removeEmptyFolderFromCache($folderPath);
+                $this->removeEmptyFolder($folderPath);
                 $max--;
             } else {
                 break;

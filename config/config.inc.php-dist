@@ -22,4 +22,6 @@ $_config = array(
 
     'log' => array(
     ),
+
+    'deleteEmptyFolder' => false // Should delete empty folder.
 );
