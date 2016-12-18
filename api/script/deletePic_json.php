@@ -1,6 +1,6 @@
 <?php
 /**
- * Description :
+ * Description : Delete a pic.
  * Return : JSON
  *
  * PHP version 5
@@ -17,10 +17,17 @@
     $_BASE_PIC_FOLDER_NAME, $_BASE_PIC_PATH
 */
 
+require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 require_once ROOT_DIR . '/api/class/CacheManager.class.php';
 
+require_once ROOT_DIR . '/api/class/DeleteItem/DeleteItem.class.php';
+
 // DS
+use DS\ExceptionExtended;
 use DS\CacheManager;
+
+// DeleteItem
+use DeleteItem\DeleteItem;
 
 
 // ====================
@@ -62,64 +69,34 @@ if ($firstCharPicPAth !== '/') {
 
 $absolutePicPath = $_BASE_PIC_PATH . $picPath;
 
+$cacheManager = new CacheManager();
+
 try {
 
-    if (!file_exists($absolutePicPath)) {
-        throw new Exception('Picture doesn\'t exist: ' . $absolutePicPath);
+    $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder());
+
+    if (is_array($result) && $result['success'] === true) {
+        $cacheManager->setCacheFolder($result['cacheFolder']);
+        $success = true;
     }
 
+} catch (ExceptionExtended $e) {
+    $jsonResult['error'] = $logError;
+    $jsonResult['error']['message'] = $e->getMessage();
+    $jsonResult['error']['publicMessage'] = $e->getPublicMessage();
+    $jsonResult['error']['severity'] = $e->getSeverity();
+    $jsonResult['error']['log'] = $e->getLog();
+    print json_encode($jsonResult);
+    die;
 } catch (Exception $e) {
     $jsonResult['error'] = $logError;
-    $jsonResult['error']['wrongCustomFolder'] = true;
-    $jsonResult['error']['message'] = 'Picture doesn\'t exist.';
-    $jsonResult['error']['errorMessage'] = $e->getMessage();
+    $jsonResult['error']['message'] = $e->getMessage();
+    $jsonResult['error']['publicMessage'] = 'Unexpected error.';
+    $jsonResult['error']['severity'] = ExceptionExtended::SEVERITY_ERROR;
     print json_encode($jsonResult);
     die;
 }
 
-try {
-
-    $success = unlink($absolutePicPath);
-
-} catch (Exception $e) {
-    $jsonResult['error'] = $logError;
-    $jsonResult['error']['message'] = 'Error while trying to delete picture.';
-    $jsonResult['error']['errorMessage'] = $e->getMessage();
-    print json_encode($jsonResult);
-}
-
-if (!$success) {
-    $jsonResult['error'] = $logError;
-    $jsonResult['error']['message'] = 'Error while trying to delete picture.';
-    print json_encode($jsonResult);
-}
-
-$folderPath = substr(
-    $absolutePicPath,
-    0,
-    strrpos(
-        $absolutePicPath,
-        '/'
-    )
-);
-
-$picName = substr(
-    $absolutePicPath,
-    strrpos(
-        $absolutePicPath,
-        '/'
-    ) + 1
-);
-
-$cacheManager = new CacheManager();
-$cacheFolder = $cacheManager->getCacheFolder();
-
-if (isset($cacheFolder[$folderPath][$picName])) {
-
-    unset($cacheFolder[$folderPath][$picName]);
-    $cacheManager->setCacheFolder($cacheFolder);
-
-}
 
 $jsonResult['success'] = $success;
 print json_encode($jsonResult);

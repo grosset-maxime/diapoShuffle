@@ -53,7 +53,8 @@ class DeleteItem extends Root
      *
      * @return null.
      */
-    protected function rrmdir($path) {
+    protected function rrmdir($path)
+    {
         $dir = opendir($path);
 
         while (false !== ($file = readdir($dir))) {
@@ -76,7 +77,8 @@ class DeleteItem extends Root
      *
      * @return null.
      */
-    protected function rmdir($path) {
+    protected function rmdir($path)
+    {
 
         // init vars
         $dir;
@@ -134,6 +136,7 @@ class DeleteItem extends Root
             return false;
         }
     }
+
 
     /**
      * Delete a folder.
@@ -213,6 +216,71 @@ class DeleteItem extends Root
             'fromDiskStatus' => $fromDiskStatus,
             'cacheFolder' => $cacheFolder,
             'cacheEmptyFolder' => $cacheEmptyFolder
+        );
+    }
+
+
+    /**
+     * Delete a pic.
+     *
+     * @param {String}   $path        : Pic path to remove.
+     * @param {String[]} $cacheFolder : Folder cache where to remove the pic.
+     *
+     * @return {Object}.
+     */
+    public function deletePic($path = '', array $cacheFolder = array())
+    {
+
+        // Init vars
+        $picName;
+        $explodedPath;
+        $folderPath;
+        $success;
+
+        if (!file_exists($path)) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'Pic doesn\'t exist: ' . $path,
+                    'message' => 'Pic doesn\'t exist: ' . $path,
+                    'severity' => ExceptionExtended::SEVERITY_WARNING
+                )
+            );
+        }
+
+        try {
+
+            $success = unlink($path);
+
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'Fail to delete pic: ' . $path,
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
+
+
+        // Delete pic from cache
+        // ---------------------
+
+        $explodedPath = explode('/', $path);
+
+        // Get folder name.
+        $picName = end($explodedPath);
+
+        // Get parent folder path.
+        unset($explodedPath[count($explodedPath) - 1]); // Remove last item of the array.
+        $folderPath = implode('/', $explodedPath);
+
+        // Remove the pic from the cache.
+        unset($cacheFolder[$folderPath][$picName]);
+
+
+        return array(
+            'success' => $success,
+            'cacheFolder' => $cacheFolder,
         );
     }
 } // End Class DeleteItem
