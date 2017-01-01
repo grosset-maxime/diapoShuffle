@@ -74,18 +74,27 @@ function ($, Client, OptionsView) {
 
     _displayOsPicPath = () => {
         let range,
-            path = (globals.picsRootPath || '') + '/' + _currentPic.randomPublicPath + '/' + _currentPic.name;
+            completePath = '',
+            paths = [globals.picsRootPath || '', _currentPic.randomPublicPath, _currentPic.name];
 
-        if (path.indexOf('//')) {
-            path = path.replace(new RegExp('//', 'g'), '/');
-        }
+        paths.forEach(function (path) {
+            if (path && path.indexOf('/') !== 0) {
+                path = '/' + path;
+            }
+
+            if (path.lastIndexOf('/') === (path.length - 1)) {
+                path = path.slice(0, -1);
+            }
+
+            completePath += path;
+        });
 
         if (Client.OS.win) {
-            path = path.replace(new RegExp('/', 'g'), '\\');
+            completePath = completePath.replace(new RegExp('/', 'g'), '\\');
         }
 
         _els.customFolderPathCtn.empty();
-        _els.randomPublicPathCtn.html(path);
+        _els.randomPublicPathCtn.html(completePath);
 
         // Select the path.
         range = document.createRange();
