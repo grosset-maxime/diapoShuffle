@@ -86,11 +86,13 @@ function (
                     break;
 
                 case 32: // SPACE
+                case 40: // down arrow
                     PlayView.pause();
                     doPreventDefault = true;
                     break;
 
                 case 73: // i (as inside)
+                case 38: // up arrow
                     PlayView.askInsideFolder();
                     break;
 
@@ -99,18 +101,20 @@ function (
                     break;
 
                 case 68: // d (as delete)
+                case 18: // alt
                     PlayView.askDeletePic();
                     break;
 
                 case 80: // p (as pin)
+                case 16: // shift
                     PlayView.pin();
                     break;
 
-                case 37: // left arrow.
+                case 37: // left arrow
                     PlayView.displayPrevious();
                     break;
 
-                case 39: // right arrow.
+                case 39: // right arrow
                     PlayView.displayNext();
                     break;
                 }
