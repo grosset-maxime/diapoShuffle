@@ -22,14 +22,34 @@ function ($, OptionsView) {
 
 
     _buildSkeleton = () => {
-        let mainCtn;
+        let mainCtn, customFolderPathCtn, randomPublicPathCtn,
+            picturePathCtn, pictureCounterCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_infos_view'
         });
 
-        // mainCtn.append(
-        // );
+        _els.customFolderPathCtn = customFolderPathCtn = $('<span>', {
+            'class': 'custom_folder_path'
+        });
+
+        _els.randomPublicPathCtn = randomPublicPathCtn = $('<span>', {
+            'class': 'random_public_path'
+        });
+
+        _els.picturePathCtn = picturePathCtn = $('<div>', {
+            'class': 'picture_path_ctn',
+            html: [customFolderPathCtn, randomPublicPathCtn]
+        });
+
+        _els.pictureCounterCtn = pictureCounterCtn = $('<div>', {
+            'class': 'picture_counter_ctn'
+        });
+
+        _els.mainCtn.append(
+            pictureCounterCtn,
+            picturePathCtn
+        );
 
         _options.root.append(mainCtn);
     };
@@ -55,33 +75,27 @@ function ($, OptionsView) {
             _buildSkeleton();
         },
 
+        setPicCounter: (counter) => {
+            _els.pictureCounterCtn.html(counter);
+        },
+
         /**
          *
          */
         setPicFolderPath: (customFolderPath, randomPublicPath) => {
-            let customFolderPathCtn, randomPublicPathCtn;
-
-            customFolderPathCtn = $('<span>', {
-                'class': 'custom_folder_path',
-                html: customFolderPath
-            });
-
-            randomPublicPathCtn = $('<span>', {
-                'class': 'random_public_path',
-                html: randomPublicPath
-            });
-
-            _els.mainCtn.html(
-                $('<div>').append(customFolderPathCtn, randomPublicPathCtn)
-            );
-
-            View.show();
+            _els.customFolderPathCtn.html(customFolderPath);
+            _els.randomPublicPathCtn.html(randomPublicPath);
         },
 
         show: () => {
             if (!OptionsView.isPublicPathOn()) {
-                View.hide();
-                return;
+                _els.picturePathCtn.hide();
+            }
+
+            if (OptionsView.isPlayPinedOn()) {
+                _els.pictureCounterCtn.show();
+            } else {
+                _els.pictureCounterCtn.hide();
             }
 
             _els.mainCtn.show();

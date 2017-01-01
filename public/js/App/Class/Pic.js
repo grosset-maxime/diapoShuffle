@@ -26,7 +26,8 @@ function (
             src: '',
             useCache: false,
             width: 0,
-            height: 0
+            height: 0,
+            count: 0
         },
 
         customFolderPath: '',
@@ -37,6 +38,7 @@ function (
 
         width: 0,
         height: 0,
+        count: 0, // Count of nb of display.
 
 
         /**
@@ -56,6 +58,8 @@ function (
 
             that.width = options.width;
             that.height = options.height;
+
+            that.count = options.count || 0;
         },
 
         getFullPath: function () {
@@ -63,7 +67,13 @@ function (
                 currentPath = that.customFolderPath + (that.randomPublicPath || '');
 
             return currentPath.replace('//', '/');
-        }
+        },
+
+        incCounter: function () {
+            this.count++;
+
+            return this;
+        },
     });
 
     return Pic;

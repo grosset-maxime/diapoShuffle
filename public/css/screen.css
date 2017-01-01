@@ -458,27 +458,39 @@ body {
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {
   display: none;
+  height: 100vh;
+  width: 100vw;
+}
+/* line 10, ../../sass/App/Views/_InfosView.scss */
+.diapo_shuffle_view_mode .diapo_shuffle .ds_infos_view {
+  display: block;
+}
+/* line 14, ../../sass/App/Views/_InfosView.scss */
+.diapo_shuffle .ds_infos_view .picture_counter_ctn,
+.diapo_shuffle .ds_infos_view .picture_path_ctn {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
   z-index: 1000;
   color: #333;
   background-color: rgba(255, 255, 255, 0.5);
   padding: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
   border-radius: 5px;
 }
-/* line 16, ../../sass/App/Views/_InfosView.scss */
-.diapo_shuffle_view_mode .diapo_shuffle .ds_infos_view {
-  display: block;
+/* line 24, ../../sass/App/Views/_InfosView.scss */
+.diapo_shuffle .ds_infos_view .picture_path_ctn {
+  bottom: 5px;
+  right: 5px;
 }
-/* line 20, ../../sass/App/Views/_InfosView.scss */
+/* line 29, ../../sass/App/Views/_InfosView.scss */
+.diapo_shuffle .ds_infos_view .picture_counter_ctn {
+  top: 5px;
+  left: 5px;
+}
+/* line 34, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .custom_folder_path {
   font-size: 1em;
   margin-right: 4px;
 }
-/* line 25, ../../sass/App/Views/_InfosView.scss */
+/* line 39, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .random_public_path {
   font-size: 1.5em;
   font-weight: bold;

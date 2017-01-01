@@ -48,6 +48,14 @@ function ($) {
          *
          */
         add: (pic) => {
+            var result = _pined.find(function (aPic) {
+                return aPic.src === pic.src;
+            });
+
+            if (result) {
+                return;
+            }
+
             _pined.push(pic);
             _navIndex = _pined.length - 1;
 
@@ -75,7 +83,7 @@ function ($) {
          *
          */
         getCurrent: () => {
-            return _pined[_navIndex];
+            return _pined[_navIndex].incCounter();
         },
 
         /**
@@ -94,7 +102,7 @@ function ($) {
                 onMiddle();
             }
 
-            return _pined[_navIndex];
+            return _pined[_navIndex].incCounter();
         },
 
         /**
@@ -113,12 +121,13 @@ function ($) {
                 onMiddle();
             }
 
-            return _pined[_navIndex];
+            return _pined[_navIndex].incCounter();
         },
 
         getRandom: () => {
             _navIndex = Math.floor(Math.random() * _pined.length);
-            return _pined[_navIndex];
+
+            return _pined[_navIndex].incCounter();
         },
 
         /**

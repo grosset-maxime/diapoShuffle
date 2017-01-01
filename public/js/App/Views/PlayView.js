@@ -338,6 +338,8 @@ function (
         let img = _els.img;
 
         InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
+        InfosView.setPicCounter(pic.count);
+        InfosView.show();
 
         if (img) {
             img.remove();
@@ -431,7 +433,7 @@ function (
         _hideLoading();
 
         if (Pic) {
-            View.setPic(Pic, onSuccess, onFailure);
+            _setPic(Pic, onSuccess, onFailure);
             HistoryPicAction.add(Pic);
         }
     };
@@ -543,8 +545,6 @@ function (
                 }
             });
         },
-
-        setPic: _setPic,
 
         askDeletePic: () => {
             if (!GetRandomPicAction.isPausing()) {
