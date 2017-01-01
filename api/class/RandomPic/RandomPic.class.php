@@ -396,6 +396,7 @@ class RandomPic extends Root
                 strlen($UNIX_SEP . $_BASE_PIC_FOLDER_NAME . $randomCustomFolder)
             ),
             'customFolderPath' => $randomCustomFolder,
+            'name' => $picFileName,
             'width' => $width,
             'height' => $height,
             'useCache' => $this->useCache

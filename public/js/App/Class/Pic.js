@@ -24,6 +24,7 @@ function (
             customFolderPath: '',
             randomPublicPath: '',
             src: '',
+            name: '',
             useCache: false,
             width: 0,
             height: 0,
@@ -33,6 +34,7 @@ function (
         customFolderPath: '',
         randomPublicPath: '',
         src: '',
+        name: '',
 
         useCache: false,
 
@@ -53,6 +55,7 @@ function (
             that.customFolderPath = options.customFolderPath;
             that.randomPublicPath = options.randomPublicPath;
             that.src = options.src;
+            that.name = options.name;
 
             that.useCache = options.useCache;
 

@@ -23,5 +23,9 @@ $_config = array(
     'log' => array(
     ),
 
+    'globalsJs' => array(
+        'picsRootPath' => '' //
+    ),
+
     'deleteEmptyFolder' => false // Should delete empty folder.
 );

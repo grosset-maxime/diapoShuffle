@@ -479,18 +479,19 @@ body {
 .diapo_shuffle .ds_infos_view .picture_path_ctn {
   bottom: 5px;
   right: 5px;
+  word-break: break-all;
 }
-/* line 29, ../../sass/App/Views/_InfosView.scss */
+/* line 30, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .picture_counter_ctn {
   top: 5px;
   left: 5px;
 }
-/* line 34, ../../sass/App/Views/_InfosView.scss */
+/* line 35, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .custom_folder_path {
   font-size: 1em;
   margin-right: 4px;
 }
-/* line 39, ../../sass/App/Views/_InfosView.scss */
+/* line 40, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .random_public_path {
   font-size: 1.5em;
   font-weight: bold;

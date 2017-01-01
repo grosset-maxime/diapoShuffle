@@ -153,6 +153,16 @@ if (!empty($_routes[$_r]['assets']) && !empty($_routes[$_r]['assets']['css'])) {
                 'PM': '<?php echo $_PMPath; ?>'
             }
         };
+
+        <?php
+            if (!empty($_config['globalsJs'])) {
+                echo 'var globals = {';
+                foreach ($_config['globalsJs'] as $key => $val) {
+                    echo '"' . $key . '": "' . $val . '",';
+                }
+                echo '};';
+            }
+        ?>
         </script>
 
         <?php echo $assetsJs; ?>

@@ -1,24 +1,28 @@
 /* global
-    define
+    define, globals
 */
 
 define(
 [
     'jquery',
 
+    // PM
+    'PM/Utils/Client',
+
     // App View
     'App/Views/OptionsView'
 ],
-function ($, OptionsView) {
+function ($, Client, OptionsView) {
     'use strict';
 
     let View,
         _options = {},
-        _els = {};
+        _els = {},
+        _currentPic = {};
 
 
     // Private functions.
-    let _buildSkeleton;
+    let _buildSkeleton, _setPicFolderPath, _setPicCounter, _displayOsPicPath;
 
 
     _buildSkeleton = () => {
@@ -39,7 +43,12 @@ function ($, OptionsView) {
 
         _els.picturePathCtn = picturePathCtn = $('<div>', {
             'class': 'picture_path_ctn',
-            html: [customFolderPathCtn, randomPublicPathCtn]
+            html: [customFolderPathCtn, randomPublicPathCtn],
+            on: {
+                click: function () {
+                    _displayOsPicPath();
+                }
+            }
         });
 
         _els.pictureCounterCtn = pictureCounterCtn = $('<div>', {
@@ -54,18 +63,48 @@ function ($, OptionsView) {
         _options.root.append(mainCtn);
     };
 
+    _setPicFolderPath = (pic = {}) => {
+        _els.customFolderPathCtn.html(pic.customFolderPath);
+        _els.randomPublicPathCtn.html(pic.randomPublicPath);
+    };
+
+    _setPicCounter = (pic = {}) => {
+        _els.pictureCounterCtn.html(pic.count);
+    };
+
+    _displayOsPicPath = () => {
+        let range,
+            path = (globals.picsRootPath || '') + '/' + _currentPic.randomPublicPath + '/' + _currentPic.name;
+
+        if (path.indexOf('//')) {
+            path = path.replace(new RegExp('//', 'g'), '/');
+        }
+
+        if (Client.OS.win) {
+            path = path.replace(new RegExp('/', 'g'), '\\');
+        }
+
+        _els.customFolderPathCtn.empty();
+        _els.randomPublicPathCtn.html(path);
+
+        // Select the path.
+        range = document.createRange();
+        range.selectNode(_els.randomPublicPathCtn[0]);
+        window.getSelection().addRange(range);
+    };
+
     View = {
         /**
          *
          */
-        init: (opts) => {
+        init: (opts = {}) => {
             $.extend(
                 true,
                 _options,
                 {
                     root: null
                 },
-                opts || {}
+                opts
             );
 
             if (!_options.root) {
@@ -75,24 +114,18 @@ function ($, OptionsView) {
             _buildSkeleton();
         },
 
-        setPicCounter: (counter) => {
-            _els.pictureCounterCtn.html(counter);
-        },
+        show: (pic = {}) => {
+            _currentPic = pic;
 
-        /**
-         *
-         */
-        setPicFolderPath: (customFolderPath, randomPublicPath) => {
-            _els.customFolderPathCtn.html(customFolderPath);
-            _els.randomPublicPathCtn.html(randomPublicPath);
-        },
-
-        show: () => {
-            if (!OptionsView.isPublicPathOn()) {
+            if (OptionsView.isPublicPathOn()) {
+                _setPicFolderPath(pic);
+                _els.picturePathCtn.show();
+            } else {
                 _els.picturePathCtn.hide();
             }
 
             if (OptionsView.isPlayPinedOn()) {
+                _setPicCounter(pic);
                 _els.pictureCounterCtn.show();
             } else {
                 _els.pictureCounterCtn.hide();

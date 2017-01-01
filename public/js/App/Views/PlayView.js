@@ -337,10 +337,6 @@ function (
     _setPic = (pic, onSuccess, onFailure) => {
         let img = _els.img;
 
-        InfosView.setPicFolderPath(pic.customFolderPath, pic.randomPublicPath);
-        InfosView.setPicCounter(pic.count);
-        InfosView.show();
-
         if (img) {
             img.remove();
         }
@@ -373,6 +369,8 @@ function (
         _els.playCtn.html(img);
 
         View.currentPic = pic;
+
+        InfosView.show(pic);
     };
 
     _showLoading = () => {
