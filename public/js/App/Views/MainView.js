@@ -101,7 +101,7 @@ function (
                     break;
 
                 case 68: // d (as delete)
-                case 18: // alt
+                case 46: // supp
                     PlayView.askDeletePic();
                     break;
 
