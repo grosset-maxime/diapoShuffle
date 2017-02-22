@@ -34,11 +34,12 @@ function ($) {
             );
 
             modalOptions = {
+                dialogClass: 'delete_modal',
                 resizable: false,
                 modal: true,
-                width: 400,
+                width: 370,
                 position: {
-                    at: 'center top+25%'
+                    at: 'center top'
                 },
                 close: (event) => {
                     event.stopPropagation();
@@ -64,9 +65,19 @@ function ($) {
             };
 
             modal = $('<div>', {
-                'class': '',
-                html: 'Do you really want to delete this picture ?'
+                html: 'Delete this picture ?'
             }).dialog(modalOptions);
+
+            modal.css({
+                'min-height': 'auto'
+            });
+
+            modal.parent().css({
+                display: 'flex',
+                top: '3px'
+            });
+
+            $('.ui-widget-overlay').addClass('delete_modal_overlay');
         }
     };
 

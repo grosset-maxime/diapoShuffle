@@ -759,3 +759,39 @@ body {
 .diapo_shuffle .ds_folder_finder .footer_ctn .btn_unselectall {
   margin-right: 15px;
 }
+
+/* line 5, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal_overlay.ui-widget-overlay {
+  opacity: 0.1;
+}
+
+/* line 9, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal {
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.6);
+}
+/* line 13, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal .ui-dialog-titlebar {
+  display: none;
+}
+/* line 17, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal .ui-dialog-content {
+  min-height: auto;
+  padding: 10px;
+  margin-right: 20px;
+}
+/* line 23, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal .ui-dialog-buttonpane {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+/* line 28, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal .ui-dialog-buttonpane .ui-button {
+  margin: 2px;
+  margin-right: 10px;
+}
+/* line 34, ../../sass/App/Modals/_DeletePicModal.scss */
+.delete_modal .ui-widget-content {
+  background: none;
+}

@@ -1,0 +1,37 @@
+// ===========================
+// App Modals Delete Pic Modal
+// ===========================
+
+.delete_modal_overlay.ui-widget-overlay {
+    opacity: 0.1;
+}
+
+.delete_modal {
+    min-width: 300px;
+    background: rgba(255, 255, 255, 0.6);
+
+    .ui-dialog-titlebar {
+        display: none;
+    }
+
+    .ui-dialog-content {
+        min-height: auto;
+        padding: 10px;
+        margin-right: 20px;
+    }
+
+    .ui-dialog-buttonpane {
+        border: none;
+        margin: 0;
+        padding: 0;
+
+        .ui-button {
+            margin: 2px;
+            margin-right: 10px;
+        }
+    }
+
+    .ui-widget-content {
+        background: none;
+    }
+}
