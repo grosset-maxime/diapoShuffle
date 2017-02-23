@@ -8,7 +8,7 @@ define(
 
     // App API
     'App/API/API',
-    'App/Utils/Utils',
+    'App/Notify',
 
     // App Views
     'App/Views/OptionsView',
@@ -33,7 +33,7 @@ function (
 
     // App API
     API,
-    Utils,
+    Notify,
 
     // App Views
     OptionsView,
@@ -570,9 +570,7 @@ function (
                             _displayNext();
                         },
                         onFailure: (error) => {
-                            Utils.notify({
-                                message: error
-                            });
+                            Notify.error({ message: error });
                         }
                     });
 

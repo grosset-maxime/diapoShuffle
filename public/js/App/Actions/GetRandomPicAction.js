@@ -8,7 +8,7 @@ define(
 
     // App API
     'App/API/API',
-    'App/Utils/Utils',
+    'App/Notify',
 
     // App
     'App/Actions/PinPicAction',
@@ -18,7 +18,7 @@ function (
 
     // App API
     API,
-    Utils,
+    Notify,
 
     // App
     PinPicAction
@@ -163,9 +163,8 @@ function (
                 onFailure: (error) => {
                     if (Action.isInside()) {
 
-                        Utils.notify({
-                            message: 'No more pic into: "' + Action.getInsideFolder() + '"',
-                            type: 'info'
+                        Notify.info({
+                            message: 'No more pic into: "' + Action.getInsideFolder() + '"'
                         });
 
                         // Remove inside folder.
@@ -174,9 +173,7 @@ function (
                         _getRandomPic();
                     } else {
                         _stop();
-                        Utils.notify({
-                            message: error
-                        });
+                        Notify.error({ message: error });
                     }
                 }
             });

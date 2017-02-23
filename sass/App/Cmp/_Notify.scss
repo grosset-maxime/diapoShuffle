@@ -1,0 +1,46 @@
+// ==============
+// App/Cmp/Notify
+// ==============
+
+
+.pm_notify_cmp {
+    display: none;
+    position: absolute;
+    text-align: center;
+    padding: 8px;
+    padding-right: 25px;
+    z-index: 1000;
+    top: 0;
+    border-bottom: 1px solid #333;
+    border-radius: 0 0 3px 3px;
+    width: 100%;
+
+    &.error {
+        background-color: rgba(232, 152, 152, 0.9);
+    }
+
+    &.info {
+        background-color: rgba(152, 201, 232, 0.9);
+    }
+
+    &.warning {
+        background-color: rgba(232, 208, 152, 0.9);
+    }
+
+    .close {
+        position: absolute;
+        cursor: pointer;
+        width: 25px;
+        height: 100%;
+        line-height: 27px;
+        top: 0;
+        right: 0;
+        opacity: 0.5;
+        transition: opacity 0.3s;
+        font-size: 1.5em;
+
+        &:hover {
+            opacity: 1
+        }
+    }
+}

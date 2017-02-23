@@ -10,7 +10,7 @@ curl(
     'PM/Core',
 
     // App
-    'App/Views/MainView',
+    'App/Views/MainView'
 ],
 function ($, PM, MainView) {
     'use strict';

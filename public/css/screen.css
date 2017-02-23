@@ -137,60 +137,6 @@ div {
   color: #666;
 }
 
-/* line 10, ../../../sass/Cmp/Notify.scss */
-/* line 2, vendors/PM/Cmp/Notify.css */
-.pm_notify_cmp {
-  display: none;
-  width: 400px;
-  position: absolute;
-  text-align: center;
-  padding: 24px;
-  z-index: 1000;
-  border-radius: 3px;
-  left: calc(50% - 200px);
-  top: 25px;
-  box-shadow: 3px 3px 5px -2px #555;
-  border: 1px solid #333;
-}
-
-/* line 23, ../../../sass/Cmp/Notify.scss */
-/* line 16, vendors/PM/Cmp/Notify.css */
-.pm_notify_cmp.error {
-  background-color: rgba(205, 51, 51, 0.95);
-}
-
-/* line 27, ../../../sass/Cmp/Notify.scss */
-/* line 20, vendors/PM/Cmp/Notify.css */
-.pm_notify_cmp.info {
-  background-color: rgba(0, 191, 255, 0.95);
-}
-
-/* line 31, ../../../sass/Cmp/Notify.scss */
-/* line 24, vendors/PM/Cmp/Notify.css */
-.pm_notify_cmp.warning {
-  background-color: rgba(255, 97, 3, 0.95);
-}
-
-/* line 35, ../../../sass/Cmp/Notify.scss */
-/* line 28, vendors/PM/Cmp/Notify.css */
-.pm_notify_cmp .close {
-  position: absolute;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  top: 0;
-  right: 0px;
-  opacity: 0.5;
-  transition: opacity 0.3s;
-}
-
-/* line 46, ../../../sass/Cmp/Notify.scss */
-/* line 40, vendors/PM/Cmp/Notify.css */
-.pm_notify_cmp .close:hover {
-  opacity: 1;
-}
-
 @keyframes ds_loading_anim {
   0% {
     width: 4px;
@@ -222,6 +168,49 @@ body {
   background-color: #f8f8f8;
   font: 14px arial, sans-serif;
   overflow: hidden;
+}
+
+/* line 6, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp {
+  display: none;
+  position: absolute;
+  text-align: center;
+  padding: 8px;
+  padding-right: 25px;
+  z-index: 1000;
+  top: 0;
+  border-bottom: 1px solid #333;
+  border-radius: 0 0 3px 3px;
+  width: 100%;
+}
+/* line 18, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp.error {
+  background-color: rgba(232, 152, 152, 0.9);
+}
+/* line 22, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp.info {
+  background-color: rgba(152, 201, 232, 0.9);
+}
+/* line 26, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp.warning {
+  background-color: rgba(232, 208, 152, 0.9);
+}
+/* line 30, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp .close {
+  position: absolute;
+  cursor: pointer;
+  width: 25px;
+  height: 100%;
+  line-height: 27px;
+  top: 0;
+  right: 0;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  font-size: 1.5em;
+}
+/* line 42, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp .close:hover {
+  opacity: 1;
 }
 
 /* line 12, ../../sass/App/Cmp/_PathChooser.scss */
@@ -257,7 +246,7 @@ body {
   opacity: 0.3;
 }
 
-/* line 70, ../../sass/screen.scss */
+/* line 71, ../../sass/screen.scss */
 .diapo_shuffle {
   color: #333;
 }

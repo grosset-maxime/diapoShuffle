@@ -45,7 +45,7 @@
 
 // PM Cmp
 // ------
-@import 'CSS:../public/css/vendors/PM/Cmp/Notify';
+// @import 'CSS:../public/css/vendors/PM/Cmp/Notify';
 
 // App Animations
 // --------------
@@ -62,6 +62,7 @@ body {
 
 // App Cmp
 // -------
+@import 'App/Cmp/Notify';
 @import 'App/Cmp/PathChooser';
 
 

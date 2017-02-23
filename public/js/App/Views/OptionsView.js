@@ -8,7 +8,7 @@ define(
 
     // App API
     'App/API/API',
-    'App/Utils/Utils',
+    'App/Notify',
 
     // App
     'App/Actions/GetRandomPicAction',
@@ -23,7 +23,7 @@ function (
 
     // App API
     API,
-    Utils,
+    Notify,
 
     GetRandomPicAction,
     PinPicAction,
@@ -344,15 +344,12 @@ function (
         API.clearCache({
             onSuccess: () => {
                 FolderFinderView.clear();
-                Utils.notify({
-                    message: 'Cache has been cleared successfully.',
-                    type: 'info'
+                Notify.info({
+                    message: 'Cache has been cleared successfully.'
                 });
             },
             onFailure: (error) => {
-                Utils.notify({
-                    message: error
-                });
+                Notify.error({ message: error });
             }
         });
     };

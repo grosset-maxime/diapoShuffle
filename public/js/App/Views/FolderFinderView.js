@@ -8,9 +8,9 @@ define(
 
     // App API
     'App/API/API',
-    'App/Utils/Utils'
+    'App/Notify'
 ],
-function ($, API, Utils) {
+function ($, API, Notify) {
     'use strict';
 
     let View,
@@ -355,9 +355,7 @@ function ($, API, Utils) {
                 callback(folders);
             },
             onFailure: (error) => {
-                Utils.notify({
-                    message: error
-                });
+                Notify.error({ message: error });
             }
         });
     };
