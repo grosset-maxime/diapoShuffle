@@ -638,12 +638,12 @@ function (
 
         displayNext: _displayNext,
 
-        pause: () => {
+        pause: (shouldPlay) => {
             if (GetRandomPicAction.isDisabled()) {
                 return;
             }
 
-            GetRandomPicAction.pause();
+            GetRandomPicAction.pause(shouldPlay);
         },
 
         stop: () => {

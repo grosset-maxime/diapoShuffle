@@ -1,0 +1,91 @@
+// ==================
+// App Shortcuts View
+// ==================
+
+.ds_shortcuts_view {
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    min-width: 100%;
+    align-items: center;
+    position: absolute;
+    font-family: consolas, arial;
+
+    .content_ctn {
+        border: 2px solid #eee;
+        box-shadow: 0px 4px 10px #666;
+        border-radius: 0 0 10px 10px;
+        background: rgba(40, 40, 40, 0.9);
+        width: 80%;
+        height: 100%;
+        padding: 15px;
+        color: #eee;
+        position: absolute;
+        transform: translateY(-120%);
+        padding-top: 55px;
+
+        &.show {
+            transform: translateY(-55px);
+        }
+    }
+
+    .close {
+        position: absolute;
+        top: 55px;
+        right: 5px;
+        color: #eee;
+        opacity: 0.6;
+        cursor: pointer;
+        padding: 14px;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .main_title {
+        font-size: 1.5em;
+        text-align: center;
+        border-bottom: 1px solid #fff;
+        width: 80%;
+        margin-left: 10%;
+        padding: 10px 0;
+        margin-bottom: 30px;
+    }
+
+    .section_title {
+        font-size: 1.2em;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+        margin: 25px 0 10px 0;
+        cursor: pointer;
+    }
+
+    .section {
+        transition: height 800ms;
+        overflow: hidden;
+
+        &.collapse {
+            height: 0 !important;
+        }
+    }
+
+    .line {
+        min-height: 22px;
+        margin: 4px 0;
+        border-radius: 2px;
+
+        &:hover {
+            background-color: rgba(100, 100, 100, 0.8);
+        }
+    }
+
+    .line_title {
+        min-width: 25%;
+        padding-left: 20px;
+        padding-right: 15px;
+    }
+}

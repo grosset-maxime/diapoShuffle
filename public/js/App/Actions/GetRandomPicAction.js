@@ -114,7 +114,7 @@ function (
         onStop();
     };
 
-    _pause = () => {
+    _pause = (shouldPlay = true) => {
         let events = _options.events,
             onBeforePause = events.onBeforePause,
             onBeforeResume = events.onBeforeResume,
@@ -129,7 +129,7 @@ function (
             _isPausing = true;
 
             onPause();
-        } else {
+        } else if (shouldPlay) {
             onBeforeResume();
 
             _start();
@@ -220,12 +220,12 @@ function (
         /**
          *
          */
-        pause: () => {
+        pause: (shouldPlay) => {
             if (_isDisabled) {
                 return;
             }
 
-            _pause();
+            _pause(shouldPlay);
         },
 
         resume: () => {

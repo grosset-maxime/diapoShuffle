@@ -1,5 +1,5 @@
 /* global
-    define
+    define, curl
 */
 
 define(
@@ -30,7 +30,8 @@ function (
         _els = {};
 
     // Private functions.
-    let _buildSkeleton, _attachEvents, _attachKeyboardShorcuts;
+    let _buildSkeleton, _attachEvents, _attachKeyboardShorcuts,
+        _toggleShortcutsView;
 
 
     _buildSkeleton = () => {
@@ -69,6 +70,16 @@ function (
         });
     };
 
+    _toggleShortcutsView = () => {
+        curl(['App/Views/ShortcutsView'], function (ShortcutsView) {
+            ShortcutsView.init({
+                root: _els.mainCtn
+            });
+
+            ShortcutsView.toggle();
+        });
+    };
+
     _attachKeyboardShorcuts = () => {
         $(document).on('keydown', (e) => {
             let keyPressed = e.which,
@@ -81,71 +92,80 @@ function (
             if (isPlaying && !isDisabled) {
 
                 switch (keyPressed) {
-                case 27: // ESC
-                    PlayView.stop();
-                    break;
+                    case 72: // h (help)
+                        PlayView.pause(false);
+                        _toggleShortcutsView();
+                        break;
 
-                case 32: // SPACE
-                case 40: // down arrow
-                    PlayView.pause();
-                    doPreventDefault = true;
-                    break;
+                    case 27: // ESC
+                        PlayView.stop();
+                        break;
 
-                case 73: // i (as inside)
-                case 38: // up arrow
-                    PlayView.askInsideFolder();
-                    break;
+                    case 32: // SPACE
+                    case 40: // down arrow
+                        PlayView.pause();
+                        doPreventDefault = true;
+                        break;
 
-                case 65: // a (as add)
-                    PlayView.askAddFolder();
-                    break;
+                    case 73: // i (as inside)
+                    case 38: // up arrow
+                        PlayView.askInsideFolder();
+                        break;
 
-                case 68: // d (as delete)
-                case 46: // supp
-                    PlayView.askDeletePic();
-                    break;
+                    case 65: // a (as add)
+                        PlayView.askAddFolder();
+                        break;
 
-                case 80: // p (as pin)
-                case 16: // shift
-                    PlayView.pin();
-                    break;
+                    case 68: // d (as delete)
+                    case 46: // supp
+                        PlayView.askDeletePic();
+                        break;
 
-                case 37: // left arrow
-                    PlayView.displayPrevious();
-                    break;
+                    case 80: // p (as pin)
+                    case 16: // shift
+                        PlayView.pin();
+                        break;
 
-                case 39: // right arrow
-                    PlayView.displayNext();
-                    break;
+                    case 37: // left arrow
+                        PlayView.displayPrevious();
+                        break;
+
+                    case 39: // right arrow
+                        PlayView.displayNext();
+                        break;
                 }
 
             } else if (!isPlaying && !isDisabled) {
 
                 switch (keyPressed) {
-                case 13: // Enter
-                    if (OptionsView.isFolderFinderOpen()) {
-                        OptionsView.closeFolderFinder();
-                        doPreventDefault = true;
-                    }
-                    break;
+                    case 72: // h (help)
+                        _toggleShortcutsView();
+                        break;
 
-                case 27: // ESC
-                    if (OptionsView.isFolderFinderOpen()) {
-                        OptionsView.closeFolderFinder();
-                    }
-                    break;
+                    case 13: // Enter
+                        if (OptionsView.isFolderFinderOpen()) {
+                            OptionsView.closeFolderFinder();
+                            doPreventDefault = true;
+                        }
+                        break;
 
-                case 32: // SPACE
-                case 80: // p (as pause)
-                    if (!OptionsView.hasFocus()) {
-                        PlayView.play();
-                        doPreventDefault = true;
-                    }
-                    break;
+                    case 27: // ESC
+                        if (OptionsView.isFolderFinderOpen()) {
+                            OptionsView.closeFolderFinder();
+                        }
+                        break;
 
-                case 66: // b (as browse)
-                    OptionsView.toggleFolderFinder();
-                    break;
+                    case 32: // SPACE
+                    case 80: // p (as pause)
+                        if (!OptionsView.hasFocus()) {
+                            PlayView.play();
+                            doPreventDefault = true;
+                        }
+                        break;
+
+                    case 66: // b (as browse)
+                        OptionsView.toggleFolderFinder();
+                        break;
                 }
 
             }
