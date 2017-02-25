@@ -64,6 +64,10 @@ function ($) {
     _buildSkeleton = () => {
         let mainCtn, contentCtn;
 
+        if (!View._isInit) {
+            View.init();
+        }
+
         contentCtn = _els.contentCtn = $('<div>', {'class': 'content_ctn'
         });
 
@@ -169,6 +173,8 @@ function ($) {
 
     View = {
 
+        _isInit: false,
+
         _isBuilt: false,
 
         _isShow: false,
@@ -193,13 +199,17 @@ function ($) {
                 _options.root = $(document.body);
             }
 
-            _buildSkeleton();
+            View._isInit = true;
         },
 
         /**
          *
          */
         show: () => {
+            if (View._isShow) {
+                return;
+            }
+
             if (!View._isBuilt) {
                 _buildSkeleton();
             }
@@ -217,7 +227,7 @@ function ($) {
          *
          */
         hide: () => {
-            if (!View._isBuilt) {
+            if (!View._isBuilt || !View._isShow) {
                 return;
             }
 
@@ -236,6 +246,10 @@ function ($) {
             } else {
                 View.show();
             }
+        },
+
+        isShow: () => {
+            return View._isShow;
         }
     };
 

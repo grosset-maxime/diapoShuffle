@@ -24,6 +24,7 @@ function (
 ) {
     'use strict';
 
+    let ShortcutsView;
 
     let View,
         _options = {},
@@ -71,12 +72,14 @@ function (
     };
 
     _toggleShortcutsView = () => {
-        curl(['App/Views/ShortcutsView'], function (ShortcutsView) {
-            ShortcutsView.init({
+        curl(['App/Views/ShortcutsView'], function (View) {
+            ShortcutsView = View;
+
+            View.init({
                 root: _els.mainCtn
             });
 
-            ShortcutsView.toggle();
+            View.toggle();
         });
     };
 
@@ -98,7 +101,11 @@ function (
                         break;
 
                     case 27: // ESC
-                        PlayView.stop();
+                        if (ShortcutsView && ShortcutsView.isShow()) {
+                            ShortcutsView.hide();
+                        } else {
+                            PlayView.stop();
+                        }
                         break;
 
                     case 32: // SPACE
@@ -150,8 +157,12 @@ function (
                         break;
 
                     case 27: // ESC
-                        if (OptionsView.isFolderFinderOpen()) {
-                            OptionsView.closeFolderFinder();
+                        if (ShortcutsView && ShortcutsView.isShow()) {
+                            ShortcutsView.hide();
+                        } else {
+                            if (OptionsView.isFolderFinderOpen()) {
+                                OptionsView.closeFolderFinder();
+                            }
                         }
                         break;
 
