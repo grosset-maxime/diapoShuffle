@@ -1,5 +1,5 @@
 /* global
-    define
+    define, curl
 */
 
 define(
@@ -75,10 +75,18 @@ function (
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_options_view flex',
-            html: $('<div>', {
+            html: [$('<div>', {
                 'class': 'title_view',
                 'text': 'Options'
-            })
+            }), $('<div>', {
+                'class': 'help_btn',
+                'text': '?',
+                on: {
+                    click: () => {
+                        _options.mainView.toggleShortcutsView();
+                    }
+                }
+            })]
         });
 
         mainCtn.css('max-height', _options.root.height() - 160);

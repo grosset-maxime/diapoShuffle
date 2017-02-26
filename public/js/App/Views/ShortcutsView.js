@@ -218,7 +218,7 @@ function ($) {
 
             setTimeout(function () {
                 _els.contentCtn.addClass('show');
-            });
+            }, 30);
 
             View._isShow = true;
         },

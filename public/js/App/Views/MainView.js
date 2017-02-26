@@ -217,7 +217,8 @@ function (
             });
 
             OptionsView.init({
-                root: _els.middleCtn
+                root: _els.middleCtn,
+                mainView: View
             });
 
             InfosView.init({
@@ -230,7 +231,9 @@ function (
             });
 
             _attachEvents();
-        }
+        },
+
+        toggleShortcutsView: _toggleShortcutsView
     };
 
     return View;
