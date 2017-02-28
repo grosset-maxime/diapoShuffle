@@ -17,6 +17,7 @@ require_once dirname(__FILE__) . '/../Root.class.php';
 
 // DS
 use DS\Root;
+use DS\ExceptionExtended;
 
 
 /**
@@ -36,6 +37,7 @@ class Item extends Root
     protected $name = '';
     protected $type = '';
     protected $path = '';
+    protected $tags = array();
 
     /**
      * Item constructor.
@@ -43,7 +45,7 @@ class Item extends Root
      * @param {array} $data : RandomPic data.
      * * param {String} data.name : Item name.
      * * param {String} data.type : Item type.
-     * * param {String} data.path : Item path without name.
+     * * param {String} data.path : Item absolute path without name.
      */
     public function __construct(array $data = array())
     {
@@ -121,13 +123,42 @@ class Item extends Root
     }
 
     /**
-     * Getter path.
+     * Getter path (Absolute path).
      *
-     * @return {String} Item path.
+     * @return {String} Item absolute path.
      */
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Getter path (Public path from root site).
+     *
+     * @return {String} Item public path.
+     */
+    public function getPublicPath()
+    {
+        global $_BASE_PIC_FOLDER_NAME;
+
+        $path = $this->path;
+
+        $publicPath = substr(
+            $path,
+            strpos($path, '/' . $_BASE_PIC_FOLDER_NAME)
+        );
+
+        return $publicPath;
+    }
+
+    /**
+     * Getter path (Public path from root site).
+     *
+     * @return {String} Item public path.
+     */
+    public function getPublicPathWithName()
+    {
+        return $this->getPublicPath() . '/' . $this->name;
     }
 
     /**
@@ -140,5 +171,52 @@ class Item extends Root
     public function setPath($path = '')
     {
         $this->path = $path;
+    }
+
+    /**
+     * Getter tags.
+     *
+     * @return {Array} Tags list.
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Setter tags.
+     *
+     * @param {Array} $tags : Tags list (replace existing).
+     *
+     * @return null
+     */
+    public function setTags($tags = array())
+    {
+        $this->tags = $tags;
+    }
+
+
+    /**
+     * Getter size.
+     *
+     * @return {Array[width, height]} Item size.
+     */
+    public function getSize()
+    {
+        try {
+
+            $size = getimagesize($this->getPathWithName());
+
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'File: "' . $this->getPathWithName() . '" fail to get size.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
+
+        return $size;
     }
 } // End Class Item

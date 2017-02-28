@@ -62,10 +62,7 @@ class RandomPic extends Root
     protected $UNIX_SEP = '/';
 
     protected $customFolders = array(); // List of custom path folder choose by user where to get random pic.
-    protected $picFileName = '';        // Random pic file name.
 
-    protected $absolutePathFolder = ''; // Complete path of the random pic's folder.
-    protected $publicPathFolder = '';   // Relative path from pic folder of the random pic's folder.
     protected $levelMax = 50;           // Maximum folder depth.
     protected $tryMax = 100;            // Maximum try before to raise folder empty exception.
     protected $cacheFolder = array();
@@ -74,6 +71,8 @@ class RandomPic extends Root
     protected $useCache = false;
 
     protected $cacheManager = null;
+
+    protected $randomPic = null; // Random pic.
 
 
     /**
@@ -254,18 +253,21 @@ class RandomPic extends Root
     /**
      * searchRandomPic
      *
-     * @param {string} $folder : folder to scan
+     * @param {string} $folder : folder to scan.
      *
-     * @return null
+     * @return {Item} Random Pic item.
      */
     protected function searchRandomPic($folder)
     {
         global $_BASE_PIC_FOLDER_NAME;
+
         static $levelCurrent = 0;
         $item; $isFolder;
 
         try {
+
             $item = $this->getRandomItem($folder);
+
         } catch (ExceptionExtended $e) {
             throw $e;
         } catch (Exception $e) {
@@ -294,20 +296,15 @@ class RandomPic extends Root
         $isFolder = $item->isFolder();
 
         if ($isFolder && $levelCurrent < $this->levelMax) {
+
             $levelCurrent++;
             $this->searchRandomPic($item->getPathWithName());
-        } else if (!$isFolder) {
-            $this->picFileName = $item->getName();
-            $this->absolutePathFolder = $folder;
 
-            $this->publicPathFolder = substr(
-                $folder,
-                strpos(
-                    $this->replaceWinSlaches($folder),
-                    $this->UNIX_SEP . $_BASE_PIC_FOLDER_NAME
-                )
-            );
+        } else if (!$isFolder) {
+
+            $this->randomPic = $item;
         }
+
         return;
     } // End function searchRandomPic()
 
@@ -320,22 +317,27 @@ class RandomPic extends Root
     {
         // Init vars
         global $_BASE_PIC_FOLDER_NAME, $_BASE_PIC_PATH;
+
         $UNIX_SEP = $this->UNIX_SEP;
-        $picFileName = '';
         $try = 0;
         $tryMax = $this->tryMax;
         $result = array();
-        $publicPathFolder = '';
-        $absolutePathFolder = '';
         $width = 0;
         $height = 0;
         $randomCustomFolder = $this->getRandomCustomFolder();
         $errorMessage;
+        $randomPic;
 
 
         do {
             try {
-                $this->searchRandomPic($_BASE_PIC_PATH . $randomCustomFolder);
+
+                $this->searchRandomPic(
+                    $_BASE_PIC_PATH . $randomCustomFolder
+                );
+
+                $randomPic = $this->randomPic;
+
             } catch (ExceptionExtended $e) {
                 throw $e;
             } catch (Exception $e) {
@@ -347,19 +349,16 @@ class RandomPic extends Root
                 );
             }
 
-            if ($this->picFileName) {
+            if (!empty($randomPic)) {
                 break;
             }
 
             $try++;
-        } while (empty($this->picFileName) && $try < $tryMax);
 
-        $picFileName = $this->picFileName;
-        $publicPathFolder = $this->publicPathFolder;
-        $absolutePathFolder = $this->absolutePathFolder;
+        } while (empty($randomPic) && $try < $tryMax);
 
         // If no pic found after nb try.
-        if (!$picFileName) {
+        if (empty($randomPic)) {
             $errorMessage = 'No picture to show after ' . $tryMax . ' try.';
             throw new ExceptionExtended(
                 array(
@@ -371,34 +370,19 @@ class RandomPic extends Root
             );
         }
 
-        $publicPathFolder = $this->replaceWinSlaches($publicPathFolder);
-
-        if ($publicPathFolder[strlen($publicPathFolder) - 1] !== $UNIX_SEP) {
-            $publicPathFolder .= $UNIX_SEP;
-        }
-
-        try {
-            list($width, $height) = getimagesize($absolutePathFolder . $UNIX_SEP . $picFileName);
-        } catch (Exception $e) {
-            throw new ExceptionExtended(
-                array(
-                    'publicMessage' => 'File: "' . $absolutePathFolder . $UNIX_SEP . $picFileName . '" doesn\'t exists.',
-                    'message' => $e->getMessage(),
-                    'severity' => ExceptionExtended::SEVERITY_ERROR
-                )
-            );
-        }
+        list($width, $height) = $randomPic->getSize();
 
         $result = array(
-            'src' => $publicPathFolder . $picFileName,
+            'src' => $randomPic->getPublicPathWithName(),
             'randomPublicPath' => substr(
-                $publicPathFolder,
+                $randomPic->getPublicPath(),
                 strlen($UNIX_SEP . $_BASE_PIC_FOLDER_NAME . $randomCustomFolder)
             ),
             'customFolderPath' => $randomCustomFolder,
-            'name' => $picFileName,
+            'name' => $randomPic->getName(),
             'width' => $width,
             'height' => $height,
+            'tags' => $randomPic->getTags(),
             'useCache' => $this->useCache
         );
 
