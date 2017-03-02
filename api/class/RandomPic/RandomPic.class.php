@@ -321,7 +321,7 @@ class RandomPic extends Root
         $randomCustomFolder = $this->getRandomCustomFolder();
         $errorMessage;
         $randomPic;
-
+        $tags;
 
         do {
             try {
@@ -366,6 +366,14 @@ class RandomPic extends Root
 
         list($width, $height) = $randomPic->getSize();
 
+        try {
+            $tags = $randomPic->getTags();
+        } catch (ExceptionExtended $e) {
+            $tags = array();
+        } catch (Exception $e) {
+            throw $e;
+        }
+
         $result = array(
             'src' => $randomPic->getPublicPathWithName(),
             'randomPublicPath' => substr(
@@ -378,7 +386,7 @@ class RandomPic extends Root
             'name' => $randomPic->getName(),
             'width' => $width,
             'height' => $height,
-            'tags' => $randomPic->getTags(),
+            'tags' => $tags,
             'useCache' => $this->useCache
         );
 

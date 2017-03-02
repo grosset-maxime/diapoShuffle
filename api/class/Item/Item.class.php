@@ -13,11 +13,21 @@
 
 namespace Item;
 
+// JpegMetadataToolkit
+require_once dirname(__FILE__) . '/../../vendors/JpegMetadataToolkit/JPEG.php';
+require_once dirname(__FILE__) . '/../../vendors/JpegMetadataToolkit/XMP.php';
+require_once dirname(__FILE__) . '/../../vendors/JpegMetadataToolkit/Photoshop_IRB.php';
+require_once dirname(__FILE__) . '/../../vendors/JpegMetadataToolkit/EXIF.php';
+require_once dirname(__FILE__) . '/../../vendors/JpegMetadataToolkit/Photoshop_File_Info.php';
+
 require_once dirname(__FILE__) . '/../Root.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 
 // Utils
 require_once dirname(__FILE__) . '/../Utils/Utils.class.php';
+
+// PHP
+use \Exception;
 
 // DS
 use DS\Root;
@@ -147,7 +157,20 @@ class Item extends Root
      */
     public function setPath($path = '')
     {
-        $this->path = (new Utils())->replaceWinSlaches($path);
+        $pathLength = strlen($path);
+
+        if ($pathLength){
+            $path = (new Utils())->replaceWinSlaches($path);
+
+            if (
+                $path[$pathLength - 1] === '/' &&
+                $pathLength >= 2
+            ) {
+                $path = rtrim($path, '/');
+            }
+        }
+
+        $this->path = $path;
     }
 
     /**
@@ -186,6 +209,41 @@ class Item extends Root
      */
     public function getTags()
     {
+        if (empty($this->tags)) {
+            $exif; $xmp; $jpegHeaderData;
+            $pathWithName = $this->getPathWithName();
+
+            try {
+
+                // Report all errors except E_NOTICE and E_STRICT.
+                error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+
+                $exif = get_EXIF_JPEG($pathWithName);
+
+                $jpegHeaderData = get_jpeg_header_data($pathWithName);
+
+                $xmp = read_XMP_array_from_text(get_XMP_text($jpegHeaderData));
+
+                $irb = get_Photoshop_IRB($jpegHeaderData);
+
+                $jpegInfo = get_photoshop_file_info($exif, $xmp, $irb);
+
+                $this->tags = $jpegInfo['keywords'];
+
+                // Report all errors.
+                error_reporting(E_ALL);
+
+            } catch (Exception $e) {
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => 'File: "' . $pathWithName . '" fail to get tags.',
+                        'message' => $e->getMessage(),
+                        'severity' => ExceptionExtended::SEVERITY_WARNING
+                    )
+                );
+            }
+        }
+
         return $this->tags;
     }
 
