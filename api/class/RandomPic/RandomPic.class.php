@@ -24,11 +24,14 @@ require_once dirname(__FILE__) . '/../Root.class.php';
 require_once dirname(__FILE__) . '/../CacheManager.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 
+// Utils
+require_once dirname(__FILE__) . '/../Utils/Utils.class.php';
+
 // DeleteItem
 require_once dirname(__FILE__) . '/../DeleteItem/DeleteItem.class.php';
 
-// RandomPic
-require_once dirname(__FILE__) . '/Item.class.php';
+// Item
+require_once dirname(__FILE__) . '/../Item/Item.class.php';
 
 
 // PHP
@@ -40,11 +43,14 @@ use DS\Root;
 use DS\CacheManager;
 use DS\ExceptionExtended;
 
+// Utils
+use Utils\Utils;
+
 // DeleteItem
 use DeleteItem\DeleteItem;
 
-// RandomPic
-use RandomPic\Item;
+// Item
+use Item\Item;
 
 
 /**
@@ -58,8 +64,7 @@ use RandomPic\Item;
  */
 class RandomPic extends Root
 {
-    protected $WIN_SEP = '\\';
-    protected $UNIX_SEP = '/';
+    protected $Utils = null;
 
     protected $customFolders = array(); // List of custom path folder choose by user where to get random pic.
 
@@ -83,11 +88,13 @@ class RandomPic extends Root
      */
     public function __construct(array $data = array())
     {
-        parent::__construct($data);
+        $this->Utils = new Utils();
 
         $this->cacheManager = new CacheManager();
         $this->cacheFolder = $this->cacheManager->getCacheFolder();
         $this->cacheEmptyFolder = $this->cacheManager->getCacheEmptyFolder();
+
+        parent::__construct($data);
     }
 
     /**
@@ -120,18 +127,6 @@ class RandomPic extends Root
             $this->cacheEmptyFolder = $result['cacheEmptyFolder'];
             $this->needUpdateCache = true;
         }
-    }
-
-    /**
-     * replaceWinSlaches
-     *
-     * @param {String} $s : String to replace antislashes by slashes.
-     *
-     * @return {String} String with win antislashes replaced by slashes.
-     */
-    protected function replaceWinSlaches($s)
-    {
-        return str_replace($this->WIN_SEP, $this->UNIX_SEP, $s);
     }
 
     /**
@@ -318,7 +313,6 @@ class RandomPic extends Root
         // Init vars
         global $_BASE_PIC_FOLDER_NAME, $_BASE_PIC_PATH;
 
-        $UNIX_SEP = $this->UNIX_SEP;
         $try = 0;
         $tryMax = $this->tryMax;
         $result = array();
@@ -376,7 +370,9 @@ class RandomPic extends Root
             'src' => $randomPic->getPublicPathWithName(),
             'randomPublicPath' => substr(
                 $randomPic->getPublicPath(),
-                strlen($UNIX_SEP . $_BASE_PIC_FOLDER_NAME . $randomCustomFolder)
+                strlen(
+                    '/' . $_BASE_PIC_FOLDER_NAME . $randomCustomFolder
+                )
             ),
             'customFolderPath' => $randomCustomFolder,
             'name' => $randomPic->getName(),
@@ -405,14 +401,13 @@ class RandomPic extends Root
     protected function normalizeCustomFolder($customFolder = '')
     {
         // Init vars.
-        $UNIX_SEP = $this->UNIX_SEP;
         $lenghtCustoFolder = 0;
         $firstCharCustomFolder = '';
 
-        $customFolder = $this->replaceWinSlaches($customFolder);
+        $customFolder = $this->Utils->replaceWinSlaches($customFolder);
         $lenghtCustoFolder = strlen($customFolder);
 
-        if ($customFolder === $UNIX_SEP) {
+        if ($customFolder === '/') {
             $customFolder = '';
         }
 
@@ -421,13 +416,13 @@ class RandomPic extends Root
             $firstCharCustomFolder = $customFolder[0];
 
             // Begin of customFolder
-            if ($firstCharCustomFolder !== $UNIX_SEP) {
-                $customFolder = $UNIX_SEP . $customFolder;
+            if ($firstCharCustomFolder !== '/') {
+                $customFolder = '/' . $customFolder;
             }
 
             // End of customFolder
-            if ($customFolder[$lenghtCustoFolder - 1] !== $UNIX_SEP) {
-                $customFolder .= $UNIX_SEP;
+            if ($customFolder[$lenghtCustoFolder - 1] !== '/') {
+                $customFolder .= '/';
             }
         }
 

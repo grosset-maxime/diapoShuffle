@@ -11,14 +11,20 @@
  * @link     No
  */
 
-namespace RandomPic;
+namespace Item;
 
 require_once dirname(__FILE__) . '/../Root.class.php';
+require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
+
+// Utils
+require_once dirname(__FILE__) . '/../Utils/Utils.class.php';
 
 // DS
 use DS\Root;
 use DS\ExceptionExtended;
 
+// Utils
+use Utils\Utils;
 
 /**
  * Class Item.
@@ -133,6 +139,18 @@ class Item extends Root
     }
 
     /**
+     * Setter path.
+     *
+     * @param {String} $path : Item path.
+     *
+     * @return null
+     */
+    public function setPath($path = '')
+    {
+        $this->path = (new Utils())->replaceWinSlaches($path);
+    }
+
+    /**
      * Getter path (Public path from root site).
      *
      * @return {String} Item public path.
@@ -159,18 +177,6 @@ class Item extends Root
     public function getPublicPathWithName()
     {
         return $this->getPublicPath() . '/' . $this->name;
-    }
-
-    /**
-     * Setter path.
-     *
-     * @param {String} $path : Item path.
-     *
-     * @return null
-     */
-    public function setPath($path = '')
-    {
-        $this->path = $path;
     }
 
     /**
