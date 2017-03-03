@@ -49,7 +49,7 @@ function (
             intervalCtn, inputScale, scaleCtn, zoomCtn,
             inputZoom, pathPicCtn, inputPathPic, btnUnSelectAll,
             nbSelectedCtn, insideFolderCtn, keyUpInput, inputPinPic,
-            pinPicCtn;
+            pinPicCtn, tagsCtn, inputTags;
 
         /**
          * @private
@@ -88,8 +88,6 @@ function (
                 }
             })]
         });
-
-        mainCtn.css('max-height', _options.root.height() - 160);
 
         footerCtn = _els.footerCtn = $('<div>', {
             'class': 'footer_ctn flex'
@@ -310,6 +308,30 @@ function (
             }).hide()
         );
 
+
+        // Checkbox tags
+        inputTags = _els.inputTags = $('<input>', {
+            'class': 'input_text',
+            type: 'checkbox',
+            checked: false
+        });
+
+        // Ctn tags
+        tagsCtn = $('<div>', {
+            'class': 'el_ctn'
+        }).append(
+            inputTags,
+            $('<span>', {
+                'class': 'title label',
+                text: 'Display tags',
+                on: {
+                    click: function () {
+                        inputTags[0].checked = !inputTags[0].checked;
+                    }
+                }
+            })
+        );
+
         btnClearCache = $('<div>', {
             'class': 'clear_cache_btn text_btn',
             text: 'Clear cache',
@@ -332,6 +354,7 @@ function (
             scaleCtn,
             pathPicCtn,
             pinPicCtn,
+            tagsCtn,
             footerCtn
         );
 
@@ -439,6 +462,8 @@ function (
         },
 
         isPlayPinedOn: () => !!_els.inputPinPic[0].checked,
+
+        showTags: () => !!_els.inputTags[0].checked,
 
         toggleFolderFinder: () => {
             if (FolderFinderView.isOpen()) {

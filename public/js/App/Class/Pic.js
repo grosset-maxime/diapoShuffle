@@ -28,7 +28,8 @@ function (
             useCache: false,
             width: 0,
             height: 0,
-            count: 0
+            count: 0,
+            tags: []
         },
 
         customFolderPath: '',
@@ -41,6 +42,8 @@ function (
         width: 0,
         height: 0,
         count: 0, // Count of nb of display.
+
+        tags: [],
 
 
         /**
@@ -63,6 +66,8 @@ function (
             that.height = options.height;
 
             that.count = options.count || 0;
+
+            that.tags = options.tags || [];
         },
 
         getFullPath: function () {

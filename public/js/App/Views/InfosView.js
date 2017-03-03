@@ -22,12 +22,13 @@ function ($, Client, OptionsView) {
 
 
     // Private functions.
-    let _buildSkeleton, _setPicFolderPath, _setPicCounter, _displayOsPicPath;
+    let _buildSkeleton, _setPicFolderPath, _setPicCounter, _displayOsPicPath,
+        _setTags;
 
 
     _buildSkeleton = () => {
         let mainCtn, customFolderPathCtn, randomPublicPathCtn,
-            picturePathCtn, pictureCounterCtn;
+            picturePathCtn, pictureCounterCtn, tagsCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_infos_view'
@@ -55,9 +56,34 @@ function ($, Client, OptionsView) {
             'class': 'picture_counter_ctn'
         });
 
+        _els.tagsCtn = tagsCtn = $('<div>', {
+            'class': 'tags_ctn',
+            on: {
+                click: () => {
+                    // If no tags, hide tags ctn.
+                    if (tagsCtn.hasClass('no_tags')) {
+                        tagsCtn.css('left', '-100%');
+                        return;
+                    }
+
+                    // If tags ctn is displayed, slide it to hide it.
+                    if (tagsCtn.hasClass('displayed')) {
+                        tagsCtn.css('transform', 'none');
+
+                    // If tags ctn is not displayed, slide it to show it.
+                    } else {
+                        tagsCtn.css('transform', 'translateX(' + tagsCtn.width() + 'px)');
+                    }
+
+                    tagsCtn.toggleClass('displayed');
+                }
+            }
+        });
+
         _els.mainCtn.append(
             pictureCounterCtn,
-            picturePathCtn
+            picturePathCtn,
+            tagsCtn
         );
 
         _options.root.append(mainCtn);
@@ -70,6 +96,40 @@ function ($, Client, OptionsView) {
 
     _setPicCounter = (pic = {}) => {
         _els.pictureCounterCtn.html(pic.count);
+    };
+
+    _setTags = (pic = {}) => {
+        let tags = pic.tags || [],
+            tagsCtn = _els.tagsCtn;
+
+        tagsCtn.empty();
+
+        if (!tags.length) {
+            tagsCtn.html('No tags.')
+                .addClass('no_tags')
+                // Reset css previously added by previous pic which has tags.
+                .css({
+                    left: '',
+                    transform: ''
+                });
+            return;
+        }
+
+        tagsCtn.removeClass('no_tags');
+
+        tags.forEach(function (tag) {
+            tagsCtn.append(
+                $('<div>', {
+                    'class': 'tag',
+                    text: tag
+                })
+            );
+        });
+
+        // hide tags ctn to left to hide it not completly.
+        setTimeout(function () {
+            tagsCtn.css('left', - (tagsCtn.width() - 10) + 'px');
+        }, 10);
     };
 
     _displayOsPicPath = () => {
@@ -138,6 +198,13 @@ function ($, Client, OptionsView) {
                 _els.pictureCounterCtn.show();
             } else {
                 _els.pictureCounterCtn.hide();
+            }
+
+            if (OptionsView.showTags()) {
+                _setTags(pic);
+                _els.tagsCtn.show();
+            } else {
+                _els.tagsCtn.hide();
             }
 
             _els.mainCtn.show();
