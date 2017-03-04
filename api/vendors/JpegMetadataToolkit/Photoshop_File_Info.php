@@ -916,7 +916,7 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
         if ( count( $date_pieces ) != 3 )
         {
                 // INVALID DATE
-                echo "Invalid Date - must be YYYY-MM-DD format<br>";
+                echo "Invalid Date 1 - must be YYYY-MM-DD format<br>";
                 return FALSE;
         }
 
@@ -927,7 +927,7 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
                 if ( ! is_numeric( $piece ) )
                 {
                         // INVALID DATE
-                        echo "Invalid Date - must be YYYY-MM-DD format<br>";
+                        echo "Invalid Date 2 - must be YYYY-MM-DD format<br>";
                         return FALSE;
                 }
         }
