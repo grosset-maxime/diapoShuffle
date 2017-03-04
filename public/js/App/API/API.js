@@ -67,7 +67,7 @@ function ($, PM, PicClass) {
         /**
          * @param {Object} options - Options.
          * @param {Pic} Pic - Pic to delete.
-         * @param {Function} [onSuccess] - Success callback, returns {Array} - folder list.
+         * @param {Function} [onSuccess] - Success callback.
          * @param {Function} [onFailure] - Failure callback.
          */
         deletePic: (options = {}) => {
@@ -78,6 +78,7 @@ function ($, PM, PicClass) {
 
             if (!Pic.src) {
                 onFailure('No Picture to delete.');
+                return;
             }
 
             xhr = $.ajax({
@@ -108,6 +109,60 @@ function ($, PM, PicClass) {
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
                 let message = 'API.deletePic()';
+
+                onFailure('Server error.');
+
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+            });
+        },
+
+        /**
+         * @param {Object} options - Options.
+         * @param {Pic} Pic - Pic to set tags.
+         * @param {Function} [onSuccess] - Success callback.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        setTags: (options = {}) => {
+            let xhr,
+                Pic = options.Pic || {},
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (!Pic.src) {
+                onFailure('No Picture to set tags.');
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=setTags_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    name: Pic.name,
+                    path: Pic.path,
+                    tags: Pic.tags
+                }
+            });
+
+            xhr.done((json) => {
+                let error, errorMessage;
+
+                if (json.error || !json.success) {
+                    error = json.error || {};
+
+                    errorMessage = 'Error: ' + error.message || 'Unknown error.';
+
+                    onFailure(errorMessage);
+
+                    PM.log(error.message || 'Undefined error.');
+                } else {
+                    onSuccess();
+                }
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                let message = 'API.setTags()';
 
                 onFailure('Server error.');
 

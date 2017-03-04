@@ -90,7 +90,7 @@ class Item extends Root
 
     /**
      * Setter name.
-     *
+
      * @param {String} $name : Item name.
      *
      * @return null
@@ -254,11 +254,63 @@ class Item extends Root
      *
      * @return null
      */
-    public function setTags($tags = array())
+    public function setTags(array $tags = array())
     {
-        $this->tags = $tags;
-    }
+        if (empty($tags)) {
+            return;
+        }
 
+        $exif; $xmp; $jpegHeaderData;
+        $result = false;
+        $pathWithName = $this->getPathWithName();
+
+        try {
+
+            // Report all errors except E_NOTICE and E_STRICT.
+            error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+
+            $exif = get_EXIF_JPEG($pathWithName);
+
+            $jpegHeaderData = get_jpeg_header_data($pathWithName);
+
+            $xmp = read_XMP_array_from_text(get_XMP_text($jpegHeaderData));
+
+            $irb = get_Photoshop_IRB($jpegHeaderData);
+
+            $jpegInfo = get_photoshop_file_info($exif, $xmp, $irb);
+
+            $this->tags = $tags;
+            $jpegInfo['keywords'] = $tags;
+
+            $jpegHeaderData = put_photoshop_file_info(
+                $jpegHeaderData,
+                $jpegInfo,
+                $exif,
+                $xmp,
+                $irb
+            );
+
+            $result = put_jpeg_header_data(
+                $pathWithName,
+                $pathWithName,
+                $jpegHeaderData
+            );
+
+            // Report all errors.
+            error_reporting(E_ALL);
+
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'File: "' . $pathWithName . '" fail to set tags.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
+
+        return $result;
+    }
 
     /**
      * Getter size.

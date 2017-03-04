@@ -128,6 +128,11 @@ function (
                         PlayView.askDeletePic();
                         break;
 
+                    case 84: // t (as tags)
+                        PlayView.askTags();
+                        doPreventDefault = true;
+                        break;
+
                     case 80: // p (as pin)
                     case 16: // shift
                         PlayView.pin();

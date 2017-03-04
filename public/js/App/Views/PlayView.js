@@ -24,6 +24,7 @@ define(
     'App/Modals/AddFolderModal',
     'App/Modals/InsideFolderModal',
     'App/Modals/DeletePicModal',
+    'App/Modals/TagsModal',
 
     // Non AMD
     'js!jquery-ui'
@@ -48,7 +49,8 @@ function (
     // App Modals
     AddFolderModal,
     InsideFolderModal,
-    DeletePicModal
+    DeletePicModal,
+    TagsModal
 ) {
     'use strict';
 
@@ -568,6 +570,40 @@ function (
                             HistoryPicAction.remove();
                             GetRandomPicAction.enable();
                             _displayNext();
+                        },
+                        onFailure: (error) => {
+                            Notify.error({ message: error });
+                        }
+                    });
+
+                }
+            });
+        },
+
+        askTags: () => {
+            if (!GetRandomPicAction.isPausing()) {
+                GetRandomPicAction.pause();
+            }
+
+            TagsModal.ask({
+                Pic: HistoryPicAction.getCurrent(),
+                onClose: function () {
+                    GetRandomPicAction.enable();
+                },
+                onOpen: function () {
+                    GetRandomPicAction.disable();
+                },
+                onEnd: function () {
+                    _els.pauseIconCtn.hide();
+                    _showLoading();
+
+                    API.setTags({
+                        Pic: HistoryPicAction.getCurrent(),
+                        onSuccess: () => {
+                            _hideLoading();
+                            _els.pauseIconCtn.show();
+                            GetRandomPicAction.enable();
+                            InfosView.updateTags();
                         },
                         onFailure: (error) => {
                             Notify.error({ message: error });

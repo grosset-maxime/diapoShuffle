@@ -24,6 +24,7 @@ function (
             customFolderPath: '',
             randomPublicPath: '',
             src: '',
+            path: '',
             name: '',
             useCache: false,
             width: 0,
@@ -35,6 +36,7 @@ function (
         customFolderPath: '',
         randomPublicPath: '',
         src: '',
+        path: '',
         name: '',
 
         useCache: false,
@@ -51,13 +53,19 @@ function (
          * @param {Object} options - Options values.
          */
         __constructor: function (options) {
-            let that = this;
+            let path,
+                that = this;
 
             that.__base(options);
 
             that.customFolderPath = options.customFolderPath;
             that.randomPublicPath = options.randomPublicPath;
             that.src = options.src;
+
+            path = that.customFolderPath ? that.customFolderPath : '';
+            path += that.randomPublicPath ? that.randomPublicPath : '';
+            that.path = options.path || path;
+
             that.name = options.name;
 
             that.useCache = options.useCache;
@@ -82,6 +90,13 @@ function (
 
             return this;
         },
+
+        addTags: function (newTags = []) {
+            let tags = this.tags.concat(newTags);
+            this.tags = tags.filter(function (tag, index, tags) {
+                return tags.indexOf(tag) === index;
+            });
+        }
     });
 
     return Pic;

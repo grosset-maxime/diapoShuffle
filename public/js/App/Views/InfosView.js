@@ -212,6 +212,12 @@ function ($, Client, OptionsView) {
 
         hide: () => {
             _els.mainCtn.hide();
+        },
+
+        updateTags: () => {
+            if (OptionsView.showTags()) {
+                _setTags(_currentPic);
+            }
         }
     };
 

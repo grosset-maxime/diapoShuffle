@@ -410,7 +410,11 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
                 if ( $Item != FALSE )
                 {
                         // Check that the values exist
-                        if  ( ( array_key_exists( 'children', $Item ) ) && ( $Item['children'][0]['tag'] =="rdf:Bag" ) )
+                        if (
+                            array_key_exists('children', $Item) &&
+                            $Item['children'][0]['tag'] == "rdf:Bag" &&
+                            !empty($Item['children'][0]['children'])
+                        )
                         {
                                 // Cycle through the values and save them
                                 foreach ( $Item['children'][0]['children'] as $sup_category )
