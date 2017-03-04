@@ -912,12 +912,13 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
         // Explode the date into pieces using the - symbol
         $date_pieces = explode( "-", $new_ps_file_info_array[ 'date' ] );
 
+        error_log(print_r($new_ps_file_info_array[ 'date' ], true));
+        error_log(print_r($date_pieces, true));
+
         // If there are not 3 pieces to the date, it is invalid
         if ( count( $date_pieces ) != 3 )
         {
-                // INVALID DATE
-                echo "Invalid Date 1 - must be YYYY-MM-DD format<br>";
-                return FALSE;
+                $date_pieces = array(date('Y'), date('m'), date('d'));
         }
 
         // Cycle through each piece of the date
@@ -927,7 +928,7 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
                 if ( ! is_numeric( $piece ) )
                 {
                         // INVALID DATE
-                        echo "Invalid Date 2 - must be YYYY-MM-DD format<br>";
+                        throw new Exception("Invalid Date - must be YYYY-MM-DD format");
                         return FALSE;
                 }
         }
