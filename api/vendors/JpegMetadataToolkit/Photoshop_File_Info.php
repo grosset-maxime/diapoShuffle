@@ -912,9 +912,6 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
         // Explode the date into pieces using the - symbol
         $date_pieces = explode( "-", $new_ps_file_info_array[ 'date' ] );
 
-        error_log(print_r($new_ps_file_info_array[ 'date' ], true));
-        error_log(print_r($date_pieces, true));
-
         // If there are not 3 pieces to the date, it is invalid
         if ( count( $date_pieces ) != 3 )
         {
