@@ -1213,10 +1213,10 @@ function read_IFD_universal( $filehnd, $Tiff_offset, $Byte_Align, $Tag_Definitio
 
         // If the data is corrupt, the number of entries may be huge, which will cause errors
         // This is often caused by a lack of a Next-IFD pointer
-        if ( $No_Entries> 10000 )
+        if ($No_Entries > 10000)
         {
                 // Huge number of entries - abort
-                echo "<p>Error: huge number of EXIF entries - EXIF is probably Corrupted</p>\n";
+                throw new Exception('Error: huge number of EXIF entries - EXIF is probably Corrupted');
 
                 return array ( FALSE , 0);
         }
