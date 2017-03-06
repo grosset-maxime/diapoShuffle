@@ -44,6 +44,8 @@ function ($, Notify) {
                     autoHide: opts.autoHide,
                     duration: opts.duration
                 });
+            } else {
+                notify.setAutoHide(opts.autoHide);
             }
 
             notify.setMessage(opts.message, opts.type, true);

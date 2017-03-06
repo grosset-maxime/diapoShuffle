@@ -61,6 +61,10 @@ define('App/Cmp/Notify', [
             }
         }, // End function __constructor()
 
+        setAutoHide: function (autoHide) {
+            this.options.autoHide = !!autoHide;
+        },
+
         /**
          * Build the DOM of the Cmp.
          */
