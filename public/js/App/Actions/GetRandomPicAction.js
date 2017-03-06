@@ -157,7 +157,13 @@ function (
         } else {
             API.getRandomPic({
                 customFolders: _getCustomFolders(),
-                onSuccess: (Pic) => {
+                onSuccess: (Pic, warning) => {
+                    if (warning) {
+                        Notify.warning({
+                            message: warning
+                        });
+                    }
+
                     onGetRandom(Pic, _setTheInterval, _getRandomPic);
                 },
                 onFailure: (error) => {

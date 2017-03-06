@@ -431,6 +431,7 @@ class Item extends Root
 
         } catch (Exception $e) {
             error_log('File: "' . $pathWithName . '" fail to get tags.');
+            error_log(print_r($e, true));
 
             throw new ExceptionExtended(
                 array(

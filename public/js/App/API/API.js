@@ -202,7 +202,7 @@ function ($, PM, PicClass) {
 
                     PM.log(error.message || 'Undefined error.');
                 } else {
-                    onSuccess(new PicClass(json.pic));
+                    onSuccess(new PicClass(json.pic), json.pic.warning);
                 }
             });
 

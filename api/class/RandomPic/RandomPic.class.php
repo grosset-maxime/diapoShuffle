@@ -320,6 +320,7 @@ class RandomPic extends Root
         $result = array();
         $width = 0;
         $height = 0;
+        $warningMessage = '';
         $randomCustomFolder = $this->getRandomCustomFolder();
         $errorMessage;
         $randomPic;
@@ -372,6 +373,7 @@ class RandomPic extends Root
             $tags = $randomPic->getTags();
         } catch (ExceptionExtended $e) {
             $tags = array();
+            $warningMessage = $e->getPublicMessage() . ' - ' . $e->getMessage();
         } catch (Exception $e) {
             throw $e;
         }
@@ -389,7 +391,8 @@ class RandomPic extends Root
             'width' => $width,
             'height' => $height,
             'tags' => $tags,
-            'useCache' => $this->useCache
+            'useCache' => $this->useCache,
+            'warning' => $warningMessage
         );
 
         if ($this->needUpdateCache) {
