@@ -160,7 +160,8 @@ function (
                 onSuccess: (Pic, warning) => {
                     if (warning) {
                         Notify.warning({
-                            message: warning
+                            message: warning,
+                            autoHide: false
                         });
                     }
 
