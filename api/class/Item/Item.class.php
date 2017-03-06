@@ -430,6 +430,8 @@ class Item extends Root
             error_reporting(E_ALL);
 
         } catch (Exception $e) {
+            error_log('File: "' . $pathWithName . '" fail to get tags.');
+
             throw new ExceptionExtended(
                 array(
                     'publicMessage' => 'File: "' . $pathWithName . '" fail to get tags.',
