@@ -240,7 +240,9 @@ class RandomPic extends Root
             array(
                 'name' => $fileName,
                 'type' => $itemType,
-                'path' => $folder
+                'path' => $folder,
+                'format' => $itemType === Item::TYPE_FILE ? pathinfo($fileName)['extension'] : null,
+                'shouldFetch' => true
             )
         );
     }

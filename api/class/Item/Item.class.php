@@ -1,6 +1,6 @@
 <?php
 /**
- * Random Pic Item.
+ * Pic Item.
  *
  * PHP version 5
  *
@@ -26,6 +26,9 @@ require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 // Utils
 require_once dirname(__FILE__) . '/../Utils/Utils.class.php';
 
+// Bdd
+require_once dirname(__FILE__) . '/../Bdd/Pic.class.php';
+
 // PHP
 use \Exception;
 
@@ -35,6 +38,9 @@ use DS\ExceptionExtended;
 
 // Utils
 use Utils\Utils;
+
+// Bdd
+use Bdd\Pic;
 
 /**
  * Class Item.
@@ -54,6 +60,9 @@ class Item extends Root
     protected $type = '';
     protected $path = '';
     protected $tags = array();
+    protected $format = '';
+    protected $Pic = null;
+
 
     /**
      * Item constructor.
@@ -62,10 +71,19 @@ class Item extends Root
      * * param {String} data.name : Item name.
      * * param {String} data.type : Item type.
      * * param {String} data.path : Item absolute path without name.
+     * * param {String} data.format : Item extension format (jpg, gif, png).
      */
     public function __construct(array $data = array())
     {
         parent::__construct($data);
+
+        if (!empty($data['shouldFetch']) && $data['shouldFetch'] === true) {
+            $this->Pic = new Pic(array(
+                'path' => $this->getPublicPathWithName(),
+                'type' => $data['format'] ? $data['format'] : null,
+                'shouldFetch' => true
+            ));
+        }
     }
 
     /**
@@ -209,42 +227,41 @@ class Item extends Root
      */
     public function getTags()
     {
-        if (empty($this->tags)) {
-            $exif; $xmp; $jpegHeaderData;
-            $pathWithName = $this->getPathWithName();
+        $tags = $this->tags;
 
-            try {
+        if (empty($tags)) {
 
-                // Report all errors except E_NOTICE and E_STRICT.
-                error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+            if (empty($this->Pic)) {
 
-                $exif = get_EXIF_JPEG($pathWithName);
+                if ($this->isJpgFormat()) {
+                    $tags = $this->getJpgTags();
+                }
 
-                $jpegHeaderData = get_jpeg_header_data($pathWithName);
+                $this->Pic = new Pic(array(
+                    'path' => $this->getPublicPathWithName(),
+                    'type' => $this->format,
+                    'tags' => $tags
+                ));
+            } else {
+                $tags = $this->Pic->getTags(true);
 
-                $xmp = read_XMP_array_from_text(get_XMP_text($jpegHeaderData));
+                if (empty($tags)) {
 
-                $irb = get_Photoshop_IRB($jpegHeaderData);
+                    if ($this->isJpgFormat()) {
+                        $tags = $this->getJpgTags();
+                    }
 
-                $jpegInfo = get_photoshop_file_info($exif, $xmp, $irb);
+                    $this->Pic->setTags($tags);
+                }
+            }
 
-                $this->tags = $jpegInfo['keywords'];
-
-                // Report all errors.
-                error_reporting(E_ALL);
-
-            } catch (Exception $e) {
-                throw new ExceptionExtended(
-                    array(
-                        'publicMessage' => 'File: "' . $pathWithName . '" fail to get tags.',
-                        'message' => $e->getMessage(),
-                        'severity' => ExceptionExtended::SEVERITY_WARNING
-                    )
-                );
+            if (!empty($tags)) {
+                $this->tags = $tags;
+                $this->Pic->update();
             }
         }
 
-        return $this->tags;
+        return $tags;
     }
 
     /**
@@ -260,8 +277,82 @@ class Item extends Root
             return;
         }
 
-        $exif; $xmp; $jpegHeaderData;
+        if ($this->isJpgFormat()) {
+            try {
+                $this->setJpgTags($tags);
+            } catch (ExceptionExtended $e) {
+                throw $e;
+            }
+        }
+
+        if (empty($this->Pic)) {
+            $this->Pic = new Pic(
+                array(
+                    'path' => $this->getPublicPathWithName(),
+                    'type' => $this->format
+                )
+            );
+        }
+
+        $this->Pic->setTags($tags);
+
+        return $this->Pic->update();
+    }
+
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    public function setFormat($format = '')
+    {
+        $this->format = $format;
+    }
+
+    /**
+     * Getter size.
+     *
+     * @return {Array[width, height]} Item size.
+     */
+    public function getSize()
+    {
+        try {
+
+            $size = getimagesize($this->getPathWithName());
+
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'File: "' . $this->getPathWithName() . '" fail to get size.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
+
+        return $size;
+    }
+
+    protected function isJpgFormat()
+    {
+        $is = false;
+        $format = $this->format;
+
+        if (empty($format)) {
+            return false;
+        }
+
+        if ($format === 'jpg' || $format === 'jpeg') {
+            $is = true;
+        }
+
+        return $is;
+    }
+
+    protected function setJpgTags(Array $tags = array())
+    {
         $result = false;
+        $exif; $xmp; $jpegHeaderData;
         $pathWithName = $this->getPathWithName();
 
         try {
@@ -312,27 +403,42 @@ class Item extends Root
         return $result;
     }
 
-    /**
-     * Getter size.
-     *
-     * @return {Array[width, height]} Item size.
-     */
-    public function getSize()
+    protected function getJpgTags()
     {
+        $exif; $xmp; $jpegHeaderData;
+        $pathWithName = $this->getPathWithName();
+        $tags = array();
+
         try {
 
-            $size = getimagesize($this->getPathWithName());
+            // Report all errors except E_NOTICE and E_STRICT.
+            error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+
+            $exif = get_EXIF_JPEG($pathWithName);
+
+            $jpegHeaderData = get_jpeg_header_data($pathWithName);
+
+            $xmp = read_XMP_array_from_text(get_XMP_text($jpegHeaderData));
+
+            $irb = get_Photoshop_IRB($jpegHeaderData);
+
+            $jpegInfo = get_photoshop_file_info($exif, $xmp, $irb);
+
+            $tags = $jpegInfo['keywords'];
+
+            // Report all errors.
+            error_reporting(E_ALL);
 
         } catch (Exception $e) {
             throw new ExceptionExtended(
                 array(
-                    'publicMessage' => 'File: "' . $this->getPathWithName() . '" fail to get size.',
+                    'publicMessage' => 'File: "' . $pathWithName . '" fail to get tags.',
                     'message' => $e->getMessage(),
-                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                    'severity' => ExceptionExtended::SEVERITY_WARNING
                 )
             );
         }
 
-        return $size;
+        return $tags;
     }
 } // End Class Item

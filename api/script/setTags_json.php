@@ -14,12 +14,13 @@
 
 /*global
     ROOT_DIR,
-    $_BASE_PIC_FOLDER_NAME, $_BASE_PIC_PATH
+    $_BASE_PIC_PATH
 */
 
 require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 
 require_once ROOT_DIR . '/api/class/Item/Item.class.php';
+
 
 // DS
 use DS\ExceptionExtended;
@@ -27,10 +28,6 @@ use DS\ExceptionExtended;
 // DeleteItem
 use Item\Item;
 
-
-// ====================
-// Start of the script.
-// ====================
 
 $name = trim($_POST['name']) ? trim($_POST['name']) : '';
 $path = trim($_POST['path']) ? trim($_POST['path']) : '';
@@ -71,7 +68,9 @@ $absolutePath = $_BASE_PIC_PATH . $path;
 $Pic = new Item(array(
     'path' => $absolutePath,
     'name' => $name,
-    'type' => Item::TYPE_FILE
+    'type' => Item::TYPE_FILE,
+    'format' => pathinfo($name)['extension'],
+    'shouldFetch' => true
 ));
 
 try {
