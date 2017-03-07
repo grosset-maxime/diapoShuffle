@@ -121,7 +121,7 @@ function (
             onPause = events.onPause,
             onResume = events.onResume;
 
-        if (_idInterval) {
+        if (_idInterval || !shouldPlay) {
             onBeforePause();
 
             _clearTheInterval();
@@ -149,23 +149,33 @@ function (
         onBeforeGetRandom();
 
         if (_options.playPined) {
+
             onGetRandom(
                 PinPicAction.getRandom(),
                 _setTheInterval,
                 _getRandomPic
             );
         } else {
+
             API.getRandomPic({
                 customFolders: _getCustomFolders(),
                 onSuccess: (Pic, warning) => {
-                    if (warning) {
-                        Notify.warning({
-                            message: warning,
-                            autoHide: false
-                        });
-                    }
 
-                    onGetRandom(Pic, _setTheInterval, _getRandomPic);
+                    onGetRandom(
+                        Pic,
+                        function () { // Success callback of _setPic()
+                            if (warning) {
+                                _pause(false);
+                                Notify.warning({
+                                    message: warning || 'teset',
+                                    autoHide: false
+                                });
+                            } else {
+                                _setTheInterval();
+                            }
+                        },
+                        _getRandomPic // Failure callback of _setPic()
+                    );
                 },
                 onFailure: (error) => {
                     if (Action.isInside()) {
