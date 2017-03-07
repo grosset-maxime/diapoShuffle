@@ -45,7 +45,10 @@ function ($, Notify) {
                     duration: opts.duration
                 });
             } else {
-                notify.setAutoHide(opts.autoHide);
+                notify.updateOptions({
+                    autoHide: opts.autoHide,
+                    duration: opts.duration
+                });
             }
 
             notify.setMessage(opts.message, opts.type, true);

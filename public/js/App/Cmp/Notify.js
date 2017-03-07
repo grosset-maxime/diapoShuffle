@@ -61,8 +61,20 @@ define('App/Cmp/Notify', [
             }
         }, // End function __constructor()
 
-        setAutoHide: function (autoHide) {
-            this.options.autoHide = !!autoHide;
+        updateOptions: function (options) {
+            function is(val) {
+                return !(val === null || val === undefined);
+            }
+
+            options = options || {};
+
+            if (is(options.autoHide)) {
+                this.options.autoHide = !!options.autoHide;
+            }
+
+            if (is(options.duration)) {
+                this.options.duration = options.duration;
+            }
         },
 
         /**
