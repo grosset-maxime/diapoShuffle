@@ -69,7 +69,7 @@
         {
                 // No EXIF data was found - abort
                 ob_end_clean ( );
-                echo "<p>Error getting EXIF Information</p>\n";
+                throw new Exception('Error getting EXIF Information');
                 return;
         }
 
@@ -78,11 +78,11 @@
         if ( count( $Exif_array ) < 1  )
         {
                 ob_end_clean ( );
-                echo "<p>Couldn't find TIFF IFD 0</p>\n";
+                throw new Exception('Couldn\'t find TIFF IFD 0');
                 return;
         }
-        
-        
+
+
 
         // Check that the EXIF IFD exists
         if ( array_key_exists( 34665, $Exif_array[0] ) )
@@ -107,7 +107,7 @@
                                                 // Found a Thumbnail
                                                 // Get the data
                                                 $data = $Exif_array[0][34665]['Data'][0][37500]['Decoded Data'][0][0x0088]['Data'];
-                                                
+
                                                 // Sometimes the Minolta thumbnails are corrupt as there is no data
                                                 // Check that the data is OK
                                                 if ( $data !== FALSE )
@@ -125,7 +125,7 @@
                                                 {
                                                         // Thumbnail data is missing - display message
                                                         ob_end_clean ( );
-                                                        echo "<p>Thumbnail missing</p>\n";
+                                                        throw new Exception('Thumbnail missing');
                                                 }
                                         }
                                                 // Check if the Thumbnail tag 0x0081 exists
@@ -152,21 +152,21 @@
                                                 {
                                                         // Thumbnail data is missing - display message
                                                         ob_end_clean ( );
-                                                        echo "<p>Thumbnail missing</p>\n";
+                                                        throw new Exception('Thumbnail missing');
                                                 }
                                         }
                                         else
                                         {
                                                 // Couldn't find a Minolta thumbnail tag - display message
                                                 ob_end_clean ( );
-                                                echo "<p>Couldn't find Minolta Thumbnail Tag</p>\n";
+                                                throw new Exception('Couldn\'t find Minolta Thumbnail Tag');
                                         }
                                 }
                                 else
                                 {
                                         // Couldn't find an IFD in the Makernote tag - display message
                                         ob_end_clean ( );
-                                        echo "<p>Makernote Doesn't contain IFD 0</p>\n";
+                                        throw new Exception('Makernote Doesn\'t contain IFD 0');
                                 }
 
                         }
@@ -174,24 +174,24 @@
                         {
                                 // Makernote does not use Olympus tags - display message
                                 ob_end_clean ( );
-                                echo "<p>Not an Olympus Makernote</p>\n";
+                                throw new Exception('Not an Olympus Makernote');
                         }
                 }
                 else
                 {
                         // Couldn't find Makernote tag - display message
                         ob_end_clean ( );
-                        echo "<p>Couldn't find Makernote</p>\n";
+                        throw new Exception('Couldn\'t find Makernote');
                 }
         }
         else
         {
                 // Couldn't find the EXIF IFD - display message
                 ob_end_clean ( );
-                echo "<p>Couldn't find Exif IFD</p>\n";
+                throw new Exception('Couldn\'t find Exif IFD');
         }
 
 
         return;
-        
+
 ?>

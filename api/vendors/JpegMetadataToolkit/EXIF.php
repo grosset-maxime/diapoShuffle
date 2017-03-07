@@ -122,10 +122,8 @@ function get_EXIF_JPEG( $filename )
         if ( ( stristr ( $filename, "http://" ) != FALSE ) || ( stristr ( $filename, "ftp://" ) != FALSE ) )
         {
                 // A HTTP or FTP wrapper is being used - show a warning and abort
-                echo "HTTP and FTP wrappers are currently not supported with EXIF - See EXIF functionality documentation - a local file must be specified<br>";
-                echo "To work on an internet file, copy it locally to start with:<br><br>\n";
-                echo "\$newfilename = tempnam ( \$dir, \"tmpexif\" );<br>\n";
-                echo "copy ( \"http://whatever.com\", \$newfilename );<br><br>\n";
+                $errorMessage = "HTTP and FTP wrappers are currently not supported with EXIF - See EXIF functionality documentation - a local file must be specified.To work on an internet file, copy it locally to start with:\$newfilename = tempnam ( \$dir, \"tmpexif\" );copy ( \"http://whatever.com\", \$newfilename );";
+                throw new Exception($errorMessage);
                 return FALSE;
         }
 
@@ -166,7 +164,7 @@ function get_EXIF_JPEG( $filename )
         if ( ! $filehnd  )
         {
                 // Could't open the file - exit
-                echo "<p>Could not open file $filename</p>\n";
+                throw new Exception('Could not open file ' . $filename);
                 return FALSE;
         }
 
@@ -300,10 +298,8 @@ function get_Meta_JPEG( $filename )
         if ( ( stristr ( $filename, "http://" ) != FALSE ) || ( stristr ( $filename, "ftp://" ) != FALSE ) )
         {
                 // A HTTP or FTP wrapper is being used - show a warning and abort
-                echo "HTTP and FTP wrappers are currently not supported with Meta - See EXIF/Meta functionality documentation - a local file must be specified<br>";
-                echo "To work on an internet file, copy it locally to start with:<br><br>\n";
-                echo "\$newfilename = tempnam ( \$dir, \"tmpmeta\" );<br>\n";
-                echo "copy ( \"http://whatever.com\", \$newfilename );<br><br>\n";
+                $errorMessage = "HTTP and FTP wrappers are currently not supported with Meta - See EXIF/Meta functionality documentation - a local file must be specified. To work on an internet file, copy it locally to start with: \$newfilename = tempnam ( \$dir, \"tmpmeta\" ); copy ( \"http://whatever.com\", \$newfilename );";
+                throw new Exception($errorMessage);
                 return FALSE;
         }
 
@@ -344,7 +340,7 @@ function get_Meta_JPEG( $filename )
         if ( ! $filehnd  )
         {
                 // Could't open the file - exit
-                echo "<p>Could not open file $filename</p>\n";
+                throw new Exception('Could not open file ' . $filename);
                 return FALSE;
         }
 
@@ -476,10 +472,8 @@ function get_EXIF_TIFF( $filename )
         if ( ( stristr ( $filename, "http://" ) != FALSE ) || ( stristr ( $filename, "ftp://" ) != FALSE ) )
         {
                 // A HTTP or FTP wrapper is being used - show a warning and abort
-                echo "HTTP and FTP wrappers are currently not supported with TIFF - See EXIF/TIFF functionality documentation - a local file must be specified<br>";
-                echo "To work on an internet file, copy it locally to start with:<br><br>\n";
-                echo "\$newfilename = tempnam ( \$dir, \"tmptiff\" );<br>\n";
-                echo "copy ( \"http://whatever.com\", \$newfilename );<br><br>\n";
+                $errorMessage = "HTTP and FTP wrappers are currently not supported with TIFF - See EXIF/TIFF functionality documentation - a local file must be specified. To work on an internet file, copy it locally to start with: \$newfilename = tempnam ( \$dir, \"tmptiff\" ); copy ( \"http://whatever.com\", \$newfilename );";
+                throw new Exception($errorMessage);
                 return FALSE;
         }
 
@@ -490,7 +484,7 @@ function get_EXIF_TIFF( $filename )
         if ( ! $filehnd  )
         {
                 // Could't open the file - exit
-                echo "<p>Could not open file $filename</p>\n";
+                throw new Exception('Could not open file ' . $filename);
                 return FALSE;
         }
 
@@ -1146,7 +1140,7 @@ function read_Multiple_IFDs( $filehnd, $Tiff_offset, $Byte_Align, $Tag_Definitio
                 if ( fseek( $filehnd, $Tiff_offset + $Next_Offset ) !== 0 )
                 {
                         // Error seeking to position of next IFD
-                        echo "<p>Error: Corrupted EXIF</p>\n";
+                        throw new Exception('Error: Corrupted EXIF');
                         return FALSE;
                 }
 
@@ -1241,7 +1235,7 @@ function read_IFD_universal( $filehnd, $Tiff_offset, $Byte_Align, $Tag_Definitio
         if ( strlen( $IFD_Data ) != (12 * $No_Entries) )
         {
                 // Couldn't read the IFD Data properly, Some Casio files have no Next IFD pointer, hence cause this error
-                echo "<p>Error: EXIF Corrupted</p>\n";
+                throw new Exception('Error: EXIF Corrupted');
                 return array(FALSE, 0);
         }
 
@@ -1297,7 +1291,7 @@ function read_IFD_universal( $filehnd, $Tiff_offset, $Byte_Align, $Tag_Definitio
 
                 if ( $Data_Count > 100000 )
                 {
-                        echo "<p>Error: huge EXIF data count - EXIF is probably Corrupted</p>\n";
+                        throw new Exception('Error: huge EXIF data count - EXIF is probably Corrupted');
 
                         // Some Casio files have no Next IFD pointer, hence cause errors
 
@@ -2239,7 +2233,7 @@ function get_IFD_Data_Type( $input_data, $data_type, $Byte_Align )
                 // Hence this should not be processed here, as it would have
                 // to return multiple values instead of a single value
 
-                echo "<p>Error - ASCII Strings should not be processed in get_IFD_Data_Type</p>\n";
+                throw new Exception('Error - ASCII Strings should not be processed in get_IFD_Data_Type');
                 return "Error Should never get here"; //explode( "\x00", $input_data );
         }
                 // Check if this is a Unsigned rational type

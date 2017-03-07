@@ -49,8 +49,8 @@
 
         // Ensure that nothing can write to the standard io, before we get the header out
         ob_start( );
-        
-        
+
+
         include 'JPEG.php';
         include 'EXIF.php';
 
@@ -69,7 +69,7 @@
         {
                 // No EXIF data could be retrieved - abort
                 ob_end_clean ( );
-                echo "<p>EXIF segment could not be retrieved</p>\n";
+                throw new Exception('EXIF segment could not be retrieved');
                 return;
         }
 
@@ -78,7 +78,7 @@
         if ( count( $Exif_array ) < 2  )
         {
                 ob_end_clean ( );
-                echo "<p>Couldn't find Thumbnail IFD</p>\n";
+                throw new Exception('Couldn\'t find Thumbnail IFD');
                 return;
         }
 
@@ -93,7 +93,7 @@
         else
         {
                 ob_end_clean ( );
-                echo "<p>Couldn't find Thumbnail Tag</p>\n";
+                throw new Exception('Couldn\'t find Thumbnail Tag');
                 return;
         }
 

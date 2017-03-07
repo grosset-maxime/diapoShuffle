@@ -84,7 +84,7 @@
                 {
                         // No Photoshop IRB data could be retrieved - abort
                         ob_end_clean ( );
-                        echo "<p>Photoshop IRB could not be retrieved from the JPEG file</p>\n";
+                        throw new Exception('Photoshop IRB could not be retrieved from the JPEG file');
                         return;
                 }
 
@@ -134,7 +134,7 @@
                         {
                                 // No Photoshop IRB data could be retrieved - abort
                                 ob_end_clean ( );
-                                echo "<p>Photoshop IRB could not be retrieved from the TIFF file</p>\n";
+                                throw new Exception('Photoshop IRB could not be retrieved from the TIFF file');
                                 return;
                         }
 
@@ -163,14 +163,14 @@
                 {
                         // Embedded Photoshop IRB block not found
                         ob_end_clean ( );
-                        echo "No Photoshop IRB found within EXIF";
+                        throw new Exception('No Photoshop IRB found within EXIF');
                 }
         }
         else
         {
                 // Unknown extension
                 ob_end_clean ( );
-                echo "Unknown file Type";
+                throw new Exception('Unknown file Type');
         }
 
 

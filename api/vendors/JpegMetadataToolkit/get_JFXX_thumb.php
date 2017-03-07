@@ -58,11 +58,11 @@
 
 
         // retrieve the filename from the URL parameters
-        
+
         $filename = $_GET['filename'];
 
         // Retrieve the JPEG header Data
-        
+
         $jpeg_header_data = get_jpeg_header_data( $filename );
 
         // Retrieve any JFXX data in the file
@@ -75,13 +75,13 @@
         {
                 // No JFXX data could be retrieved - abort
                 ob_end_clean ( );
-                echo "<p>JFXX Data could not be retrieved</p>\n";
+                throw new Exception('JFXX Data could not be retrieved');
                 return;
         }
 
         // Check the JFXX extension code which indicates what format
         // the thumbnail is encoded with
-        
+
         if ( $JFXX_array['Extension_Code'] == 0x10 ) // JPEG Encoding
         {
                 // JPEG Encoding - Output JPEG Data

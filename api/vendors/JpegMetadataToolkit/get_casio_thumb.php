@@ -68,7 +68,7 @@
         {
                 // No EXIF data was found - abort
                 ob_end_clean ( );
-                echo "<p>Error getting EXIF Information</p>\n";
+                throw new Exception('Error getting EXIF Information');
                 return;
         }
 
@@ -79,18 +79,18 @@
                 // Couldn't find the zeroth IFD
                 return;
         }
-        
-        
+
+
         // Check that the EXIF IFD exists
         if ( array_key_exists( 34665, $Exif_array[0] ) )
         {
                 // Found the EXIF IFD,
-                
+
                 // Check that the makernote tag exists
                 if ( array_key_exists( 37500, $Exif_array[0][34665]['Data'][0] ) )
                 {
                         // Makernote Exists
-                
+
                         // Check that the Makernote is Casio Type 2
                         if  ( $Exif_array[0][34665]['Data'][0][37500]['Makernote Tags'] == "Casio Type 2" )
                         {
@@ -124,5 +124,5 @@
         }
 
         return;
-        
+
 ?>
