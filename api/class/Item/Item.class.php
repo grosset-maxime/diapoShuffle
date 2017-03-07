@@ -271,10 +271,10 @@ class Item extends Root
      *
      * @return null
      */
-    public function setTags(array $tags = array())
+    public function setTags(array $tags = array(), $clearTags = false)
     {
-        if (empty($tags)) {
-            return;
+        if (empty($tags) && !$clearTags) {
+            return false;
         }
 
         if ($this->isJpgFormat()) {
@@ -294,6 +294,7 @@ class Item extends Root
             );
         }
 
+        $this->tags = $tags;
         $this->Pic->setTags($tags);
 
         return $this->Pic->update();
@@ -370,7 +371,6 @@ class Item extends Root
 
             $jpegInfo = get_photoshop_file_info($exif, $xmp, $irb);
 
-            $this->tags = $tags;
             $jpegInfo['keywords'] = $tags;
 
             $jpegHeaderData = put_photoshop_file_info(

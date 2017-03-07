@@ -127,6 +127,8 @@ class Pic extends Root
     {
         if (is_array($tags) && !empty($tags)) {
             $tags = implode(';', $tags);
+        } if (empty($tags)) {
+            $tags = '';
         }
 
         $this->tags = $tags;
@@ -134,7 +136,7 @@ class Pic extends Root
 
     public function getTags($arrayFormat = false)
     {
-        $tags = $this->tags;
+        $tags = html_entity_decode($this->tags);
 
         if ($arrayFormat === true) {
             if (empty($tags)) {
@@ -197,6 +199,10 @@ class Pic extends Root
 
         if (!empty($this->id)) {
             return $this->update();
+        }
+
+        if (empty($this->tags)) {
+            return true;
         }
 
         try {
@@ -262,6 +268,10 @@ class Pic extends Root
     {
         if (empty($this->id)) {
             return $this->add(array('shouldNotUpdate' => true));
+        }
+
+        if (empty($this->tags)) {
+            return $this->delete();
         }
 
         $bdd = $this->bdd;

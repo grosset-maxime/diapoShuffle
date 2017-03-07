@@ -12,7 +12,8 @@ define(
 function ($) {
     'use strict';
 
-    let _els = {};
+    let _els = {},
+        _options = {};
 
     let _buildSkeleton, _getTags;
 
@@ -20,7 +21,8 @@ function ($) {
         let body, inputTags;
 
         inputTags = _els.inputTags = $('<input>',{
-            type: 'text'
+            type: 'text',
+            value: _options.Pic.getTags().join(';')
         });
 
         body = $('<div>', {
@@ -50,12 +52,11 @@ function ($) {
          *
          */
         ask: (options = {}) => {
-            let modal, modalOptions,
-                opts = {};
+            let modal, modalOptions;
 
             $.extend(
                 true,
-                opts,
+                _options,
                 {
                     Pic: {},
                     onOpen: () => {},
@@ -76,24 +77,25 @@ function ($) {
                 },
                 close: (event) => {
                     event.stopPropagation();
-                    opts.onClose();
+                    _options.onClose();
                 },
                 open: () => {
-                    opts.onOpen();
+                    _options.onOpen();
                 },
                 buttons: [{
                     text: 'Cancel',
                     tabIndex: -1,
                     click: () => {
                         modal.dialog('close');
-                        opts.onCancel();
+                        _options.onCancel();
                     }
                 }, {
                     text: 'Set',
                     click: () => {
                         modal.dialog('close');
-                        opts.Pic.addTags(_getTags());
-                        opts.onEnd();
+                        // _options.Pic.addTags(_getTags());
+                        _options.Pic.setTags(_getTags());
+                        _options.onEnd();
                     }
                 }]
             };

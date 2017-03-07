@@ -75,7 +75,7 @@ $Pic = new Item(array(
 
 try {
 
-    $success = $Pic->setTags($tags);
+    $success = $Pic->setTags($tags, empty($tags));
 
 } catch (ExceptionExtended $e) {
     $jsonResult['error'] = $logError;

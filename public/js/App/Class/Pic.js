@@ -96,6 +96,15 @@ function (
             this.tags = tags.filter(function (tag, index, tags) {
                 return tags.indexOf(tag) === index;
             });
+        },
+
+        setTags: function (tags = []) {
+            this.tags = [];
+            this.addTags(tags);
+        },
+
+        getTags: function () {
+            return this.tags;
         }
     });
 
