@@ -1,0 +1,27 @@
+// ===================
+// App Cmp TagsChooser
+// ===================
+
+// global:
+
+.tagschooser_cmp {
+    display: inline-block;
+
+    .tag_el {
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin: 4px;
+        border-radius: 3px;
+        display: inline-block;
+        box-shadow: 2px 2px 5px #ccc;
+        cursor: pointer;
+    }
+
+    .selected_tags_ctn,
+    .available_tags_ctn {
+        border: 1px solid #aaa;
+        border-radius: 3px;
+        padding: 5px;
+        margin-bottom: 5px;
+    }
+}

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost:8889
--- Généré le :  Lun 06 Mars 2017 à 20:51
+-- Généré le :  Mer 08 Mars 2017 à 22:23
 -- Version du serveur :  5.5.42
 -- Version de PHP :  5.6.10
 
@@ -40,7 +40,8 @@ CREATE TABLE `tags` (
 -- Index pour la table `tags`
 --
 ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

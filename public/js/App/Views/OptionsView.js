@@ -313,7 +313,7 @@ function (
         inputTags = _els.inputTags = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
-            checked: false
+            checked: true
         });
 
         // Ctn tags

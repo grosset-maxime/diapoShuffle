@@ -246,7 +246,30 @@ body {
   opacity: 0.3;
 }
 
-/* line 71, ../../sass/screen.scss */
+/* line 7, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp {
+  display: inline-block;
+}
+/* line 10, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .tag_el {
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 4px;
+  border-radius: 3px;
+  display: inline-block;
+  box-shadow: 2px 2px 5px #ccc;
+  cursor: pointer;
+}
+/* line 20, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .selected_tags_ctn,
+.tagschooser_cmp .available_tags_ctn {
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+/* line 72, ../../sass/screen.scss */
 .diapo_shuffle {
   color: #333;
 }

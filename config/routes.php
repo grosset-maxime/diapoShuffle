@@ -44,6 +44,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/setTags_json.php',
     ),
+    'getAllTags_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/getAllTags_json.php',
+    ),
     'getFolderList_s' => array(
         'isScript' => true,
         'path' => '/api/script/getFolderList_json.php',

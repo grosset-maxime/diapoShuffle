@@ -6,12 +6,16 @@ define(
 [
     'jquery',
 
-    'PM/Class'
+    'PM/Class',
+
+    'App/Class/Tag'
 ],
 function (
     $,
 
-    Class
+    Class,
+
+    Tag
 ) {
     'use strict';
 
@@ -75,7 +79,7 @@ function (
 
             that.count = options.count || 0;
 
-            that.tags = options.tags || [];
+            that.setTags(options.tags || []);
         },
 
         getFullPath: function () {
@@ -92,9 +96,26 @@ function (
         },
 
         addTags: function (newTags = []) {
-            let tags = this.tags.concat(newTags);
-            this.tags = tags.filter(function (tag, index, tags) {
-                return tags.indexOf(tag) === index;
+            function has (tags, newTag) {
+                return tags.find(function (tag) {
+                    return newTag.id === tag.id;
+                });
+            }
+
+            let tags = this.tags;
+
+            if (newTags.length && typeof newTags[0] === 'string') {
+                newTags = newTags.map(function (tag) {
+                    return new Tag({
+                        id: tag
+                    });
+                });
+            }
+
+            newTags.forEach(function (newTag) {
+                if (!has(tags, newTag)) {
+                    tags.push(newTag);
+                }
             });
         },
 
@@ -105,6 +126,12 @@ function (
 
         getTags: function () {
             return this.tags;
+        },
+
+        getTagsId: function () {
+            return this.tags.map(function (tag) {
+                return tag.id;
+            });
         }
     });
 

@@ -10,12 +10,15 @@ define(
     'PM/Core',
 
    // App Class
-   'App/Class/Pic'
+   'App/Class/Pic',
+   'App/Class/Tag'
 ],
-function ($, PM, PicClass) {
+function ($, PM, PicClass, TagClass) {
     'use strict';
 
     let API;
+
+    let _allTagsCache;
 
     API = {
 
@@ -141,7 +144,7 @@ function ($, PM, PicClass) {
                 data: {
                     name: Pic.name,
                     path: Pic.path,
-                    tags: Pic.tags
+                    tags: Pic.getTagsId()
                 }
             });
 
@@ -208,6 +211,57 @@ function ($, PM, PicClass) {
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
                 let message = 'API.getRandomPic()';
+
+                onFailure('Server error.');
+
+                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+            });
+        },
+
+        /**
+         * @param {Object} options - Options.
+         * @param {Function} [onSuccess] - Success callback, returns {Tag[]} - All tags.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        getAllTags: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (_allTagsCache) {
+                onSuccess(_allTagsCache);
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=getAllTags_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true
+            });
+
+            xhr.done((json) => {
+                let error,
+                    unknownErrorMessage = 'Unknown error.';
+
+                if (json.error || !json.success) {
+                    error = json.error || {};
+
+                    onFailure(error.publicMessage || unknownErrorMessage);
+
+                    PM.log(error.message || 'Undefined error.');
+                } else {
+
+                    _allTagsCache = json.tags.map(function (tag) {
+                        return new TagClass(tag);
+                    });
+
+                    onSuccess(_allTagsCache);
+                }
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                let message = 'API.getAllTags()';
 
                 onFailure('Server error.');
 

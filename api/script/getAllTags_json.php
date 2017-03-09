@@ -1,6 +1,6 @@
 <?php
 /**
- * Description : Set tags on a pic.
+ * Description : Get all available tags.
  * Return : JSON
  *
  * PHP version 5
@@ -19,63 +19,30 @@
 
 require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 
-require_once ROOT_DIR . '/api/class/Item/Item.class.php';
+require_once ROOT_DIR . '/api/class/Bdd/Tags.class.php';
 
 
 // DS
 use DS\ExceptionExtended;
 
-// Item
-use Item\Item;
+// DeleteItem
+use Bdd\Tags;
 
 
-$name = trim($_POST['name']) ? trim($_POST['name']) : '';
-$path = trim($_POST['path']) ? trim($_POST['path']) : '';
-$tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
-
-$logError = array(
-    'mandatory_fields' => array(
-        'name' => '= ' . $name,
-        'path' => '= ' . $path
-    ),
-    'optional_fields' => array(
-    ),
-);
+$logError = array();
 
 $jsonResult = array(
     'success' => false
 );
 
-if (empty($name) || empty($path)) {
-    $jsonResult['error'] = $logError;
-    $jsonResult['error']['mandatoryFields'] = true;
-    $jsonResult['error']['message'] = 'Mandatory fields missing.';
-    print json_encode($jsonResult);
-    die;
-}
-
 $success = false;
-
-$firstCharPicPAth = $path[0];
-
-// Begin of picPath
-if ($firstCharPicPAth !== '/') {
-    $path = '/' . $path;
-}
-
-$absolutePath = $_BASE_PIC_PATH . $path;
-
-$Pic = new Item(array(
-    'path' => $absolutePath,
-    'name' => $name,
-    'type' => Item::TYPE_FILE,
-    'format' => pathinfo($name)['extension'],
-    'shouldFetch' => true
-));
 
 try {
 
-    $success = $Pic->setTags($tags, empty($tags));
+    $Tags = new Tags(array('shouldFetchAll' => true));
+
+    $jsonResult['tags'] = $Tags->export();
+    $success = true;
 
 } catch (ExceptionExtended $e) {
     $jsonResult['error'] = $logError;

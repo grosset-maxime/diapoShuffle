@@ -117,11 +117,11 @@ function ($, Client, OptionsView) {
 
         tagsCtn.removeClass('no_tags');
 
-        tags.forEach(function (tag) {
+        tags.forEach(function (Tag) {
             tagsCtn.append(
                 $('<div>', {
                     'class': 'tag',
-                    text: tag
+                    text: Tag.getName()
                 })
             );
         });

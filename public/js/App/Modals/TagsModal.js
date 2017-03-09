@@ -6,10 +6,14 @@ define(
 [
     'jquery',
 
+    'App/Cmp/TagsChooser',
+
+    'App/Class/Tag',
+
     // Non AMD
     'js!jquery-ui'
 ],
-function ($) {
+function ($, TagsChooser, TagClass) {
     'use strict';
 
     let _els = {},
@@ -18,18 +22,26 @@ function ($) {
     let _buildSkeleton, _getTags;
 
     _buildSkeleton = () => {
-        let body, inputTags;
+        let body, inputTags, tagsChooserCtn;
 
         inputTags = _els.inputTags = $('<input>',{
             type: 'text',
-            value: _options.Pic.getTags().join(';')
+            value: _options.Pic.getTags().map(function (Tag) {
+                return Tag.getName();
+            }).join(';')
+        });
+
+        tagsChooserCtn = $('<div>', {
+            html: (new TagsChooser({
+                selected: _options.Pic.getTags()
+            })).build()
         });
 
         body = $('<div>', {
             html: [$('<span>', {
                 text: 'tags: '
             }),
-                inputTags
+                inputTags, tagsChooserCtn
             ]
         });
 
@@ -40,7 +52,17 @@ function ($) {
         let val = _els.inputTags.val();
 
         return val.split(';').map(function (el) {
-            return el.trim();
+            let Tag;
+
+            el = el.trim();
+
+            if (el) {
+                Tag = new TagClass({
+                    id: el
+                });
+            }
+
+            return Tag;
         }).filter(function (el) {
             return el;
         });
