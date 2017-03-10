@@ -17,55 +17,33 @@ function ($, TagsChooser, TagClass) {
     'use strict';
 
     let _els = {},
-        _options = {};
+        _options = {},
+        _tagChooser;
 
     let _buildSkeleton, _getTags;
 
     _buildSkeleton = () => {
-        let body, inputTags, tagsChooserCtn;
+        let body, tagsChooserCtn;
 
-        inputTags = _els.inputTags = $('<input>',{
-            type: 'text',
-            value: _options.Pic.getTags().map(function (Tag) {
-                return Tag.getName();
-            }).join(';')
+        _tagChooser = new TagsChooser({
+            selected: _options.Pic.getTags()
         });
 
         tagsChooserCtn = $('<div>', {
-            html: (new TagsChooser({
-                selected: _options.Pic.getTags()
-            })).build()
+            html: _tagChooser.build()
         });
 
         body = $('<div>', {
             html: [$('<span>', {
                 text: 'tags: '
-            }),
-                inputTags, tagsChooserCtn
-            ]
+            }), tagsChooserCtn]
         });
 
         return body;
     };
 
     _getTags = () => {
-        let val = _els.inputTags.val();
-
-        return val.split(';').map(function (el) {
-            let Tag;
-
-            el = el.trim();
-
-            if (el) {
-                Tag = new TagClass({
-                    id: el
-                });
-            }
-
-            return Tag;
-        }).filter(function (el) {
-            return el;
-        });
+        return _tagChooser.getSelected();
     };
 
     let Modal = {
@@ -115,8 +93,11 @@ function ($, TagsChooser, TagClass) {
                     text: 'Set',
                     click: () => {
                         modal.dialog('close');
-                        // _options.Pic.addTags(_getTags());
-                        _options.Pic.setTags(_getTags());
+
+                        _options.Pic.setTags(
+                            _getTags()
+                        );
+
                         _options.onEnd();
                     }
                 }]

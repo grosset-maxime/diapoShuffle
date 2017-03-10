@@ -259,8 +259,15 @@ body {
   display: inline-block;
   box-shadow: 2px 2px 5px #ccc;
   cursor: pointer;
+  transition: all .5s;
 }
 /* line 20, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .tag_el.selected {
+  background-color: #666;
+  box-shadow: 2px 2px 5px #999;
+  color: #fff;
+}
+/* line 27, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .selected_tags_ctn,
 .tagschooser_cmp .available_tags_ctn {
   border: 1px solid #aaa;

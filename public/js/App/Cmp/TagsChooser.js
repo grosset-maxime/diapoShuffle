@@ -54,7 +54,7 @@ define([
         _onTagClick: function (e) {
             let tag = e.target;
 
-            tag.toggleClass('selected');
+            $(tag).toggleClass('selected');
         },
 
         _buildTags: function () {
@@ -72,7 +72,7 @@ define([
 
             function createTagEl (Tag, selected) {
                 let tagEl = $('<div>', {
-                    'class': 'tag_el ' + selected ? 'selected' : '',
+                    'class': 'tag_el ' + (selected ? 'selected' : ''),
                     text: Tag.getName(),
                     on: {
                         click: that._onTagClick
@@ -132,8 +132,8 @@ define([
                 selectedTags = [];
 
             function retriveSelectedTags (tagsCtn) {
-                tagsCtn.find('.selected').forEach(function (tagEl) {
-                    selectedTags.push(tagEl.data('Tag'));
+                tagsCtn.find('.selected').each(function (index, tagEl) {
+                    selectedTags.push($(tagEl).data('Tag'));
                 });
             }
 
