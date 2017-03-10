@@ -71,7 +71,7 @@ function ($, TagsChooser, TagClass) {
                 dialogClass: 'tags_modal',
                 resizable: false,
                 modal: true,
-                width: 370,
+                minWidth: 800,
                 position: {
                     at: 'center top'
                 },
