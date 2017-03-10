@@ -37,7 +37,7 @@ define([
             }
         },
 
-        // selected: [],
+        _allTags: null,
 
         /**
          * @constructor TagsChooser.
@@ -47,14 +47,48 @@ define([
          * @param {String[]} [options.available]    - Available tags.
          */
         __constructor: function (options) {
-            let container,
-                that = this;
-
+            let that = this;
             that.__base(options);
+        },
 
-            container = options.container;
+        _onTagClick: function (e) {
+            let tag = e.target;
 
-            // that.selected = options.selected;
+            tag.toggleClass('selected');
+        },
+
+        _buildTags: function () {
+            let that = this,
+                options = that.options,
+                selectedTags = options.selected || [],
+                els = that.els,
+                selectedTagsCtn = els.selectedTagsCtn,
+                availableTagsCtn = els.availableTagsCtn,
+                allTagsWithoutSelected = that._allTags.filter(function (tag) {
+                    return !selectedTags.find(function  (selectedTag) {
+                        return tag.id === selectedTag.id;
+                    });
+                });
+
+            function createTagEl (Tag, selected) {
+                let tagEl = $('<div>', {
+                    'class': 'tag_el ' + selected ? 'selected' : '',
+                    text: Tag.getName(),
+                    on: {
+                        click: that._onTagClick
+                    }
+                }).data('Tag', Tag);
+
+                return tagEl;
+            }
+
+            selectedTags.forEach(function (Tag) {
+                selectedTagsCtn.append(createTagEl(Tag, true));
+            });
+
+            allTagsWithoutSelected.forEach(function (Tag) {
+                availableTagsCtn.append(createTagEl(Tag, false));
+            });
         },
 
         /**
@@ -63,43 +97,19 @@ define([
         build: function () {
             let ctn, selectedTagsCtn, availableTagsCtn,
                 that = this,
-                options = that.options,
-                selectedTags = options.selected || [],
                 els = that.els;
 
             // Main ctn.
             ctn = els.container = $('<div>', {
-                'class': CLASS_NAME + ' ' + options.className
+                'class': CLASS_NAME + ' ' + that.options.className
             });
 
-            selectedTagsCtn = $('<div>', {
+            selectedTagsCtn = els.selectedTagsCtn = $('<div>', {
                 'class': 'selected_tags_ctn'
             });
 
-            availableTagsCtn = $('<div>', {
+            availableTagsCtn = els.availableTagsCtn = $('<div>', {
                 'class': 'available_tags_ctn'
-            });
-
-            selectedTags.forEach(function (Tag) {
-                let tagEl = $('<div>', {
-                    'class': 'tag_el',
-                    text: Tag.getName()
-                });
-
-                selectedTagsCtn.append(tagEl);
-            });
-
-            API.getAllTags({
-                onSuccess: function (tags) {
-                    tags.forEach(function (Tag) {
-                        let tagEl = $('<div>', {
-                            'class': 'tag_el',
-                            text: Tag.getName()
-                        });
-
-                        availableTagsCtn.append(tagEl);
-                    });
-                }
             });
 
             ctn.append(
@@ -107,7 +117,30 @@ define([
                 availableTagsCtn
             );
 
+            API.getAllTags({
+                onSuccess: (allTags) => {
+                    that._allTags = allTags;
+                    that._buildTags();
+                }
+            });
+
             return ctn;
+        },
+
+        getSelected: function () {
+            let els = this.els,
+                selectedTags = [];
+
+            function retriveSelectedTags (tagsCtn) {
+                tagsCtn.find('.selected').forEach(function (tagEl) {
+                    selectedTags.push(tagEl.data('Tag'));
+                });
+            }
+
+            retriveSelectedTags(els.selectedTagsCtn);
+            retriveSelectedTags(els.availableTagsCtn);
+
+            return selectedTags;
         }
     });
 

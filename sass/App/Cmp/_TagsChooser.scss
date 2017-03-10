@@ -15,6 +15,14 @@
         display: inline-block;
         box-shadow: 2px 2px 5px #ccc;
         cursor: pointer;
+        transition: all .5s;
+
+        &.selected {
+            border-color: #666;
+            background-color: #333;
+            box-shadow: 2px 2px 5px #666;
+            color: #fff;
+        }
     }
 
     .selected_tags_ctn,
