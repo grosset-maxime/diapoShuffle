@@ -1,0 +1,37 @@
+// =====================
+// App Modals Tags Modal
+// =====================
+
+
+.tags_modal_overlay.ui-widget-overlay {
+    opacity: 0.1;
+}
+
+.tags_modal {
+    background: rgba(255, 255, 255, 0.92);
+    z-index: 2000;
+    overflow: auto;
+    max-height: calc(100% - 70px);
+
+    .ui-dialog-titlebar {
+        display: none;
+    }
+
+    .ui-dialog-content {
+        min-height: auto;
+        padding: 10px;
+    }
+
+    .ui-dialog-buttonpane {
+        margin: 0;
+        padding: 0;
+
+        .ui-button {
+            margin-right: 20px;
+        }
+    }
+
+    .ui-widget-content {
+        background: none;
+    }
+}

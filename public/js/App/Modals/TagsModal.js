@@ -8,12 +8,10 @@ define(
 
     'App/Cmp/TagsChooser',
 
-    'App/Class/Tag',
-
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, TagsChooser, TagClass) {
+function ($, TagsChooser) {
     'use strict';
 
     let _els = {},
@@ -34,9 +32,7 @@ function ($, TagsChooser, TagClass) {
         });
 
         body = $('<div>', {
-            html: [$('<span>', {
-                text: 'tags: '
-            }), tagsChooserCtn]
+            html: tagsChooserCtn
         });
 
         return body;
@@ -71,10 +67,6 @@ function ($, TagsChooser, TagClass) {
                 dialogClass: 'tags_modal',
                 resizable: false,
                 modal: true,
-                minWidth: 800,
-                position: {
-                    at: 'center top'
-                },
                 close: (event) => {
                     event.stopPropagation();
                     _options.onClose();
@@ -107,16 +99,17 @@ function ($, TagsChooser, TagClass) {
                 html: _buildSkeleton()
             }).dialog(modalOptions);
 
-            // modal.css({
-            //     'min-height': 'auto'
-            // });
+            modal.css({
+                'min-height': 'auto'
+            });
 
-            // modal.parent().css({
-            //     display: 'flex',
-            //     top: '3px'
-            // });
+            modal.parent().css({
+                width: 'calc(100% - 6px)',
+                top: '3px',
+                left: '3px'
+            });
 
-            // $('.ui-widget-overlay').addClass('delete_modal_overlay');
+            $('.ui-widget-overlay').addClass('tags_modal_overlay');
         }
     };
 

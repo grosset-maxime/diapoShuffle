@@ -87,7 +87,7 @@ class Tags extends Root
     public function fetchAll(Array $options = array())
     {
         $bdd = $this->bdd;
-        $query = 'SELECT * FROM tags';
+        $query = 'SELECT * FROM tags ORDER BY name';
         $req; $data;
 
         $req = $bdd->prepare($query);
