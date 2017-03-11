@@ -127,7 +127,19 @@
     .selected_custom_folder_ctn {
         font-size: 0.8em;
         overflow: auto;
-        min-height: 32px;
+        margin: 0;
+
+        &.not_empty {
+            margin: 8px;
+        }
+
+        .thumb {
+            margin: 0 6px 6px 0;
+        }
+    }
+
+    .selected_tags_ctn {
+        display: none;
 
         .thumb {
             margin: 0 6px 6px 0;

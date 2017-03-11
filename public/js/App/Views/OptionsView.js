@@ -14,6 +14,7 @@ define(
     'App/Actions/GetRandomPicAction',
     'App/Actions/PinPicAction',
     'App/Views/FolderFinderView',
+    'App/Modals/TagsModal',
 
     // Non AMD
     'js!jquery-ui'
@@ -27,7 +28,8 @@ function (
 
     GetRandomPicAction,
     PinPicAction,
-    FolderFinderView
+    FolderFinderView,
+    TagsModal
 ) {
     'use strict';
 
@@ -37,19 +39,21 @@ function (
     let View,
         _options = {},
         _els = {},
-        _hasFocus = false;
+        _hasFocus = false,
+        _selectedTags = [];
 
     // Private functions.
-    let _buildSkeleton, _clearCache, _onCloseFolderFinder, _updateNbCustomFolderSelected;
+    let _buildSkeleton, _clearCache, _onCloseFolderFinder, _updateNbCustomFolderSelected,
+        _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick;
 
 
     _buildSkeleton = () => {
         let mainCtn, customFolderCtn, selectedCustomFolderCtn,
             footerCtn, btnStart, inputInterval, btnClearCache,
-            intervalCtn, inputScale, scaleCtn, zoomCtn,
-            inputZoom, pathPicCtn, inputPathPic, btnUnSelectAll,
+            intervalCtn, inputScale, scaleCtn, zoomCtn, selectedTagsCtn,
+            inputZoom, pathPicCtn, inputPathPic, btnUnSelectAllFolders, btnUnSelectAllTags,
             nbSelectedCtn, insideFolderCtn, keyUpInput, inputPinPic,
-            pinPicCtn, tagsCtn, inputTags;
+            pinPicCtn, tagsCtn, inputTags, displayTagsCtn;
 
         /**
          * @private
@@ -95,7 +99,7 @@ function (
 
         // Ctn custom folder
         // -----------------
-        _els.btnUnSelectAll = btnUnSelectAll = $('<input>', {
+        _els.btnUnSelectAllFolders = btnUnSelectAllFolders = $('<input>', {
             'class': 'btn btn_unselectall',
             type: 'button',
             value: 'Unselect All',
@@ -127,12 +131,43 @@ function (
                     }
                 }
             }).button(),
-            btnUnSelectAll,
+            btnUnSelectAllFolders,
             nbSelectedCtn
         );
 
         selectedCustomFolderCtn = _els.selectedCustomFolderCtn = $('<div>', {
             'class': 'el_ctn selected_custom_folder_ctn'
+        });
+
+        _els.btnUnSelectAllTags = btnUnSelectAllTags = $('<input>', {
+            'class': 'btn btn_unselectall',
+            type: 'button',
+            value: 'Unselect All',
+            on: {
+                click: _onUnSelectAllTagsBtnClick
+            }
+        }).button();
+
+        tagsCtn = _els.tagsCtn = $('<div>', {
+            'class': 'el_ctn flex'
+        }).append(
+            $('<label>', {
+                'class': 'title',
+                text: 'Tag(s) :'
+            }),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'Select ...',
+                on: {
+                    click: _onTagsSelectBtnClick
+                }
+            }).button(),
+            btnUnSelectAllTags
+        );
+
+        selectedTagsCtn = _els.selectedTagsCtn = $('<div>', {
+            'class': 'el_ctn selected_tags_ctn'
         });
 
         insideFolderCtn = _els.insideFolderCtn = $('<div>', {
@@ -317,7 +352,7 @@ function (
         });
 
         // Ctn tags
-        tagsCtn = $('<div>', {
+        displayTagsCtn = $('<div>', {
             'class': 'el_ctn'
         }).append(
             inputTags,
@@ -348,13 +383,15 @@ function (
         mainCtn.append(
             customFolderCtn,
             selectedCustomFolderCtn,
+            tagsCtn,
+            selectedTagsCtn,
             insideFolderCtn,
             intervalCtn,
             zoomCtn,
             scaleCtn,
             pathPicCtn,
             pinPicCtn,
-            tagsCtn,
+            displayTagsCtn,
             footerCtn
         );
 
@@ -369,6 +406,48 @@ function (
             min: 1,
             max: 99
         });
+    };
+
+    _onTagsSelectBtnClick = () => {
+        TagsModal.ask({
+            selectedTags: _selectedTags,
+            onClose: function () {
+                GetRandomPicAction.enable();
+            },
+            onOpen: function () {
+                GetRandomPicAction.disable();
+            },
+            onEnd: function (selectedTags) {
+                let selectedTagsCtn = _els.selectedTagsCtn,
+                    btnUnSelectAllTags = _els.btnUnSelectAllTags;
+
+                _selectedTags = selectedTags;
+                selectedTagsCtn.empty();
+
+                if (selectedTags.length) {
+                    btnUnSelectAllTags.show();
+
+                    selectedTags.forEach(function (Tag) {
+                        selectedTagsCtn.append(
+                            $('<div>', {
+                                'class': 'tag_el thumb',
+                                text: Tag.getName()
+                            }).button()
+                        );
+                    });
+
+                    selectedTagsCtn.show();
+                } else {
+                    _onUnSelectAllTagsBtnClick();
+                }
+            }
+        });
+    };
+
+    _onUnSelectAllTagsBtnClick = () => {
+        _selectedTags = [];
+        _els.selectedTagsCtn.hide().empty();
+        _els.btnUnSelectAllTags.hide();
     };
 
     _clearCache = () => {
@@ -387,16 +466,16 @@ function (
 
     _onCloseFolderFinder = () => {
         let nbCustomFolderSelected = View.getCustomFolders().length,
-            btnUnSelectAll = _els.btnUnSelectAll;
+            btnUnSelectAllFolders = _els.btnUnSelectAllFolders;
 
         _updateNbCustomFolderSelected();
 
         if (!nbCustomFolderSelected) {
-            btnUnSelectAll.hide();
+            btnUnSelectAllFolders.hide();
             return;
         }
 
-        btnUnSelectAll.show();
+        btnUnSelectAllFolders.show();
     };
 
     _updateNbCustomFolderSelected = () => {

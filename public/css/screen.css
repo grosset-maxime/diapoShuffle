@@ -471,17 +471,29 @@ body {
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn {
   font-size: 0.8em;
   overflow: auto;
-  min-height: 32px;
+  margin: 0;
 }
 /* line 132, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .selected_custom_folder_ctn.not_empty {
+  margin: 8px;
+}
+/* line 136, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn .thumb {
   margin: 0 6px 6px 0;
 }
-/* line 137, ../../sass/App/Views/_OptionsView.scss */
+/* line 141, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .selected_tags_ctn {
+  display: none;
+}
+/* line 144, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .selected_tags_ctn .thumb {
+  margin: 0 6px 6px 0;
+}
+/* line 149, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .inside_folder_ctn {
   display: none;
 }
-/* line 140, ../../sass/App/Views/_OptionsView.scss */
+/* line 152, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .inside_folder_ctn .inside_folder {
   display: inline-block;
   margin-left: 11px;

@@ -24,7 +24,7 @@ function ($, TagsChooser) {
         let body, tagsChooserCtn;
 
         _tagChooser = new TagsChooser({
-            selected: _options.Pic.getTags()
+            selected: _options.selectedTags ? _options.selectedTags : []
         });
 
         tagsChooserCtn = $('<div>', {
@@ -50,11 +50,13 @@ function ($, TagsChooser) {
         ask: (options = {}) => {
             let modal, modalOptions;
 
+            _options = {};
+
             $.extend(
                 true,
                 _options,
                 {
-                    Pic: {},
+                    selectedTags: [],
                     onOpen: () => {},
                     onCancel: () => {},
                     onClose: () => {},
@@ -85,12 +87,7 @@ function ($, TagsChooser) {
                     text: 'Set',
                     click: () => {
                         modal.dialog('close');
-
-                        _options.Pic.setTags(
-                            _getTags()
-                        );
-
-                        _options.onEnd();
+                        _options.onEnd(_getTags());
                     }
                 }]
             };

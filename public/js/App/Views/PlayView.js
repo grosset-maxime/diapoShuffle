@@ -581,24 +581,28 @@ function (
         },
 
         askTags: () => {
+            let Pic = HistoryPicAction.getCurrent();
+
             if (!GetRandomPicAction.isPausing()) {
                 GetRandomPicAction.pause();
             }
 
             TagsModal.ask({
-                Pic: HistoryPicAction.getCurrent(),
+                selectedTags: Pic.getTags(),
                 onClose: function () {
                     GetRandomPicAction.enable();
                 },
                 onOpen: function () {
                     GetRandomPicAction.disable();
                 },
-                onEnd: function () {
+                onEnd: function (selectedTags) {
                     _els.pauseIconCtn.hide();
                     _showLoading();
 
+                    Pic.setTags(selectedTags);
+
                     API.setTags({
-                        Pic: HistoryPicAction.getCurrent(),
+                        Pic: Pic,
                         onSuccess: () => {
                             _hideLoading();
                             _els.pauseIconCtn.show();

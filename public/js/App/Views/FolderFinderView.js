@@ -318,6 +318,7 @@ function ($, API, Notify) {
             }).button();
 
             _selectedFolderCtn.append(item);
+            _selectedFolderCtn.addClass('not_empty');
         }
 
         _updateNbSelected();
@@ -463,6 +464,7 @@ function ($, API, Notify) {
 
             if (_selectedFolderCtn) {
                 _selectedFolderCtn.empty();
+                _selectedFolderCtn.removeClass('not_empty');
             }
 
             View.clearUI();
