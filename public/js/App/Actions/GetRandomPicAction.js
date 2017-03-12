@@ -393,6 +393,7 @@ function (
         setOptions: (opts) => {
             $.extend(true, _options, opts || {});
             _options.customFolders = opts.customFolders || [];
+            _options.playTags = opts.playTags || [];
         }
     };
 
