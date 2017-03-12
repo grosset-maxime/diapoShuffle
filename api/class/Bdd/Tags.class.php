@@ -101,7 +101,6 @@ class Tags extends Root
 
         }
 
-
         if (
             empty($options['shouldNotHydrate']) || $options['shouldNotHydrate'] !== true
         ) {
@@ -109,6 +108,8 @@ class Tags extends Root
                 'tags' => $tags
             ));
         }
+
+        $req->closeCursor();
 
         return $tags;
     }

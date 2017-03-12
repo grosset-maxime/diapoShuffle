@@ -195,6 +195,8 @@ class Pic extends Root
             $this->hydrate($data);
         }
 
+        $req->closeCursor();
+
         return $data;
     }
 
@@ -243,6 +245,8 @@ class Pic extends Root
 
         }
 
+        $req->closeCursor();
+
         return $success;
     }
 
@@ -266,7 +270,11 @@ class Pic extends Root
 
         $req = $bdd->prepare($query);
 
-        return $req->execute(array($this->id));
+        $result = $req->execute(array($this->id));
+
+        $req->closeCursor();
+
+        return $result;
     }
 
     public function update()
@@ -283,9 +291,13 @@ class Pic extends Root
         $query = 'UPDATE pics SET tags = ? WHERE id = ?';
         $req = $bdd->prepare($query);
 
-        return $req->execute(array(
+        $result = $req->execute(array(
             ';' . $this->tags . ';',
             $this->id
         ));
+
+        $req->closeCursor();
+
+        return $result;
     }
 }

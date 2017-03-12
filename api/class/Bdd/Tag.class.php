@@ -130,6 +130,8 @@ class Tag extends Root
             $this->hydrate($data);
         }
 
+        $req->closeCursor();
+
         return $data;
     }
 
@@ -169,6 +171,8 @@ class Tag extends Root
 
         }
 
+        $req->closeCursor();
+
         return $success;
     }
 
@@ -192,7 +196,11 @@ class Tag extends Root
 
         $req = $bdd->prepare($query);
 
-        return $req->execute(array($this->id));
+        $result = $req->execute(array($this->id));
+
+        $req->closeCursor();
+
+        return $result;
     }
 
     public function update()
@@ -205,6 +213,10 @@ class Tag extends Root
         $query = 'UPDATE tags SET name = ? WHERE id = ?';
         $req = $bdd->prepare($query);
 
-        return $req->execute(array($this->name, $this->id));
+        $result = $req->execute(array($this->name, $this->id));
+
+        $req->closeCursor();
+
+        return $result;
     }
 }

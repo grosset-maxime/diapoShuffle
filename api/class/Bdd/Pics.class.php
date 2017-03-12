@@ -91,6 +91,8 @@ class Pics extends Root
         //     ));
         // }
 
+        $req->closeCursor();
+
         return $pics;
     }
 }
