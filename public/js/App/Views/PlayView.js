@@ -268,6 +268,10 @@ function (
             widthView = _viewDimension.width,
             heightView = _viewDimension.height;
 
+        if (!widthPic || !heightPic) {
+            return;
+        }
+
         if (widthPic >= widthView || heightPic >= heightView) {
             return;
         }
@@ -349,6 +353,15 @@ function (
         })
             .on({
                 load: () => {
+                    let imgEl;
+
+                    if (!pic.width || !pic.height) {
+                        imgEl = img[0];
+                        pic.width = imgEl.naturalWidth;
+                        pic.height = imgEl.naturalHeight;
+                        _scalePic(pic, img);
+                    }
+
                     View.show();
                     onSuccess && onSuccess();
                 },
