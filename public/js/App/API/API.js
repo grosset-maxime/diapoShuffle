@@ -131,8 +131,8 @@ function ($, PM, PicClass, TagClass) {
                 onSuccess = options.onSuccess || (() => {}),
                 onFailure = options.onFailure || (() => {});
 
-            if (!Pic.src) {
-                onFailure('No Picture to set tags.');
+            if (!Pic.name || !Pic.path) {
+                onFailure('Missing Picture information (name or path) to set tags.');
                 return;
             }
 

@@ -63,8 +63,21 @@ function (
             that.__base(options);
 
             if (options.publicPathWithName) {
+                let path,
+                    src = options.publicPathWithName,
+                    pathParts = src.split('/').filter(function (part) {
+                        return part.trim();
+                    });
 
-                that.src = options.publicPathWithName;
+                that.src = src;
+
+                that.name = pathParts[pathParts.length - 1];
+
+                pathParts.shift();
+                pathParts.pop();
+                path = pathParts.join('/');
+                that.randomPublicPath = path;
+                that.path = path;
 
             } else {
 
