@@ -918,12 +918,13 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
         // If there are not 3 pieces to the date, it is invalid
         if ( count( $date_pieces ) != 3 )
         {
-                $date_pieces = array(date('Y'), date('m'), date('d'));
+            $date_pieces = array(date('Y'), date('m'), date('d'));
         }
 
-        // Cycle through each piece of the date
-        foreach( $date_pieces as $piece )
-        {
+        try {
+            // Cycle through each piece of the date
+            foreach( $date_pieces as $piece )
+            {
                 // If the piece is not numeric, then the date is invalid.
                 if ( ! is_numeric( $piece ) )
                 {
@@ -931,13 +932,13 @@ function put_photoshop_file_info( $jpeg_header_data, $new_ps_file_info_array, $O
                         throw new Exception("Invalid Date - must be YYYY-MM-DD format");
                         return FALSE;
                 }
+            }
+        } catch (Exception $e) {
+            $date_pieces = array(date('Y'), date('m'), date('d'));
         }
 
         // Make a unix timestamp at midnight on the date specified
         $date_stamp = mktime( 0,0,0, $date_pieces[1], $date_pieces[2], $date_pieces[0] );
-
-
-
 
         // Create a translation table to remove carriage return characters
         $trans = array( "\x0d" => "" );
