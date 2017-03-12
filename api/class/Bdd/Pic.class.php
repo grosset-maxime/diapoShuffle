@@ -58,7 +58,7 @@ class Pic extends Root
      */
     public function __construct(Array $data = array())
     {
-        $this->bdd = (new BddConnector())->getBdd();
+        $this->bdd = BddConnector::getBddConnector()->getBdd();
 
         parent::__construct($data);
 

@@ -49,6 +49,8 @@ use DS\ExceptionExtended;
  */
 class BddConnector extends Root
 {
+    protected static $BddConnector = null;
+
     protected $bdd = null;
     protected $host = '';
     protected $name = '';
@@ -93,6 +95,15 @@ class BddConnector extends Root
                 )
             );
         }
+    }
+
+    public static function getBddConnector()
+    {
+        if (is_null(self::$BddConnector)) {
+            self::$BddConnector = new BddConnector();
+        }
+
+        return self::$BddConnector;
     }
 
     public function getBdd()
