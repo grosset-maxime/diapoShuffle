@@ -126,10 +126,15 @@ class Pic extends Root
     public function setTags($tags = '')
     {
         if (is_array($tags) && !empty($tags)) {
+
             $tags = implode(';', $tags);
+
         } if (empty($tags)) {
             $tags = '';
         }
+
+        $tags = rtrim($tags, ';');
+        $tags = trim($tags, ';');
 
         $this->tags = $tags;
     }
@@ -212,7 +217,7 @@ class Pic extends Root
             $success = $req->execute(array(
                 'path' => $this->path,
                 'type' => $this->type,
-                'tags' => $this->tags
+                'tags' => ';' . $this->tags . ';'
             ));
         } catch (Exception $e) {
             $data = $this->fetch(array('shouldNotHydrate' => true));
@@ -278,6 +283,9 @@ class Pic extends Root
         $query = 'UPDATE pics SET tags = ? WHERE id = ?';
         $req = $bdd->prepare($query);
 
-        return $req->execute(array($this->tags, $this->id));
+        return $req->execute(array(
+            ';' . $this->tags . ';',
+            $this->id
+        ));
     }
 }

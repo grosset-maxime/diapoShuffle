@@ -62,20 +62,27 @@ function (
 
             that.__base(options);
 
-            that.customFolderPath = options.customFolderPath;
-            that.randomPublicPath = options.randomPublicPath;
-            that.src = options.src;
+            if (options.publicPathWithName) {
 
-            path = that.customFolderPath ? that.customFolderPath : '';
-            path += that.randomPublicPath ? that.randomPublicPath : '';
-            that.path = options.path || path;
+                that.src = options.publicPathWithName;
 
-            that.name = options.name;
+            } else {
 
-            that.useCache = options.useCache;
+                that.customFolderPath = options.customFolderPath;
+                that.randomPublicPath = options.randomPublicPath;
+                that.src = options.src;
 
-            that.width = options.width;
-            that.height = options.height;
+                path = that.customFolderPath ? that.customFolderPath : '';
+                path += that.randomPublicPath ? that.randomPublicPath : '';
+                that.path = options.path || path;
+
+                that.name = options.name;
+
+                that.useCache = options.useCache;
+
+                that.width = options.width;
+                that.height = options.height;
+            }
 
             that.count = options.count || 0;
 
@@ -103,6 +110,11 @@ function (
             }
 
             let tags = this.tags;
+
+            if (typeof newTags === 'string') {
+                newTags = newTags.substring(1, newTags.length - 1);
+                newTags = newTags.split(';');
+            }
 
             if (newTags.length && typeof newTags[0] === 'string') {
                 newTags = newTags.map(function (tag) {

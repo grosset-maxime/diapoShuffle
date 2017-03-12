@@ -186,6 +186,8 @@ function ($) {
                 return;
             }
 
+            _options = {};
+
             $.extend(
                 true,
                 _options,

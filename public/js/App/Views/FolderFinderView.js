@@ -381,6 +381,8 @@ function ($, API, Notify) {
          *
          */
         init: (opts) => {
+            _options = {};
+
             $.extend(
                 true,
                 _options,

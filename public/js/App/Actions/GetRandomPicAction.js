@@ -12,6 +12,7 @@ define(
 
     // App
     'App/Actions/PinPicAction',
+    'App/Actions/TagsPicAction'
 ],
 function (
     $,
@@ -21,7 +22,8 @@ function (
     Notify,
 
     // App
-    PinPicAction
+    PinPicAction,
+    TagsPicAction
 ) {
     'use strict';
 
@@ -35,6 +37,7 @@ function (
             customFolders: DEFAULT_CUSTOM_FOLDERS,
             insideFolder: '',
             playPined: false,
+            playTags: [],
             events: {
                 onBeforeStart: () => {},
                 onStart: () => {},
@@ -144,6 +147,15 @@ function (
             onBeforeGetRandom = events.onBeforeGetRandom,
             onGetRandom = events.onGetRandom;
 
+        function onError (error) {
+            _stop();
+
+            Notify.error({
+                message: error,
+                autoHide: false
+            });
+        }
+
         _clearTheInterval();
 
         onBeforeGetRandom();
@@ -155,6 +167,20 @@ function (
                 _setTheInterval,
                 _getRandomPic
             );
+        } else if (_options.playTags.length) {
+
+            TagsPicAction.getRandom({
+                Tags: _options.playTags,
+                onSuccess: (Pic) => {
+                    onGetRandom(
+                        Pic,
+                        _setTheInterval,
+                        _getRandomPic
+                    );
+                },
+                onFailure: onError
+            });
+
         } else {
 
             API.getRandomPic({
@@ -189,8 +215,7 @@ function (
 
                         _getRandomPic();
                     } else {
-                        _stop();
-                        Notify.error({ message: error });
+                        onError(error);
                     }
                 }
             });
@@ -213,6 +238,7 @@ function (
          *
          */
         init: (opts) => {
+            _options = {};
             $.extend(true, _options, _defaultOptions, opts || {});
         },
 

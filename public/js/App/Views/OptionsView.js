@@ -13,6 +13,7 @@ define(
     // App
     'App/Actions/GetRandomPicAction',
     'App/Actions/PinPicAction',
+    'App/Actions/TagsPicAction',
     'App/Views/FolderFinderView',
     'App/Modals/TagsModal',
 
@@ -28,6 +29,7 @@ function (
 
     GetRandomPicAction,
     PinPicAction,
+    TagsPicAction,
     FolderFinderView,
     TagsModal
 ) {
@@ -182,16 +184,6 @@ function (
                 })
             ]
         });
-
-        // Btn start
-        btnStart = _els.btnStart = $('<input>', {
-            'class': 'btn start_btn',
-            type: 'button',
-            value: 'Start',
-            on: {
-                click: GetRandomPicAction.start
-            }
-        }).button();
 
         // Input interval
         inputInterval = _els.inputInterval = $('<input>', {
@@ -375,6 +367,16 @@ function (
             }
         });
 
+        // Btn start
+        btnStart = _els.btnStart = $('<input>', {
+            'class': 'btn start_btn',
+            type: 'button',
+            value: 'Start',
+            on: {
+                click: GetRandomPicAction.start
+            }
+        }).button();
+
         footerCtn.append(
             btnStart,
             btnClearCache
@@ -448,6 +450,7 @@ function (
         _selectedTags = [];
         _els.selectedTagsCtn.hide().empty();
         _els.btnUnSelectAllTags.hide();
+        TagsPicAction.clear();
     };
 
     _clearCache = () => {
@@ -495,6 +498,8 @@ function (
     View = {
 
         init: (opts) => {
+            _options = {};
+
             $.extend(
                 true,
                 _options,
@@ -637,6 +642,10 @@ function (
                 parent.find('.clear_btn').hide();
                 inputPinPic[0].checked = false;
             }
+        },
+
+        getSelectedTags: () => {
+            return _selectedTags;
         }
     };
 

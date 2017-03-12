@@ -389,7 +389,8 @@ function (
         GetRandomPicAction.setOptions({
             interval: OptionsView.getTimeInterval(),
             customFolders: OptionsView.getCustomFolders() || [],
-            playPined: isPlayPined
+            playPined: isPlayPined,
+            playTags: OptionsView.getSelectedTags()
         });
 
         View.toggleStatePauseBtn(View.BTN_PAUSE);
@@ -475,6 +476,8 @@ function (
          * @param {Object} opts -
          */
         init: (opts) => {
+            _options = {};
+
             $.extend(
                 true,
                 _options,

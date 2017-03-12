@@ -167,6 +167,8 @@ function ($, Client, OptionsView) {
          *
          */
         init: (opts = {}) => {
+            _options = {};
+
             $.extend(
                 true,
                 _options,

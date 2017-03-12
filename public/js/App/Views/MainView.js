@@ -197,6 +197,8 @@ function (
         init: (opts) => {
             let mainCtn;
 
+            _options = {};
+
             $.extend(
                 true,
                 _options,

@@ -34,6 +34,8 @@ function ($) {
          *
          */
         init: (opts) => {
+            _options = {};
+
             $.extend(
                 true,
                 _options,

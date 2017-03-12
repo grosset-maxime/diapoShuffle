@@ -56,6 +56,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/getRandomPic_json.php',
     ),
+    'getPicsFromTags_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/getPicsFromTags_json.php',
+    ),
 );
 
 // Static - Views - Errors
