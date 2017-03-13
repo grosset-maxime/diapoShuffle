@@ -92,10 +92,16 @@ define([
         },
 
         _onFilterAvailableTags: function (search) {
-            let that = this,
-                els = that.els,
-                availableTagsCtn = els.availableTagsCtn,
-                tags;
+            let tags, els, availableTagsCtn,
+                that = this;
+
+            if (!search) {
+                that._clearFilterAvailableTags();
+                return;
+            }
+
+            els = that.els;
+            availableTagsCtn = els.availableTagsCtn;
 
             search = search.toLowerCase();
 
@@ -127,6 +133,7 @@ define([
          */
         build: function () {
             let ctn, selectedTagsCtn, availableTagsCtn, searchAvailableCtn,
+                searchAvailableInput,
                 that = this,
                 els = that.els;
 
@@ -140,19 +147,24 @@ define([
             });
 
             availableTagsCtn = els.availableTagsCtn = $('<div>', {
-                'class': 'available_tags_ctn'
+                'class': 'available_tags_ctn',
+                on: {
+                    click: function () {
+                        searchAvailableInput.focus();
+                    }
+                }
             });
 
             searchAvailableCtn = els.searchAvailableCtn = $('<div>', {
                 'class': 'search_available_tags_ctn',
-                html: [els.searchAvailableInput = $('<input>', {
+                html: [searchAvailableInput = els.searchAvailableInput = $('<input>', {
                     'class': 'search_input',
                     type: 'text',
                     placeholder: 'filter',
                     on: {
                         keyup: /*$.throttle(300,*/ function () {
                             that._onFilterAvailableTags(
-                                els.searchAvailableInput.val()
+                                searchAvailableInput.val()
                             );
                         }
                     }
