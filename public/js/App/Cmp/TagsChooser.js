@@ -97,12 +97,14 @@ define([
                 availableTagsCtn = els.availableTagsCtn,
                 tags;
 
+            search = search.toLowerCase();
+
             tags = availableTagsCtn.find('.tag_el');
 
             tags.each(function(index, tagEl) {
                 let tag = $(tagEl);
 
-                if (tag.data('Tag').getName().indexOf(search) < 0) {
+                if (tag.data('Tag').getName().toLowerCase().indexOf(search) < 0) {
                     tag.addClass('hide');
                 } else {
                     tag.removeClass('hide');
