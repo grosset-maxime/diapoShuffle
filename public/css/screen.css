@@ -276,6 +276,33 @@ body {
   padding: 5px;
   margin-bottom: 5px;
 }
+/* line 36, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .search_available_tags_ctn {
+  margin-bottom: 4px;
+}
+/* line 39, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .search_available_tags_ctn .search_input {
+  line-height: 18px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  padding-left: 5px;
+  font-size: 14px;
+}
+/* line 47, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .search_available_tags_ctn .clear_search_btn {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 18px;
+  border: 1px solid #aaa;
+  border-radius: 11px;
+  padding: 0 5px;
+  margin-left: 10px;
+  opacity: 0.5;
+}
+/* line 57, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .search_available_tags_ctn .clear_search_btn:hover {
+  opacity: 1;
+}
 
 /* line 72, ../../sass/screen.scss */
 .diapo_shuffle {

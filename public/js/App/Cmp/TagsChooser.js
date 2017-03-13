@@ -91,11 +91,40 @@ define([
             });
         },
 
+        _onFilterAvailableTags: function (search) {
+            let that = this,
+                els = that.els,
+                availableTagsCtn = els.availableTagsCtn,
+                tags;
+
+            tags = availableTagsCtn.find('.tag_el');
+
+            tags.each(function(index, tagEl) {
+                let tag = $(tagEl);
+
+                if (tag.data('Tag').getName().indexOf(search) < 0) {
+                    tag.addClass('hide');
+                } else {
+                    tag.removeClass('hide');
+                }
+            });
+        },
+
+        _clearFilterAvailableTags: function () {
+            let els = this.els;
+
+            els.searchAvailableInput.val('').focus();
+
+            els.availableTagsCtn.find('.tag_el').each(function(index, tagEl) {
+                $(tagEl).removeClass('hide');
+            });
+        },
+
         /**
          * Build the DOM of the Cmp.
          */
         build: function () {
-            let ctn, selectedTagsCtn, availableTagsCtn,
+            let ctn, selectedTagsCtn, availableTagsCtn, searchAvailableCtn,
                 that = this,
                 els = that.els;
 
@@ -112,8 +141,31 @@ define([
                 'class': 'available_tags_ctn'
             });
 
+            searchAvailableCtn = els.searchAvailableCtn = $('<div>', {
+                'class': 'search_available_tags_ctn',
+                html: [els.searchAvailableInput = $('<input>', {
+                    'class': 'search_input',
+                    type: 'text',
+                    placeholder: 'filter',
+                    on: {
+                        keyup: /*$.throttle(300,*/ function () {
+                            that._onFilterAvailableTags(
+                                els.searchAvailableInput.val()
+                            );
+                        }
+                    }
+                }), $('<div>', {
+                    'class': 'clear_search_btn',
+                    text: 'x',
+                    on: {
+                        click: that._clearFilterAvailableTags.bind(that)
+                    }
+                })]
+            });
+
             ctn.append(
                 selectedTagsCtn,
+                searchAvailableCtn,
                 availableTagsCtn
             );
 
