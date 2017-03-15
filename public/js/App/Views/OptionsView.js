@@ -427,6 +427,7 @@ function (
                 selectedTagsCtn.empty();
 
                 if (selectedTags.length) {
+                    TagsPicAction.clear();
                     btnUnSelectAllTags.show();
 
                     selectedTags.forEach(function (Tag) {

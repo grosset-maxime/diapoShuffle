@@ -65,23 +65,37 @@ class Pics extends Root
 
     public function fetch(Array $options = array())
     {
+        $where = '';
+        $pics = array();
+
         $bdd = $this->bdd;
-        $query = 'SELECT * FROM pics WHERE tags LIKE ?';
+        $query = 'SELECT * FROM pics WHERE ';
         $req; $data;
 
-        $tagsRegex = '%;' . $options['tags'][0] . ';%';
+        $tags = !empty($options['tags']) ? $options['tags'] : array();
 
-        $req = $bdd->prepare($query);
-        $req->execute(array($tagsRegex));
+        if (empty($tags)) {
+            return $pics;
+        }
 
-        $pics = array();
+        $tags = array_map(function ($tag) {
+            return '%;' . $tag . ';%';
+        }, $tags);
+
+        foreach ($tags as $tag) {
+            $where .= '(tags LIKE ?) AND ';
+        }
+
+        $where = rtrim($where, 'AND ');
+
+        $req = $bdd->prepare($query . $where);
+        $req->execute($tags);
 
         while ($data = $req->fetch(PDO::FETCH_ASSOC)) {
 
             $pics[] = $data;
 
         }
-
 
         // if (
         //     empty($options['shouldNotHydrate']) || $options['shouldNotHydrate'] !== true
