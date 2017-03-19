@@ -10,11 +10,11 @@ define([
     'PM/Core',
     'PM/Cmp/Abstract',
 
-    'App/API/API',
+    'App/TagsManager',
 
     // Non AMD
     'js!jquery-inherit'
-], function ($, PM, Abstract, API) {
+], function ($, PM, Abstract, TagsManager) {
     'use strict';
 
     let TagsChooser;
@@ -162,7 +162,7 @@ define([
                     type: 'text',
                     placeholder: 'filter',
                     on: {
-                        keyup: /*$.throttle(300,*/ function () {
+                        keyup: function () {
                             that._onFilterAvailableTags(
                                 searchAvailableInput.val()
                             );
@@ -171,6 +171,8 @@ define([
                             if (e.which === 27) { // If ESC, prevent closing modal and clear field.
                                 e.stopPropagation();
                                 e.preventDefault();
+
+                                // Clear search available tags input.
                                 searchAvailableInput.val('');
                             }
                         }
@@ -190,12 +192,17 @@ define([
                 availableTagsCtn
             );
 
-            API.getAllTags({
-                onSuccess: (allTags) => {
-                    that._allTags = allTags;
-                    that._buildTags();
-                }
-            });
+            if (TagsManager.hasFetchTags()) {
+                that._allTags = TagsManager.getTags();
+                that._buildTags();
+            } else {
+                TagsManager.init({
+                    onSuccess: (Tags) => {
+                        that._allTags = Tags;
+                        that._buildTags();
+                    }
+                });
+            }
 
             return ctn;
         },

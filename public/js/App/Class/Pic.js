@@ -8,14 +8,14 @@ define(
 
     'PM/Class',
 
-    'App/Class/Tag'
+    'App/TagsManager'
 ],
 function (
     $,
 
     Class,
 
-    Tag
+    TagsManager
 ) {
     'use strict';
 
@@ -115,7 +115,7 @@ function (
             return this;
         },
 
-        addTags: function (newTags = []) {
+        addTags: function (newTags = [], force = false) {
             function has (tags, newTag) {
                 return tags.find(function (tag) {
                     return newTag.id === tag.id;
@@ -130,15 +130,11 @@ function (
             }
 
             if (newTags.length && typeof newTags[0] === 'string') {
-                newTags = newTags.map(function (tag) {
-                    return new Tag({
-                        id: tag
-                    });
-                });
+                newTags = TagsManager.getTagsByIds(newTags);
             }
 
             newTags.forEach(function (newTag) {
-                if (!has(tags, newTag)) {
+                if (force || !has(tags, newTag)) {
                     tags.push(newTag);
                 }
             });
@@ -146,7 +142,7 @@ function (
 
         setTags: function (tags = []) {
             this.tags = [];
-            this.addTags(tags);
+            this.addTags(tags, true);
         },
 
         getTags: function () {

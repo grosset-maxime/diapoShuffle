@@ -6,20 +6,28 @@ define(
 [
     'jquery',
 
-    // App API
+    // API
     'App/API/API',
+
+    // Notify
     'App/Notify',
 
-    // App
+    // Class
+    'App/Class/Pic',
+
+    // Actions
     'App/Actions/PinPicAction',
     'App/Actions/TagsPicAction'
 ],
 function (
     $,
 
-    // App API
+    // API
     API,
+
     Notify,
+
+    PicClass,
 
     // App
     PinPicAction,
@@ -185,10 +193,10 @@ function (
 
             API.getRandomPic({
                 customFolders: _getCustomFolders(),
-                onSuccess: (Pic, warning) => {
+                onSuccess: (picInfo, warning) => {
 
                     onGetRandom(
-                        Pic,
+                        new PicClass(picInfo),
                         function () { // Success callback of _setPic()
                             if (warning) {
                                 _pause(false);

@@ -7,18 +7,12 @@ define(
     'jquery',
 
     // PM
-    'PM/Core',
-
-   // App Class
-   'App/Class/Pic',
-   'App/Class/Tag'
+    'PM/Core'
 ],
-function ($, PM, PicClass, TagClass) {
+function ($, PM) {
     'use strict';
 
     let API;
-
-    let _allTagsCache;
 
     API = {
 
@@ -252,7 +246,7 @@ function ($, PM, PicClass, TagClass) {
 
                     PM.log(error.message || 'Undefined error.');
                 } else {
-                    onSuccess(new PicClass(json.pic), json.pic.warning);
+                    onSuccess(json.pic, json.pic.warning);
                 }
             });
 
@@ -275,11 +269,6 @@ function ($, PM, PicClass, TagClass) {
                 onSuccess = options.onSuccess || (() => {}),
                 onFailure = options.onFailure || (() => {});
 
-            if (_allTagsCache) {
-                onSuccess(_allTagsCache);
-                return;
-            }
-
             xhr = $.ajax({
                 url: '/?r=getAllTags_s',
                 type: 'POST',
@@ -299,11 +288,7 @@ function ($, PM, PicClass, TagClass) {
                     PM.log(error.message || 'Undefined error.');
                 } else {
 
-                    _allTagsCache = json.tags.map(function (tag) {
-                        return new TagClass(tag);
-                    });
-
-                    onSuccess(_allTagsCache);
+                    onSuccess(json.tags);
                 }
             });
 
