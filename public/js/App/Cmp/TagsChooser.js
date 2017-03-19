@@ -166,6 +166,13 @@ define([
                             that._onFilterAvailableTags(
                                 searchAvailableInput.val()
                             );
+                        },
+                        keydown: function (e) {
+                            if (e.which === 27) { // If ESC, prevent closing modal and clear field.
+                                e.stopPropagation();
+                                e.preventDefault();
+                                searchAvailableInput.val('');
+                            }
                         }
                     }
                 }), $('<div>', {
