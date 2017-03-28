@@ -180,7 +180,7 @@ function (
 
             TagsPicAction.getRandom({
                 Tags: _options.playTags,
-                operator: _options.operator,
+                operator: _options.tagsOperator,
                 onSuccess: (Pic) => {
                     onGetRandom(
                         Pic,
@@ -405,7 +405,7 @@ function (
 
             _options.customFolders = opts.customFolders || [];
             _options.playTags = opts.playTags || [];
-            _options.tagsOperator = opts.operator;
+            _options.tagsOperator = opts.tagsOperator;
         }
     };
 
