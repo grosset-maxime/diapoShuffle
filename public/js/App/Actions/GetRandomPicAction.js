@@ -46,6 +46,7 @@ function (
             insideFolder: '',
             playPined: false,
             playTags: [],
+            tagsOperator: '',
             events: {
                 onBeforeStart: () => {},
                 onStart: () => {},
@@ -179,6 +180,7 @@ function (
 
             TagsPicAction.getRandom({
                 Tags: _options.playTags,
+                operator: _options.operator,
                 onSuccess: (Pic) => {
                     onGetRandom(
                         Pic,
@@ -400,8 +402,10 @@ function (
          */
         setOptions: (opts) => {
             $.extend(true, _options, opts || {});
+
             _options.customFolders = opts.customFolders || [];
             _options.playTags = opts.playTags || [];
+            _options.tagsOperator = opts.operator;
         }
     };
 

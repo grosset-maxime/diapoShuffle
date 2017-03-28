@@ -169,7 +169,8 @@ function ($, PM) {
 
         /**
          * @param {Object} options - Options.
-         * @param {Array}  [Tags] - Tags.
+         * @param {Array}  [options.Tags] - Tags.
+         * @param {String} [options.operator] - Operator ('AND' or 'OR').
          * @param {Function} [onSuccess] - Success callback, returns {Object[]} - List of pic matching tags.
          * @param {Function} [onFailure] - Failure callback.
          */
@@ -184,6 +185,7 @@ function ($, PM) {
                 dataType: 'json',
                 async: true,
                 data: {
+                    operator: options.operator,
                     tags: options.Tags.map(function (Tag) {
                         return Tag.getId();
                     })

@@ -29,6 +29,7 @@ use Bdd\Pics;
 
 
 $tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
+$operator = !empty($_POST['operator']) ? $_POST['operator'] : 'AND';
 
 $logError = array();
 $jsonResult = array(
@@ -56,6 +57,7 @@ $success = false;
 try {
 
     $results = (new Pics())->fetch(array(
+        'operator' => $operator,
         'tags' => $tags
     ));
 

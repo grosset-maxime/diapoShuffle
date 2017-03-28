@@ -527,6 +527,11 @@ body {
   font-size: 0.8em;
   word-break: break-all;
 }
+/* line 160, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .btn_tag_operator {
+  display: none;
+  margin-left: 10px;
+}
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {
   display: none;

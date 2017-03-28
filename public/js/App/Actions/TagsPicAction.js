@@ -74,6 +74,7 @@ function ($, API, Pic) {
 
                 API.getPicsFromTags({
                     Tags: options.Tags,
+                    operator: options.operator,
                     onSuccess: (results) => {
                         _results = results;
                         onSuccess(results);

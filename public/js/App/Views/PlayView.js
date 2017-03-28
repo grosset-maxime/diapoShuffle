@@ -403,7 +403,8 @@ function (
             interval: OptionsView.getTimeInterval(),
             customFolders: OptionsView.getCustomFolders() || [],
             playPined: isPlayPined,
-            playTags: OptionsView.getSelectedTags()
+            playTags: OptionsView.getSelectedTags(),
+            tagsOperator: OptionsView.getTagsOperator()
         });
 
         View.toggleStatePauseBtn(View.BTN_PAUSE);

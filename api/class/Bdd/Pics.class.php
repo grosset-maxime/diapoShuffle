@@ -32,7 +32,7 @@ use Bdd\BddConnector;
 
 
 /**
- * Class Pic.
+ * Class Pics.
  *
  * @category Class
  * @package  No
@@ -44,24 +44,15 @@ class Pics extends Root
 {
     protected $bdd = null;
 
-    // protected $pics = array();
-
-
     /**
-     * Pic constructor.
+     * Pics constructor.
      */
     public function __construct(Array $data = array())
     {
         $this->bdd = BddConnector::getBddConnector()->getBdd();
 
         parent::__construct($data);
-
-        // if (!empty($data['shouldFetchAll']) && $data['shouldFetchAll'] === true) {
-        //     $this->fetchAll();
-        // }
     }
-
-    // public function getPics ()
 
     public function fetch(Array $options = array())
     {
@@ -73,6 +64,8 @@ class Pics extends Root
         $req; $data;
 
         $tags = !empty($options['tags']) ? $options['tags'] : array();
+        $operator = !empty($options['operator']) ? $options['operator'] : '';
+        $operator = $operator === 'OR' ? ' OR ' : ' AND ';
 
         if (empty($tags)) {
             return $pics;
@@ -83,10 +76,10 @@ class Pics extends Root
         }, $tags);
 
         foreach ($tags as $tag) {
-            $where .= '(tags LIKE ?) AND ';
+            $where .= '(tags LIKE ?) ' . $operator;
         }
 
-        $where = rtrim($where, 'AND ');
+        $where = rtrim($where, $operator);
 
         $req = $bdd->prepare($query . $where);
         $req->execute($tags);
@@ -96,14 +89,6 @@ class Pics extends Root
             $pics[] = $data;
 
         }
-
-        // if (
-        //     empty($options['shouldNotHydrate']) || $options['shouldNotHydrate'] !== true
-        // ) {
-        //     $this->hydrate(array(
-        //         'pics' => $pics
-        //     ));
-        // }
 
         $req->closeCursor();
 

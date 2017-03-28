@@ -46,61 +46,30 @@ function (
 
     // Private functions.
     let _buildSkeleton, _clearCache, _onCloseFolderFinder, _updateNbCustomFolderSelected,
-        _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick;
+        _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick, _buildTagsFilter, _buildFolderFilter,
+        _buildInsideOption, _buildIntervalOption, _keyUpInput, _buildZoomOption, _buildScaleOption,
+        _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect;
 
 
-    _buildSkeleton = () => {
-        let mainCtn, customFolderCtn, selectedCustomFolderCtn,
-            footerCtn, btnStart, inputInterval, btnClearCache,
-            intervalCtn, inputScale, scaleCtn, zoomCtn, selectedTagsCtn,
-            inputZoom, pathPicCtn, inputPathPic, btnUnSelectAllFolders, btnUnSelectAllTags,
-            nbSelectedCtn, insideFolderCtn, keyUpInput, inputPinPic,
-            pinPicCtn, tagsCtn, inputTags, displayTagsCtn;
+    _keyUpInput = (e) => {
+        let keyPressed = e.which,
+            doPreventDefault = false;
 
-        /**
-         * @private
-         */
-        keyUpInput = (e) => {
-            let keyPressed = e.which,
-                doPreventDefault = false;
+        switch (keyPressed) {
+        case 13: // Enter
+            doPreventDefault = true;
+            GetRandomPicAction.start();
+            break;
+        }
 
-            // console.log(keyPressed);
+        if (doPreventDefault) {
+            e.preventDefault();
+        }
+    };
 
-            switch (keyPressed) {
-            case 13: // Enter
-                doPreventDefault = true;
-                GetRandomPicAction.start();
-                break;
-            }
+    _buildFolderFilter = () => {
+        let btnUnSelectAllFolders, nbSelectedCtn, customFolderCtn, selectedCustomFolderCtn;
 
-            if (doPreventDefault) {
-                e.preventDefault();
-            }
-        };
-
-
-        mainCtn = _els.mainCtn = $('<div>', {
-            'class': 'window ds_options_view flex',
-            html: [$('<div>', {
-                'class': 'title_view',
-                'text': 'Options'
-            }), $('<div>', {
-                'class': 'help_btn',
-                'text': '?',
-                on: {
-                    click: () => {
-                        _options.mainView.toggleShortcutsView();
-                    }
-                }
-            })]
-        });
-
-        footerCtn = _els.footerCtn = $('<div>', {
-            'class': 'footer_ctn flex'
-        });
-
-        // Ctn custom folder
-        // -----------------
         _els.btnUnSelectAllFolders = btnUnSelectAllFolders = $('<input>', {
             'class': 'btn btn_unselectall',
             type: 'button',
@@ -116,7 +85,7 @@ function (
             'class': 'nb_selected'
         });
 
-        customFolderCtn = _els.customFolderCtn = $('<div>', {
+        _els.customFolderCtn = customFolderCtn = $('<div>', {
             'class': 'el_ctn flex'
         }).append(
             $('<label>', {
@@ -137,9 +106,18 @@ function (
             nbSelectedCtn
         );
 
-        selectedCustomFolderCtn = _els.selectedCustomFolderCtn = $('<div>', {
+        _els.selectedCustomFolderCtn = selectedCustomFolderCtn = $('<div>', {
             'class': 'el_ctn selected_custom_folder_ctn'
         });
+
+        _els.mainCtn.append(
+            customFolderCtn,
+            selectedCustomFolderCtn
+        );
+    };
+
+    _buildTagsFilter = () => {
+        let btnTagOperator, btnUnSelectAllTags, tagsCtn,selectedTagsCtn;
 
         _els.btnUnSelectAllTags = btnUnSelectAllTags = $('<input>', {
             'class': 'btn btn_unselectall',
@@ -147,6 +125,18 @@ function (
             value: 'Unselect All',
             on: {
                 click: _onUnSelectAllTagsBtnClick
+            }
+        }).button();
+
+        _els.btnTagOperator = btnTagOperator = $('<input>', {
+            'class': 'btn btn_tag_operator',
+            type: 'button',
+            value: 'AND',
+            on: {
+                click: function () {
+                    this.value = this.value === 'AND' ? 'OR' : 'AND';
+                    _onTagsSelect(_selectedTags);
+                }
             }
         }).button();
 
@@ -165,12 +155,22 @@ function (
                     click: _onTagsSelectBtnClick
                 }
             }).button(),
+            btnTagOperator,
             btnUnSelectAllTags
         );
 
         selectedTagsCtn = _els.selectedTagsCtn = $('<div>', {
             'class': 'el_ctn selected_tags_ctn'
         });
+
+        _els.mainCtn.append(
+            tagsCtn,
+            selectedTagsCtn
+        );
+    };
+
+    _buildInsideOption = () => {
+        let insideFolderCtn;
 
         insideFolderCtn = _els.insideFolderCtn = $('<div>', {
             'class': 'el_ctn inside_folder_ctn',
@@ -185,7 +185,12 @@ function (
             ]
         });
 
-        // Input interval
+        _els.mainCtn.append(insideFolderCtn);
+    };
+
+    _buildIntervalOption = () => {
+        let inputInterval, intervalCtn;
+
         inputInterval = _els.inputInterval = $('<input>', {
             id: 'intervalOpts',
             'class': 'input_interval input_spinner',
@@ -199,7 +204,7 @@ function (
                 blur: function () {
                     _hasFocus = false;
                 },
-                keyup: keyUpInput
+                keyup: _keyUpInput
             }
         });
 
@@ -215,7 +220,62 @@ function (
             inputInterval
         );
 
-        // Checkbox scale
+        _els.mainCtn.append(intervalCtn);
+
+        inputInterval.spinner({
+            min: 1,
+            max: 60
+        });
+    };
+
+    _buildZoomOption = () => {
+        let inputZoom, zoomCtn;
+
+        inputZoom = _els.inputZoom = $('<input>', {
+            id: 'zoomOpts',
+            'class': 'input_zoom input_spinner',
+            value: DEFAULT_ZOOM,
+            step: 0.1,
+            maxlength: 2,
+            numberFormat: 'n',
+            on: {
+                focus: function () {
+                    _hasFocus = true;
+                },
+                blur: function () {
+                    _hasFocus = false;
+                },
+                keyup: _keyUpInput
+            }
+        });
+
+        zoomCtn = $('<div>', {
+            'class': 'el_ctn'
+        }).append(
+            $('<label>', {
+                'class': 'title label',
+                text: 'Zoom :',
+                for: 'zoomOpts',
+                on: {
+                    click: function () {
+                        inputZoom.focus();
+                    }
+                }
+            }),
+            inputZoom
+        );
+
+        _els.mainCtn.append(zoomCtn);
+
+        inputZoom.spinner({
+            min: 1,
+            max: 99
+        });
+    };
+
+    _buildScaleOption = () => {
+        let inputScale, scaleCtn;
+
         inputScale = _els.inputScale = $('<input>', {
             id: 'scaleOpts',
             'class': 'input_text',
@@ -235,50 +295,18 @@ function (
             })
         );
 
-        // Spinner Zoom
-        inputZoom = _els.inputZoom = $('<input>', {
-            id: 'zoomOpts',
-            'class': 'input_zoom input_spinner',
-            value: DEFAULT_ZOOM,
-            step: 0.1,
-            maxlength: 2,
-            numberFormat: 'n',
-            on: {
-                focus: function () {
-                    _hasFocus = true;
-                },
-                blur: function () {
-                    _hasFocus = false;
-                },
-                keyup: keyUpInput
-            }
-        });
+        _els.mainCtn.append(scaleCtn);
+    };
 
-        // Ctn Zoom
-        zoomCtn = $('<div>', {
-            'class': 'el_ctn'
-        }).append(
-            $('<label>', {
-                'class': 'title label',
-                text: 'Zoom :',
-                for: 'zoomOpts',
-                on: {
-                    click: function () {
-                        inputZoom.focus();
-                    }
-                }
-            }),
-            inputZoom
-        );
+    _buildPathOption = () => {
+        let inputPathPic, pathPicCtn;
 
-        // Checkbox scale
         inputPathPic = _els.inputPathPic = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
             checked: true
         });
 
-        // Ctn scale
         pathPicCtn = $('<div>', {
             'class': 'el_ctn'
         }).append(
@@ -294,7 +322,12 @@ function (
             })
         );
 
-        // Checkbox pin
+        _els.mainCtn.append(pathPicCtn);
+    };
+
+    _buildPinOption = () => {
+        let inputPinPic, pinPicCtn;
+
         inputPinPic = _els.inputPinPic = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
@@ -335,15 +368,19 @@ function (
             }).hide()
         );
 
+        _els.mainCtn.append(pinPicCtn);
+    };
 
-        // Checkbox tags
+    _buildTagsOption = () => {
+        let inputTags, displayTagsCtn;
+
         inputTags = _els.inputTags = $('<input>', {
             'class': 'input_text',
             type: 'checkbox',
             checked: true
         });
 
-        // Ctn tags
+        // Ctn display tags
         displayTagsCtn = $('<div>', {
             'class': 'el_ctn'
         }).append(
@@ -359,6 +396,18 @@ function (
             })
         );
 
+        _els.mainCtn.append(displayTagsCtn);
+    };
+
+    _buildFooter = () => {
+        let footerCtn, btnClearCache, btnStart;
+
+        footerCtn = _els.footerCtn = $('<div>', {
+            'class': 'footer_ctn flex'
+        });
+
+        // Clear Pic cache
+        // ---------------
         btnClearCache = $('<div>', {
             'class': 'clear_cache_btn text_btn',
             text: 'Clear cache',
@@ -368,6 +417,7 @@ function (
         });
 
         // Btn start
+        // ---------
         btnStart = _els.btnStart = $('<input>', {
             'class': 'btn start_btn',
             type: 'button',
@@ -382,32 +432,82 @@ function (
             btnClearCache
         );
 
-        mainCtn.append(
-            customFolderCtn,
-            selectedCustomFolderCtn,
-            tagsCtn,
-            selectedTagsCtn,
-            insideFolderCtn,
-            intervalCtn,
-            zoomCtn,
-            scaleCtn,
-            pathPicCtn,
-            pinPicCtn,
-            displayTagsCtn,
-            footerCtn
-        );
+        _els.mainCtn.append(footerCtn);
+    };
+
+    _buildSkeleton = () => {
+        let mainCtn;
+
+        mainCtn = _els.mainCtn = $('<div>', {
+            'class': 'window ds_options_view flex',
+            html: [$('<div>', {
+                'class': 'title_view',
+                'text': 'Options'
+            }), $('<div>', {
+                'class': 'help_btn',
+                'text': '?',
+                on: {
+                    click: () => {
+                        _options.mainView.toggleShortcutsView();
+                    }
+                }
+            })]
+        });
+
+        _buildFolderFilter();
+
+        _buildTagsFilter();
+
+        _buildInsideOption();
+
+        _buildIntervalOption();
+
+        _buildZoomOption();
+
+        _buildScaleOption();
+
+        _buildPathOption();
+
+        _buildPinOption();
+
+        _buildTagsOption();
+
+        _buildFooter();
 
         _options.root.append(mainCtn);
+    };
 
-        inputInterval.spinner({
-            min: 1,
-            max: 60
-        });
+    _onTagsSelect = (selectedTags) => {
+        let selectedTagsCtn = _els.selectedTagsCtn,
+            btnUnSelectAllTags = _els.btnUnSelectAllTags,
+            selectedTagsLength = selectedTags.length;
 
-        inputZoom.spinner({
-            min: 1,
-            max: 99
-        });
+        _selectedTags = selectedTags;
+        selectedTagsCtn.empty();
+
+        if (selectedTagsLength) {
+            TagsPicAction.clear();
+            btnUnSelectAllTags.show();
+
+            selectedTags.forEach(function (Tag) {
+                selectedTagsCtn.append(
+                    $('<div>', {
+                        'class': 'tag_el thumb',
+                        text: Tag.getName()
+                    }).button()
+                );
+            });
+
+            selectedTagsCtn.show();
+
+            if (selectedTagsLength >= 2) {
+                _els.btnTagOperator.show();
+            } else {
+                _els.btnTagOperator.hide();
+            }
+        } else {
+            _onUnSelectAllTagsBtnClick();
+        }
     };
 
     _onTagsSelectBtnClick = () => {
@@ -419,31 +519,7 @@ function (
             onOpen: function () {
                 GetRandomPicAction.disable();
             },
-            onEnd: function (selectedTags) {
-                let selectedTagsCtn = _els.selectedTagsCtn,
-                    btnUnSelectAllTags = _els.btnUnSelectAllTags;
-
-                _selectedTags = selectedTags;
-                selectedTagsCtn.empty();
-
-                if (selectedTags.length) {
-                    TagsPicAction.clear();
-                    btnUnSelectAllTags.show();
-
-                    selectedTags.forEach(function (Tag) {
-                        selectedTagsCtn.append(
-                            $('<div>', {
-                                'class': 'tag_el thumb',
-                                text: Tag.getName()
-                            }).button()
-                        );
-                    });
-
-                    selectedTagsCtn.show();
-                } else {
-                    _onUnSelectAllTagsBtnClick();
-                }
-            }
+            onEnd: _onTagsSelect
         });
     };
 
@@ -451,6 +527,7 @@ function (
         _selectedTags = [];
         _els.selectedTagsCtn.hide().empty();
         _els.btnUnSelectAllTags.hide();
+        _els.btnTagOperator.hide();
         TagsPicAction.clear();
     };
 
@@ -647,6 +724,10 @@ function (
 
         getSelectedTags: () => {
             return _selectedTags;
+        },
+
+        getTagsOperator: () => {
+            return _els.btnTagOperator.val();
         }
     };
 
