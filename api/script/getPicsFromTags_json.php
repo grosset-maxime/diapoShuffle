@@ -64,6 +64,8 @@ try {
     if (!empty($results)) {
         $success = true;
         $jsonResult['results'] = $results;
+    } else {
+        $jsonResult['error']['publicMessage'] = 'No pic found for selected tags: ' . implode(' ' . $operator . ' ', $tags);
     }
 
 } catch (ExceptionExtended $e) {

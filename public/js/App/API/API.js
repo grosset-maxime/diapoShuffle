@@ -14,6 +14,26 @@ function ($, PM) {
 
     let API;
 
+    function _onDone (json, onOK, onKO) {
+        let error,
+            unknownErrorMessage = 'Unknown error.';
+
+        if (json.error || !json.success) {
+            error = json.error || {};
+
+            onKO && onKO(error.publicMessage || error.message || unknownErrorMessage);
+
+            PM.log(error.message || 'Undefined error.');
+        } else {
+            onOK && onOK(json);
+        }
+    }
+
+    function _onFail (jqXHR, textStatus, errorThrown, message, onFailure) {
+        onFailure && onFailure('Server error.');
+        PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+    }
+
     API = {
 
         /**
@@ -38,26 +58,17 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error,
-                    unknownErrorMessage = 'Unknown error.';
-
-                if (json.error || !json.success) {
-                    error = json.error || {};
-
-                    onFailure(error.publicMessage || unknownErrorMessage);
-
-                    PM.log(error.message || 'Undefined error.');
-                } else {
-                    onSuccess(json.folderList);
-                }
+                _onDone(
+                    json,
+                    function (json) {
+                        onSuccess(json.folderList);
+                    },
+                    onFailure
+                );
             });
 
             xhr.fail((jqXHR, textStatus, errorThrown) => {
-                let message = 'API.getFolderList()';
-
-                onFailure('Server error.');
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getFolderList()', onFailure);
             });
         },
 
@@ -89,27 +100,11 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error, errorMessage;
-
-                if (json.error || !json.success) {
-                    error = json.error || {};
-
-                    errorMessage = 'Error: ' + error.message || 'Unknown error.';
-
-                    onFailure(errorMessage);
-
-                    PM.log(error.message || 'Undefined error.');
-                } else {
-                    onSuccess();
-                }
+                _onDone(json, onSuccess, onFailure);
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                let message = 'API.deletePic()';
-
-                onFailure('Server error.');
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.deletePic()', onFailure);
             });
         },
 
@@ -143,27 +138,11 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error, errorMessage;
-
-                if (json.error || !json.success) {
-                    error = json.error || {};
-
-                    errorMessage = 'Error: ' + error.message || 'Unknown error.';
-
-                    onFailure(errorMessage);
-
-                    PM.log(error.message || 'Undefined error.');
-                } else {
-                    onSuccess();
-                }
+                _onDone(json, onSuccess, onFailure);
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                let message = 'API.setTags()';
-
-                onFailure('Server error.');
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.setTags()', onFailure);
             });
         },
 
@@ -193,26 +172,17 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error,
-                    unknownErrorMessage = 'Unknown error.';
-
-                if (json.error || !json.success) {
-                    error = json.error || {};
-
-                    onFailure(error.publicMessage || unknownErrorMessage);
-
-                    PM.log(error.message || 'Undefined error.');
-                } else {
-                    onSuccess(json.results);
-                }
+                _onDone(
+                    json,
+                    function (json) {
+                        onSuccess(json.results);
+                    },
+                    onFailure
+                );
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                let message = 'API.getPicsFromTags()';
-
-                onFailure('Server error.');
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getPicsFromTags()', onFailure);
             });
         },
 
@@ -238,26 +208,17 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error,
-                    unknownErrorMessage = 'Unknown error.';
-
-                if (json.error || !json.success) {
-                    error = json.error || {};
-
-                    onFailure(error.publicMessage || unknownErrorMessage);
-
-                    PM.log(error.message || 'Undefined error.');
-                } else {
-                    onSuccess(json.pic, json.pic.warning);
-                }
+                _onDone(
+                    json,
+                    function (json) {
+                        onSuccess(json.pic, json.warning);
+                    },
+                    onFailure
+                );
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                let message = 'API.getRandomPic()';
-
-                onFailure('Server error.');
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getRandomPic()', onFailure);
             });
         },
 
@@ -279,27 +240,17 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error,
-                    unknownErrorMessage = 'Unknown error.';
-
-                if (json.error || !json.success) {
-                    error = json.error || {};
-
-                    onFailure(error.publicMessage || unknownErrorMessage);
-
-                    PM.log(error.message || 'Undefined error.');
-                } else {
-
-                    onSuccess(json.tags);
-                }
+                _onDone(
+                    json,
+                    function() {
+                        onSuccess(json.tags);
+                    },
+                    onFailure
+                );
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                let message = 'API.getAllTags()';
-
-                onFailure('Server error.');
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getAllTags()', onFailure);
             });
         },
 
@@ -311,8 +262,7 @@ function ($, PM) {
         clearCache: (options = {}) => {
             let xhr,
                 onSuccess = options.onSuccess || (() => {}),
-                onFailure = options.onFailure || (() => {}),
-                errorMessage = 'Server error while trying to clear cache.';
+                onFailure = options.onFailure || (() => {});
 
             xhr = $.ajax({
                 url: '/?r=clearCache_s',
@@ -322,25 +272,11 @@ function ($, PM) {
             });
 
             xhr.done((json) => {
-                let error;
-
-                if (json.success) {
-                    onSuccess();
-                } else {
-                    error = json.error || {};
-
-                    onFailure(errorMessage + ' ' + (error.publicMessage || ''));
-
-                    PM.log(error.message || 'Undefined error.');
-                }
+                _onDone(json, onSuccess, onFailure);
             });
 
             xhr.fail((jqXHR, textStatus, errorThrown) => {
-                let message = 'API.clearCache()';
-
-                onFailure(errorMessage);
-
-                PM.logAjaxFail(jqXHR, textStatus, errorThrown, message);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.clearCache()', onFailure);
             });
         }
     };
