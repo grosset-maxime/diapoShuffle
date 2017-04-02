@@ -34,7 +34,8 @@ function (
             width: 0,
             height: 0,
             count: 0,
-            tags: []
+            tags: [],
+            nbResult: 0
         },
 
         customFolderPath: '',
@@ -51,6 +52,7 @@ function (
 
         tags: [],
 
+        nbResult: 0, // Nb of result on filter. (should not be in Pic instance but keep here it is easier)
 
         /**
          * @constructor Pic.
@@ -98,6 +100,7 @@ function (
             }
 
             that.count = options.count || 0;
+            that.nbResult = options.nbResult || 0;
 
             that.setTags(options.tags || []);
         },

@@ -50,21 +50,24 @@ function ($, API, Pic) {
 
 
         getRandom: (options) => {
-            let pic, navIndex;
 
             function onSuccess (results) {
-                navIndex = Math.floor(Math.random() * results.length);
+                let navIndex, pic,
+                    nbResult = results.length;
+
+                navIndex = Math.floor(Math.random() * nbResult);
                 pic = results[navIndex];
 
-                if (pic.incCounter) {
-                    pic.incCounter();
-                } else {
+                if (!pic.incCounter) {
                     pic = new Pic({
                         publicPathWithName: pic.path,
-                        tags: pic.tags
+                        tags: pic.tags,
+                        nbResult: nbResult
                     });
                     _results[navIndex] = pic;
                 }
+
+                pic.incCounter();
 
                 options.onSuccess && options.onSuccess(pic);
             }

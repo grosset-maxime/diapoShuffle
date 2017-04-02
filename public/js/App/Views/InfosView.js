@@ -95,7 +95,10 @@ function ($, Client, OptionsView) {
     };
 
     _setPicCounter = (pic = {}) => {
-        _els.pictureCounterCtn.html(pic.count);
+        let picCount = pic.count,
+            counter = pic.nbResult ? (pic.nbResult + ' | ' + picCount) : picCount;
+
+        _els.pictureCounterCtn.html(counter);
     };
 
     _setTags = (pic = {}) => {
@@ -195,7 +198,7 @@ function ($, Client, OptionsView) {
                 _els.picturePathCtn.hide();
             }
 
-            if (OptionsView.isPlayPinedOn()) {
+            if (OptionsView.isPlayPinedOn() || OptionsView.getSelectedTags().length) {
                 _setPicCounter(pic);
                 _els.pictureCounterCtn.show();
             } else {
