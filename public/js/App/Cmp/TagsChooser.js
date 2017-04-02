@@ -143,7 +143,12 @@ define([
             });
 
             selectedTagsCtn = els.selectedTagsCtn = $('<div>', {
-                'class': 'selected_tags_ctn'
+                'class': 'selected_tags_ctn',
+                on: {
+                    click: function () {
+                        searchAvailableInput.focus();
+                    }
+                }
             });
 
             availableTagsCtn = els.availableTagsCtn = $('<div>', {
