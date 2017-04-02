@@ -10,9 +10,10 @@ curl(
     'PM/Core',
 
     // App
-    'App/Views/MainView'
+    'App/Views/MainView',
+    'App/TagsManager'
 ],
-function ($, PM, MainView) {
+function ($, PM, MainView, TagsManager) {
     'use strict';
 
     let _initView;
@@ -21,6 +22,8 @@ function ($, PM, MainView) {
         MainView.init({
             root: $(document.body)
         });
+
+        TagsManager.init();
     };
 
     PM.setDebug(true);
