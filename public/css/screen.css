@@ -988,28 +988,35 @@ body {
 .tags_modal {
   background: rgba(255, 255, 255, 0.92);
   z-index: 2000;
-  overflow: auto;
   max-height: calc(100% - 70px);
 }
-/* line 16, ../../sass/App/Modals/_TagsModal.scss */
+/* line 15, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-dialog-titlebar {
   display: none;
 }
-/* line 20, ../../sass/App/Modals/_TagsModal.scss */
+/* line 19, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-dialog-content {
-  min-height: auto;
+  height: 100%;
   padding: 10px;
+  padding-bottom: 50px;
 }
 /* line 25, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-dialog-buttonpane {
   margin: 0;
   padding: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }
-/* line 29, ../../sass/App/Modals/_TagsModal.scss */
+/* line 32, ../../sass/App/Modals/_TagsModal.scss */
+.tags_modal .ui-dialog-buttonpane.ui-widget-content {
+  background: rgba(255, 255, 255, 0.9);
+}
+/* line 36, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-dialog-buttonpane .ui-button {
   margin-right: 20px;
 }
-/* line 34, ../../sass/App/Modals/_TagsModal.scss */
+/* line 41, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-widget-content {
   background: none;
 }

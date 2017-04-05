@@ -10,7 +10,6 @@
 .tags_modal {
     background: rgba(255, 255, 255, 0.92);
     z-index: 2000;
-    overflow: auto;
     max-height: calc(100% - 70px);
 
     .ui-dialog-titlebar {
@@ -18,13 +17,21 @@
     }
 
     .ui-dialog-content {
-        min-height: auto;
+        height: 100%;
         padding: 10px;
+        padding-bottom: 50px;
     }
 
     .ui-dialog-buttonpane {
         margin: 0;
         padding: 0;
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+
+        &.ui-widget-content {
+            background: rgba(255, 255, 255, 0.9);
+        }
 
         .ui-button {
             margin-right: 20px;

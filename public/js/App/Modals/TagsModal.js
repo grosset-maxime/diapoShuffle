@@ -97,11 +97,14 @@ function ($, TagsChooser) {
             }).dialog(modalOptions);
 
             modal.css({
-                'min-height': 'auto'
+                'min-height': 'auto',
+                'max-height': '',
+                height: '100%'
             });
 
             modal.parent().css({
                 width: 'calc(100% - 6px)',
+                height: '100%',
                 top: '3px',
                 left: '3px'
             });
