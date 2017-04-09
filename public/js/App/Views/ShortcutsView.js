@@ -58,6 +58,13 @@ function ($) {
         }, {
             shortcut: 'right arrow',
             desc: 'Display next picture'
+        }],
+        _tagsModalShortuctsElements = [{
+            shortcut: 'CTRL / mouse down',
+            desc: 'See through modal'
+        }, {
+            shortcut: 'ESC',
+            desc: 'Clear search filter'
         }];
 
 
@@ -109,7 +116,8 @@ function ($) {
 
     _fillContent = (contentCtn) => {
         let close, mainTitle, homeShortuctsTitle, homeShortuctsSection,
-            playerShortuctsTitle, playerShortuctsSection,
+            playerShortuctsTitle, playerShortuctsSection, tagsModalShortuctsTitle,
+            tagsModalShortuctsSection,
             LINE_HEIGHT = 26;
 
         function toggleCollapse (sectionEl) {
@@ -129,6 +137,9 @@ function ($) {
             text: 'Shortcuts / Help'
         });
 
+
+        // Home shortucts
+        // --------------
         homeShortuctsTitle = $('<div>', {
             'class': 'section_title',
             text: 'Home shortcuts',
@@ -144,6 +155,9 @@ function ($) {
             html: _createElements(_homeShortuctsElements)
         }).css('height', _homeShortuctsElements.length * LINE_HEIGHT);
 
+
+        // Player shortucts
+        // ----------------
         playerShortuctsTitle = $('<div>', {
             'class': 'section_title',
             text: 'Player shortcuts',
@@ -159,13 +173,33 @@ function ($) {
             html: _createElements(_playerShortuctsElements)
         }).css('height', _playerShortuctsElements.length * LINE_HEIGHT);
 
+
+        // Tags Modal shortucts
+        // --------------------
+        tagsModalShortuctsTitle = $('<div>', {
+            'class': 'section_title',
+            text: 'Player shortcuts',
+            on: {
+                click: function () {
+                    toggleCollapse(tagsModalShortuctsSection);
+                }
+            }
+        });
+
+        tagsModalShortuctsSection = $('<div>', {
+            'class': 'section',
+            html: _createElements(_tagsModalShortuctsElements)
+        }).css('height', _tagsModalShortuctsElements.length * LINE_HEIGHT);
+
         contentCtn.append(
             close,
             mainTitle,
             homeShortuctsTitle,
             homeShortuctsSection,
             playerShortuctsTitle,
-            playerShortuctsSection
+            playerShortuctsSection,
+            tagsModalShortuctsTitle,
+            tagsModalShortuctsSection
         );
 
         return contentCtn;

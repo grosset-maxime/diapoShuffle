@@ -18,7 +18,7 @@ function ($, TagsChooser) {
         _options = {},
         _tagChooser;
 
-    let _buildSkeleton, _getTags;
+    let _buildSkeleton, _getTags, _seeThroughModal;
 
     _buildSkeleton = () => {
         let body, tagsChooserCtn;
@@ -42,13 +42,20 @@ function ($, TagsChooser) {
         return _tagChooser.getSelected();
     };
 
+    _seeThroughModal = (event, hide) => {
+        console.log(event.which);
+        if (event.which === 17 || event.target === _els.modal[0]) { // 17 = Ctrl
+            _els.parentModal.css('opacity', hide ? 0.1 : 1);
+        }
+    };
+
     let Modal = {
 
         /**
          *
          */
         ask: (options = {}) => {
-            let modal, modalOptions;
+            let modal, modalOptions, parentModal;
 
             _options = {};
 
@@ -92,8 +99,22 @@ function ($, TagsChooser) {
                 }]
             };
 
-            modal = $('<div>', {
-                html: _buildSkeleton()
+            _els.modal = modal = $('<div>', {
+                html: _buildSkeleton(),
+                on: {
+                    keydown: function (e) {
+                        _seeThroughModal(e, true);
+                    },
+                    keyup: function (e) {
+                        _seeThroughModal(e, false);
+                    },
+                    mousedown: function (e) {
+                        _seeThroughModal(e, true);
+                    },
+                    mouseup: function (e) {
+                        _seeThroughModal(e, false);
+                    }
+                }
             }).dialog(modalOptions);
 
             modal.css({
@@ -102,7 +123,9 @@ function ($, TagsChooser) {
                 height: '100%'
             });
 
-            modal.parent().css({
+            _els.parentModal = parentModal = modal.parent();
+
+            parentModal.css({
                 width: 'calc(100% - 6px)',
                 height: '100%',
                 top: '3px',

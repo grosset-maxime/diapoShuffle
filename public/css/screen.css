@@ -981,14 +981,14 @@ body {
 
 /* line 6, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal_overlay.ui-widget-overlay {
-  opacity: 0.1;
+  opacity: 0;
 }
 
 /* line 10, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal {
   background: rgba(255, 255, 255, 0.92);
   z-index: 2000;
-  max-height: calc(100% - 70px);
+  max-height: 100%;
 }
 /* line 15, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-dialog-titlebar {
