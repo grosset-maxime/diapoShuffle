@@ -19,7 +19,7 @@ function ($, Notify) {
          * @param {Object} options - Options.
          * @param {String}  message - Message to display.
          * @param {Boolean} [autoHide=true] - Auto hide.
-         * @param {Integer} [duration=3] - Display duration in seconde.
+         * @param {Integer} [duration=5] - Display duration in seconde.
          * @param {String}  [type="error"] - Type of notify ("error", "info", "warning").
          */
         notify: (options = {}) => {
@@ -32,7 +32,7 @@ function ($, Notify) {
                     message: '',
                     type: Notify.TYPE_ERROR,
                     autoHide: true,
-                    duration: 3
+                    duration: 5
                 },
                 options || {}
             );

@@ -613,21 +613,35 @@ function (
                     GetRandomPicAction.disable();
                 },
                 onEnd: function (selectedTags) {
+                    let previousPicTags;
+
+                    function onResponse () {
+                        _hideLoading();
+                        _els.pauseIconCtn.show();
+                        GetRandomPicAction.enable();
+                    }
+
                     _els.pauseIconCtn.hide();
                     _showLoading();
 
+                    previousPicTags = Pic.getTags();
                     Pic.setTags(selectedTags);
 
                     API.setTags({
                         Pic: Pic,
+                        tags: selectedTags,
                         onSuccess: () => {
-                            _hideLoading();
-                            _els.pauseIconCtn.show();
-                            GetRandomPicAction.enable();
+                            onResponse();
                             InfosView.updateTags();
+                            Pic.setTags(selectedTags);
                         },
                         onFailure: (error) => {
-                            Notify.error({ message: error });
+                            onResponse();
+                            Pic.setTags(previousPicTags);
+                            Notify.error({
+                                message: error,
+                                autoHide: false
+                            });
                         }
                     });
 

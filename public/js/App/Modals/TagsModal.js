@@ -43,9 +43,8 @@ function ($, TagsChooser) {
     };
 
     _seeThroughModal = (event, hide) => {
-        console.log(event.which);
         if (event.which === 17 || event.target === _els.modal[0]) { // 17 = Ctrl
-            _els.parentModal.css('opacity', hide ? 0.1 : 1);
+            _els.parentModal.css('opacity', hide ? 0.05 : 1);
         }
     };
 
