@@ -30,16 +30,18 @@ use Bdd\Pics;
 
 $tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
 $operator = !empty($_POST['operator']) ? $_POST['operator'] : 'AND';
+$types = !empty($_POST['types']) ? $_POST['types'] : array();
 
 $logError = array();
 $jsonResult = array(
     'success' => false
 );
 
-if (empty($tags)) {
+if (empty($tags) && empty($types)) {
     $logError = array(
         'mandatory_fields' => array(
-            'tags' => '= ' . print_r($tags, true)
+            'tags' => '= ' . print_r($tags, true),
+            'types' => '= ' . print_r($types, true),
         ),
         'optional_fields' => array(
         ),
@@ -58,14 +60,24 @@ try {
 
     $results = (new Pics())->fetch(array(
         'operator' => $operator,
-        'tags' => $tags
+        'tags' => $tags,
+        'types' => $types
     ));
 
     if (!empty($results)) {
         $success = true;
         $jsonResult['results'] = $results;
     } else {
-        $jsonResult['error']['publicMessage'] = 'No pic found for selected tags: ' . implode(' ' . $operator . ' ', $tags);
+        $message = 'No pic found for selected ';
+        if (empty($tags)) {
+            $message .= 'types: ' . implode(' OR ', $types);
+        } else if (empty($types)) {
+            $message .= 'tags: ' . implode(' ' . $operator . ' ', $tags);
+        } else {
+            $message .= 'tags: ' . implode(' ' . $operator . ' ', $tags);
+            $message .= ' and for types: ' . implode(' OR ', $types);
+        }
+        $jsonResult['error']['publicMessage'] = $message;
     }
 
 } catch (ExceptionExtended $e) {

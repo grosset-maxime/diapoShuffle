@@ -18,6 +18,7 @@ require_once dirname(__FILE__) . '/../Root.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 
 require_once dirname(__FILE__) . '/BddConnector.class.php';
+require_once dirname(__FILE__) . '/Pic.class.php';
 
 // PHP
 use \Exception;
@@ -29,6 +30,7 @@ use DS\ExceptionExtended;
 
 // Bdd
 use Bdd\BddConnector;
+use Bdd\Pic;
 
 
 /**
@@ -57,6 +59,9 @@ class Pics extends Root
     public function fetch(Array $options = array())
     {
         $where = '';
+        $tagsWhere = '';
+        $typesWhere = '';
+        $typesId = array();
         $pics = array();
 
         $bdd = $this->bdd;
@@ -66,23 +71,48 @@ class Pics extends Root
         $tags = !empty($options['tags']) ? $options['tags'] : array();
         $operator = !empty($options['operator']) ? $options['operator'] : '';
         $operator = $operator === 'OR' ? ' OR ' : ' AND ';
+        $types = !empty($options['types']) ? $options['types'] : array();
 
-        if (empty($tags)) {
+        if (!empty($tags)) {
+            $tags = array_map(function ($tag) {
+                return '%;' . $tag . ';%';
+            }, $tags);
+
+            foreach ($tags as $tag) {
+                $tagsWhere .= '(tags LIKE ?) ' . $operator;
+            }
+
+            $where .= '(' . rtrim($tagsWhere, $operator) . ')';
+        }
+
+        if (!empty($types)) {
+            foreach ($types as $type) {
+                if ($type === 'JPG') {
+                    $typesId[] = Pic::TYPE_JPG;
+                } else if ($type === 'GIF') {
+                    $typesId[] = PIC::TYPE_GIF;
+                } else if ($type === 'PNG') {
+                    $typesId[] = PIC::TYPE_PNG;
+                } else {
+                    throw new Exception('Type not found: ' . $type);
+                }
+
+                $typesWhere .= 'type = ? OR';
+            }
+
+            // Add a AND in where if needed.
+            $where .= !empty($where) ? ' AND ' : '';
+
+            // Remove last OR.
+            $where .= '(' . rtrim($typesWhere, 'OR') . ')';
+        }
+
+        if (empty($where)) {
             return $pics;
         }
 
-        $tags = array_map(function ($tag) {
-            return '%;' . $tag . ';%';
-        }, $tags);
-
-        foreach ($tags as $tag) {
-            $where .= '(tags LIKE ?) ' . $operator;
-        }
-
-        $where = rtrim($where, $operator);
-
         $req = $bdd->prepare($query . $where);
-        $req->execute($tags);
+        $req->execute(array_merge($tags, $typesId));
 
         while ($data = $req->fetch(PDO::FETCH_ASSOC)) {
 

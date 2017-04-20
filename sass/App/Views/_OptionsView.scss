@@ -161,4 +161,13 @@
         display: none;
         margin-left: 10px;
     }
+
+    .type_filter_ctn .btn {
+        margin-right: 8px;
+        background-color: initial;
+
+        &.selected {
+            background-color: $ORANGE_LIGHT;
+        }
+    }
 } // End .ds_options_view

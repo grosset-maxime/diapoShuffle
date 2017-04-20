@@ -404,6 +404,7 @@ function (
             customFolders: OptionsView.getCustomFolders() || [],
             playPined: isPlayPined,
             playTags: OptionsView.getSelectedTags(),
+            playTypes: OptionsView.getSelectedTypes(),
             tagsOperator: OptionsView.getTagsOperator()
         });
 

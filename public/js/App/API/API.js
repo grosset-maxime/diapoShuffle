@@ -149,6 +149,7 @@ function ($, PM) {
         /**
          * @param {Object} options - Options.
          * @param {Array}  [options.Tags] - Tags.
+         * @param {Array}  [options.types] - Types (JPG, GIF, PNG).
          * @param {String} [options.operator] - Operator ('AND' or 'OR').
          * @param {Function} [onSuccess] - Success callback, returns {Object[]} - List of pic matching tags.
          * @param {Function} [onFailure] - Failure callback.
@@ -167,7 +168,8 @@ function ($, PM) {
                     operator: options.operator,
                     tags: options.Tags.map(function (Tag) {
                         return Tag.getId();
-                    })
+                    }),
+                    types: options.types
                 }
             });
 

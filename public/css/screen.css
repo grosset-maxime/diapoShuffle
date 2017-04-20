@@ -532,6 +532,15 @@ body {
   display: none;
   margin-left: 10px;
 }
+/* line 165, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .type_filter_ctn .btn {
+  margin-right: 8px;
+  background-color: initial;
+}
+/* line 169, ../../sass/App/Views/_OptionsView.scss */
+.diapo_shuffle .ds_options_view .type_filter_ctn .btn.selected {
+  background-color: #FCF3E5;
+}
 /* line 5, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view {
   display: none;

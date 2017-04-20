@@ -48,7 +48,8 @@ function (
     let _buildSkeleton, _clearCache, _onCloseFolderFinder, _updateNbCustomFolderSelected,
         _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick, _buildTagsFilter, _buildFolderFilter,
         _buildInsideOption, _buildIntervalOption, _keyUpInput, _buildZoomOption, _buildScaleOption,
-        _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect;
+        _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect, _buildTypesFilter,
+        _onTypesSelectBtnClick;
 
 
     _keyUpInput = (e) => {
@@ -113,6 +114,47 @@ function (
         _els.mainCtn.append(
             customFolderCtn,
             selectedCustomFolderCtn
+        );
+    };
+
+    _buildTypesFilter = () => {
+        let typesCtn;
+
+        typesCtn = _els.typesCtn = $('<div>', {
+            'class': 'el_ctn flex type_filter_ctn'
+        }).append(
+            $('<label>', {
+                'class': 'title',
+                text: 'Type(s) :'
+            }),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'JPG',
+                on: {
+                    click: _onTypesSelectBtnClick
+                }
+            }).button(),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'GIF',
+                on: {
+                    click: _onTypesSelectBtnClick
+                }
+            }).button(),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'PNG',
+                on: {
+                    click: _onTypesSelectBtnClick
+                }
+            }).button()
+        );
+
+        _els.mainCtn.append(
+            typesCtn
         );
     };
 
@@ -458,6 +500,8 @@ function (
 
         _buildTagsFilter();
 
+        _buildTypesFilter();
+
         _buildInsideOption();
 
         _buildIntervalOption();
@@ -521,6 +565,11 @@ function (
             },
             onEnd: _onTagsSelect
         });
+    };
+
+    _onTypesSelectBtnClick = (e) => {
+        $(e.target).toggleClass('selected');
+        TagsPicAction.clear();
     };
 
     _onUnSelectAllTagsBtnClick = () => {
@@ -724,6 +773,12 @@ function (
 
         getSelectedTags: () => {
             return _selectedTags;
+        },
+
+        getSelectedTypes: () => {
+            return _els.typesCtn.find('.btn.selected').map(function (index, btn) {
+                return btn.value;
+            }).get();
         },
 
         getTagsOperator: () => {

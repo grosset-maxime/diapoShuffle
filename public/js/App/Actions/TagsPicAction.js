@@ -18,36 +18,13 @@ function ($, API, Pic) {
 
     Action = {
 
-        /**
-         *
-         */
         init: (opts = {}) => {
             _options = {};
+        },
 
-            // $.extend(
-            //     true,
-            //     _options,
-            //     {
-            //         events: {
-            //             onLast: () => {},
-            //             onFirst: () => {},
-            //             onMiddle: () => {},
-            //             onClear: () => {},
-            //             onRemove: () => {},
-            //             onAdd: () => {}
-            //         }
-            //     },
-            //     opts
-            // );
-        }, // End init()
-
-        /**
-         *
-         */
         setOptions: (opts) => {
             $.extend(true, _options, opts || {});
         },
-
 
         getRandom: (options) => {
 
@@ -72,19 +49,17 @@ function ($, API, Pic) {
                 options.onSuccess && options.onSuccess(pic);
             }
 
-
             if (!_results.length) {
 
                 API.getPicsFromTags({
                     Tags: options.Tags,
+                    types: options.types,
                     operator: options.operator,
                     onSuccess: (results) => {
                         _results = results;
                         onSuccess(results);
                     },
-                    onFailure: (error) => {
-                        options.onFailure && options.onFailure(error);
-                    }
+                    onFailure: options.onFailure
                 });
             } else {
                 onSuccess(_results);

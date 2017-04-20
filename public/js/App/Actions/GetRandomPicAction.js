@@ -46,6 +46,7 @@ function (
             insideFolder: '',
             playPined: false,
             playTags: [],
+            playTypes: [],
             tagsOperator: '',
             events: {
                 onBeforeStart: () => {},
@@ -176,10 +177,14 @@ function (
                 _setTheInterval,
                 _getRandomPic
             );
-        } else if (_options.playTags.length) {
+        } else if (
+            _options.playTags.length ||
+            _options.playTypes.length
+        ) {
 
             TagsPicAction.getRandom({
                 Tags: _options.playTags,
+                types: _options.playTypes,
                 operator: _options.tagsOperator,
                 onSuccess: (Pic) => {
                     onGetRandom(
@@ -405,6 +410,7 @@ function (
 
             _options.customFolders = opts.customFolders || [];
             _options.playTags = opts.playTags || [];
+            _options.playTypes = opts.playTypes || [];
             _options.tagsOperator = opts.tagsOperator;
         }
     };
