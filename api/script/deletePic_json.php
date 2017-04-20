@@ -22,12 +22,18 @@ require_once ROOT_DIR . '/api/class/CacheManager.class.php';
 
 require_once ROOT_DIR . '/api/class/DeleteItem/DeleteItem.class.php';
 
+// Bdd
+require_once ROOT_DIR . '/api/class/Bdd/Pics.class.php';
+
 // DS
 use DS\ExceptionExtended;
 use DS\CacheManager;
 
 // DeleteItem
 use DeleteItem\DeleteItem;
+
+// Bdd
+use Bdd\Pic;
 
 
 // ====================
@@ -57,17 +63,17 @@ if (!$picPath) {
 }
 
 $success = false;
-$picPath = substr($picPath, strlen('/' . $_BASE_PIC_FOLDER_NAME));
+$path = substr($picPath, strlen('/' . $_BASE_PIC_FOLDER_NAME));
 
-$picPath = str_replace('\\', '/', $picPath);
-$firstCharPicPAth = $picPath[0];
+$path = str_replace('\\', '/', $path);
+$firstCharPicPAth = $path[0];
 
 // Begin of picPath
 if ($firstCharPicPAth !== '/') {
-    $picPath = '/' . $picPath;
+    $path = '/' . $path;
 }
 
-$absolutePicPath = $_BASE_PIC_PATH . $picPath;
+$absolutePicPath = $_BASE_PIC_PATH . $path;
 
 $cacheManager = new CacheManager();
 
@@ -76,7 +82,20 @@ try {
     $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder());
 
     if (is_array($result) && $result['success'] === true) {
+        // Remove pic from cache.
         $cacheManager->setCacheFolder($result['cacheFolder']);
+
+        try {
+
+            // Remove pic from bdd.
+            ( new Pic( array('path' => $picPath) ) )->delete();
+
+        } catch (ExceptionExtended $e) {
+            if ($e->getSeverity() !== ExceptionExtended::SEVERITY_INFO) {
+                throw $e;
+            }
+        }
+
         $success = true;
     }
 

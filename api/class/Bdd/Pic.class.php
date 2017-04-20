@@ -82,7 +82,12 @@ class Pic extends Root
         $this->path = $path;
     }
 
-    public function getPath($stringFormat = false)
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    public function getType($stringFormat = false)
     {
         $type = $this->type;
 

@@ -18,6 +18,7 @@
 
 require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 
+// Bdd
 require_once ROOT_DIR . '/api/class/Bdd/Pics.class.php';
 
 
