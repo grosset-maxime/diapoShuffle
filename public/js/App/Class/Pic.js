@@ -125,6 +125,19 @@ function (
                 });
             }
 
+            function compare (a, b) {
+                let res = 0,
+                    aName = a.getName().toLowerCase(),
+                    bName = b.getName().toLowerCase();
+
+                if (aName < bName) {
+                    res = -1;
+                } else if (aName > bName) {
+                    res = 1;
+                }
+                return res;
+            }
+
             let tags = this.tags;
 
             if (typeof newTags === 'string') {
@@ -141,6 +154,8 @@ function (
                     tags.push(newTag);
                 }
             });
+
+            tags = tags.sort(compare);
         },
 
         setTags: function (tags = []) {
