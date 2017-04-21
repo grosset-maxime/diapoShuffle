@@ -23,7 +23,7 @@ function ($, Client, OptionsView) {
 
     // Private functions.
     let _buildSkeleton, _setPicFolderPath, _setPicCounter, _displayOsPicPath,
-        _setTags;
+        _setTags, _onTagsCtnClick;
 
 
     _buildSkeleton = () => {
@@ -59,24 +59,7 @@ function ($, Client, OptionsView) {
         _els.tagsCtn = tagsCtn = $('<div>', {
             'class': 'tags_ctn',
             on: {
-                click: () => {
-                    // If no tags, hide tags ctn.
-                    if (tagsCtn.hasClass('no_tags')) {
-                        tagsCtn.css('left', '-100%');
-                        return;
-                    }
-
-                    // If tags ctn is displayed, slide it to hide it.
-                    if (tagsCtn.hasClass('displayed')) {
-                        tagsCtn.css('transform', 'none');
-
-                    // If tags ctn is not displayed, slide it to show it.
-                    } else {
-                        tagsCtn.css('transform', 'translateX(' + tagsCtn.width() + 'px)');
-                    }
-
-                    tagsCtn.toggleClass('displayed');
-                }
+                click: _onTagsCtnClick
             }
         });
 
@@ -105,20 +88,16 @@ function ($, Client, OptionsView) {
         let tags = pic.tags || [],
             tagsCtn = _els.tagsCtn;
 
-        tagsCtn.empty();
+        tagsCtn
+            .empty()
+            .removeClass('no_tags hidden')
+            .css('transform', '');
 
         if (!tags.length) {
             tagsCtn.html('No tags.')
-                .addClass('no_tags')
-                // Reset css previously added by previous pic which has tags.
-                .css({
-                    left: '',
-                    transform: ''
-                });
+                .addClass('no_tags');
             return;
         }
-
-        tagsCtn.removeClass('no_tags');
 
         tags.forEach(function (Tag) {
             tagsCtn.append(
@@ -128,11 +107,6 @@ function ($, Client, OptionsView) {
                 })
             );
         });
-
-        // hide tags ctn to left to hide it not completly.
-        setTimeout(function () {
-            tagsCtn.css('left', - (tagsCtn.width() - 10) + 'px');
-        }, 10);
     };
 
     _displayOsPicPath = () => {
@@ -164,6 +138,21 @@ function ($, Client, OptionsView) {
         range.selectNode(_els.randomPublicPathCtn[0]);
         window.getSelection().addRange(range);
     };
+
+    _onTagsCtnClick = () => {
+        let tagsCtn = _els.tagsCtn;
+
+        if (tagsCtn.hasClass('hidden')) {
+            // If tags ctn is not displayed, slide it to show it.
+            tagsCtn.css('transform', 'none');
+        } else {
+            // If tags ctn is displayed, slide it to hide it.
+            tagsCtn.css('transform', 'translateX(-' + tagsCtn.width() + 'px)');
+        }
+
+        tagsCtn.toggleClass('hidden');
+    };
+
 
     View = {
         /**

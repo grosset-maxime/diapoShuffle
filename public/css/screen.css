@@ -586,19 +586,22 @@ body {
 /* line 46, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .tags_ctn {
   top: 80px;
-  left: -100%;
+  left: 5px;
   transition: transform 750ms ease;
   border: 2px solid #333;
   max-height: calc(100vh - 160px);
   overflow: auto;
+  cursor: pointer;
 }
-/* line 54, ../../sass/App/Views/_InfosView.scss */
+/* line 55, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .tags_ctn.no_tags {
-  left: 5px;
+  border-color: red;
 }
-/* line 58, ../../sass/App/Views/_InfosView.scss */
+/* line 59, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .tags_ctn .tag {
-  padding: 2px;
+  border-left: 1px solid #333;
+  padding: 5px;
+  margin: 8px 4px;
 }
 /* line 5, ../../sass/App/Views/_PlayView.scss */
 .diapo_shuffle .ds_play_view {
