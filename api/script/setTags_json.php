@@ -39,6 +39,7 @@ $logError = array(
         'path' => '= ' . $path
     ),
     'optional_fields' => array(
+        'tags' => '= ' . print_r($tags, true)
     ),
 );
 

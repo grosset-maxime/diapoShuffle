@@ -892,12 +892,13 @@ body {
   position: absolute;
   transform: translateY(-120%);
   padding-top: 55px;
+  overflow: auto;
 }
-/* line 30, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 31, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .content_ctn.show {
   transform: translateY(-55px);
 }
-/* line 35, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 36, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .close {
   position: absolute;
   top: 55px;
@@ -907,11 +908,11 @@ body {
   cursor: pointer;
   padding: 14px;
 }
-/* line 44, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 45, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .close:hover {
   opacity: 1;
 }
-/* line 49, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 50, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .main_title {
   font-size: 1.5em;
   text-align: center;
@@ -921,7 +922,7 @@ body {
   padding: 10px 0;
   margin-bottom: 30px;
 }
-/* line 59, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 60, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .section_title {
   font-size: 1.2em;
   border-bottom: 1px solid #eee;
@@ -929,26 +930,26 @@ body {
   margin: 25px 0 10px 0;
   cursor: pointer;
 }
-/* line 67, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 68, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .section {
   transition: height 800ms;
   overflow: hidden;
 }
-/* line 71, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 72, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .section.collapse {
   height: 0 !important;
 }
-/* line 76, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 77, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .line {
   min-height: 22px;
   margin: 4px 0;
   border-radius: 2px;
 }
-/* line 81, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 82, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .line:hover {
   background-color: rgba(100, 100, 100, 0.8);
 }
-/* line 86, ../../sass/App/Views/_ShortcutsView.scss */
+/* line 87, ../../sass/App/Views/_ShortcutsView.scss */
 .diapo_shuffle .ds_shortcuts_view .line_title {
   min-width: 25%;
   padding-left: 20px;

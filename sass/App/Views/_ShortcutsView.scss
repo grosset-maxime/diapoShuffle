@@ -26,6 +26,7 @@
         position: absolute;
         transform: translateY(-120%);
         padding-top: 55px;
+        overflow: auto;
 
         &.show {
             transform: translateY(-55px);
