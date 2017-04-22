@@ -6,16 +6,24 @@ define(
 [
     'jquery',
 
-    // App API
-    'App/API/API',
+    // App
     'App/Notify',
 
-    // App
+    // API
+    'App/API/API',
+
+    // Actions
     'App/Actions/PlayerAction',
-    'App/Actions/PinPicAction',
     'App/Actions/TagsPicAction',
+
+    // Views
     'App/Views/FolderFinderView',
+
+    // Modals
     'App/Modals/TagsModal',
+
+    // Engines
+    'App/Engines/PinedPicEngine',
 
     // Non AMD
     'js!jquery-ui'
@@ -23,15 +31,24 @@ define(
 function (
     $,
 
-    // App API
-    API,
+    // App
     Notify,
 
+    // API
+    API,
+
+    // Actions
     PlayerAction,
-    PinPicAction,
     TagsPicAction,
+
+    // Views
     FolderFinderView,
-    TagsModal
+
+    // Modals
+    TagsModal,
+
+    // Engines
+    PinedPicEngine
 ) {
     'use strict';
 
@@ -405,7 +422,7 @@ function (
                 'class': 'title clear_btn text_btn',
                 text: 'clear',
                 on: {
-                    click: PinPicAction.clear
+                    click: PinedPicEngine.clear
                 }
             }).hide()
         );
@@ -752,7 +769,7 @@ function (
             let inputPinPic = _els.inputPinPic,
                 parent = inputPinPic.parent();
 
-            parent.find('.count').text('(' + PinPicAction.getNbPined() + ')');
+            parent.find('.count').text('(' + PinedPicEngine.getNbPined() + ')');
             parent.removeClass('disabled');
             parent.find('.clear_btn').show();
         },
@@ -760,7 +777,7 @@ function (
         onRemovePined: () => {
             let inputPinPic = _els.inputPinPic,
                 parent = inputPinPic.parent(),
-                nbPined = PinPicAction.getNbPined();
+                nbPined = PinedPicEngine.getNbPined();
 
             parent.find('.count').text('(' + nbPined + ')');
 

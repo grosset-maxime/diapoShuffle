@@ -6,32 +6,40 @@ define(
 [
     'jquery',
 
+    // App
+    'App/Notify',
+
     // API
     'App/API/API',
-
-    // Notify
-    'App/Notify',
 
     // Class
     'App/Class/Pic',
 
     // Actions
-    'App/Actions/PinPicAction',
-    'App/Actions/TagsPicAction'
+    'App/Actions/HistoryPicAction',
+    'App/Actions/TagsPicAction',
+
+    // Engines
+    'App/Engines/PinedPicEngine',
 ],
 function (
     $,
 
+    // App
+    Notify,
+
     // API
     API,
 
-    Notify,
-
+    // Class
     PicClass,
 
-    // App
-    PinPicAction,
-    TagsPicAction
+    // Actions
+    HistoryPicAction,
+    TagsPicAction,
+
+    // Engines
+    PinedPicEngine
 ) {
     'use strict';
 
@@ -58,7 +66,7 @@ function (
                 onBeforeStop: () => {},
                 onStop: () => {},
                 onBeforeGetRandom: () => {},
-                onGetRandom: () => {},
+                onGetPic: () => {},
                 onResetInsideFolder: () => {},
                 onAddCustomFolder: () => {}
             }
@@ -70,7 +78,7 @@ function (
 
 
     // Private functons.
-    let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _getRandomPic;
+    let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _runEngine;
 
     _getCustomFolders = () => (_options.insideFolder ? [_options.insideFolder] : '') || _options.customFolders;
 
@@ -79,7 +87,7 @@ function (
         _clearTheInterval();
 
         _idInterval = setTimeout(
-            _getRandomPic,
+            _runEngine,
             _options.interval * 1000
         );
     };
@@ -104,7 +112,7 @@ function (
 
         $(document.body).addClass(VIEW_MODE_CLASS);
 
-        _getRandomPic();
+        _runEngine();
 
         _isPlaying = true;
         _isPausing = false;
@@ -152,10 +160,10 @@ function (
         }
     };
 
-    _getRandomPic = () => {
+    _runEngine = () => {
         let events = _options.events,
             onBeforeGetRandom = events.onBeforeGetRandom,
-            onGetRandom = events.onGetRandom;
+            onGetPic = events.onGetPic;
 
         function onError (error) {
             _stop();
@@ -171,11 +179,14 @@ function (
         onBeforeGetRandom();
 
         if (_options.playPined) {
+            let Pic = PinedPicEngine.getRandom();
 
-            onGetRandom(
-                PinPicAction.getRandom(),
+            HistoryPicAction.add(Pic);
+
+            onGetPic(
+                Pic,
                 _setTheInterval,
-                _getRandomPic
+                _runEngine
             );
         } else if (
             _options.playTags.length ||
@@ -187,11 +198,15 @@ function (
                 types: _options.playTypes,
                 operator: _options.tagsOperator,
                 onSuccess: (Pic) => {
-                    onGetRandom(
+
+                    HistoryPicAction.add(Pic);
+
+                    onGetPic(
                         Pic,
                         _setTheInterval,
-                        _getRandomPic
+                        _runEngine
                     );
+
                 },
                 onFailure: onError
             });
@@ -201,9 +216,12 @@ function (
             API.getRandomPic({
                 customFolders: _getCustomFolders(),
                 onSuccess: (picInfo, warning) => {
+                    let Pic = new PicClass(picInfo);
 
-                    onGetRandom(
-                        new PicClass(picInfo),
+                    HistoryPicAction.add(Pic);
+
+                    onGetPic(
+                        Pic,
                         function () { // Success callback of _setPic()
                             if (warning) {
                                 _pause(false);
@@ -215,7 +233,7 @@ function (
                                 _setTheInterval();
                             }
                         },
-                        _getRandomPic // Failure callback of _setPic()
+                        _runEngine // Failure callback of _setPic()
                     );
                 },
                 onFailure: (error) => {
@@ -228,7 +246,7 @@ function (
                         // Remove inside folder.
                         Action.setInsideFolder();
 
-                        _getRandomPic();
+                        _runEngine();
                     } else {
                         onError(error);
                     }

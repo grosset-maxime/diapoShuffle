@@ -6,25 +6,29 @@ define(
 [
     'jquery',
 
-    // App API
-    'App/API/API',
+    // App
     'App/Notify',
 
-    // App Views
+    // API
+    'App/API/API',
+
+    // Views
     'App/Views/OptionsView',
     'App/Views/InfosView',
     'App/Views/FolderFinderView',
 
-    // App Actions
+    // Actions
     'App/Actions/PlayerAction',
     'App/Actions/HistoryPicAction',
-    'App/Actions/PinPicAction',
 
-    // App Modals
+    // Modals
     'App/Modals/AddFolderModal',
     'App/Modals/InsideFolderModal',
     'App/Modals/DeletePicModal',
     'App/Modals/TagsModal',
+
+    // Engines
+    'App/Engines/PinedPicEngine',
 
     // Non AMD
     'js!jquery-ui'
@@ -32,25 +36,29 @@ define(
 function (
     $,
 
-    // App API
-    API,
+    // APp
     Notify,
 
-    // App Views
+    // API
+    API,
+
+    // Views
     OptionsView,
     InfosView,
     FolderFinderView,
 
-    // App Actions
+    // Actions
     PlayerAction,
     HistoryPicAction,
-    PinPicAction,
 
-    // App Modals
+    // Modals
     AddFolderModal,
     InsideFolderModal,
     DeletePicModal,
-    TagsModal
+    TagsModal,
+
+    // Engines
+    PinedPicEngine
 ) {
     'use strict';
 
@@ -70,7 +78,7 @@ function (
     // Private functions.
     let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
         _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause,
-        _onGetRandom, _setNbPinBtn, _onBeforeGetRandom, _onResume,
+        _onGetPic, _setNbPinBtn, _onBeforeGetRandom, _onResume,
         _hideLoading, _showLoading, _doActionAnim;
 
     // Private vars.
@@ -445,12 +453,11 @@ function (
         _showLoading();
     };
 
-    _onGetRandom = (Pic, onSuccess, onFailure) => {
+    _onGetPic = (Pic, onSuccess, onFailure) => {
         _hideLoading();
 
         if (Pic) {
             _setPic(Pic, onSuccess, onFailure);
-            HistoryPicAction.add(Pic);
         }
     };
 
@@ -517,7 +524,7 @@ function (
                     onPause: _onPause,
                     onResume: _onResume,
                     onBeforeGetRandom: _onBeforeGetRandom,
-                    onGetRandom: _onGetRandom,
+                    onGetPic: _onGetPic,
                     onResetInsideFolder: OptionsView.resetInsideFolder,
                     onAddCustomFolder: OptionsView.addCustomFolder
                 }
@@ -540,7 +547,7 @@ function (
                 }
             });
 
-            PinPicAction.init({
+            PinedPicEngine.init({
                 events: {
                     onFirst: () => {
                         View.disablePreviousBtn();
@@ -711,14 +718,14 @@ function (
         displayNext: _displayNext,
 
         pin: () => {
-            PinPicAction.add(View.currentPic);
-            _setNbPinBtn(PinPicAction.getNbPined());
+            PinedPicEngine.add(View.currentPic);
+            _setNbPinBtn(PinedPicEngine.getNbPined());
             _doActionAnim();
         },
 
         unPin: () => {
-            PinPicAction.remove();
-            _setNbPinBtn(PinPicAction.getNbPined());
+            PinedPicEngine.remove();
+            _setNbPinBtn(PinedPicEngine.getNbPined());
             _displayNext();
             _doActionAnim();
         },
