@@ -53,8 +53,8 @@ function ($, API, Pic) {
 
                 API.getPicsFromTags({
                     Tags: options.Tags,
+                    tagsOperator: options.tagsOperator,
                     types: options.types,
-                    operator: options.operator,
                     onSuccess: (results) => {
                         _results = results;
                         onSuccess(results);

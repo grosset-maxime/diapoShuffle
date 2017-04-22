@@ -14,7 +14,6 @@ define(
 
     // Actions
     'App/Actions/PlayerAction',
-    'App/Actions/TagsPicAction',
 
     // Views
     'App/Views/FolderFinderView',
@@ -24,6 +23,7 @@ define(
 
     // Engines
     'App/Engines/PinedPicEngine',
+    'App/Engines/BddEngine',
 
     // Non AMD
     'js!jquery-ui'
@@ -39,7 +39,6 @@ function (
 
     // Actions
     PlayerAction,
-    TagsPicAction,
 
     // Views
     FolderFinderView,
@@ -48,7 +47,8 @@ function (
     TagsModal,
 
     // Engines
-    PinedPicEngine
+    PinedPicEngine,
+    BddEngine
 ) {
     'use strict';
 
@@ -547,7 +547,7 @@ function (
         selectedTagsCtn.empty();
 
         if (selectedTagsLength) {
-            TagsPicAction.clear();
+            BddEngine.clear();
             btnUnSelectAllTags.show();
 
             selectedTags.forEach(function (Tag) {
@@ -586,7 +586,7 @@ function (
 
     _onTypesSelectBtnClick = (e) => {
         $(e.target).toggleClass('selected');
-        TagsPicAction.clear();
+        BddEngine.clear();
     };
 
     _onUnSelectAllTagsBtnClick = () => {
@@ -594,7 +594,7 @@ function (
         _els.selectedTagsCtn.hide().empty();
         _els.btnUnSelectAllTags.hide();
         _els.btnTagOperator.hide();
-        TagsPicAction.clear();
+        BddEngine.clear();
     };
 
     _clearCache = () => {

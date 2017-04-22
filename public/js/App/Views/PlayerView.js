@@ -410,10 +410,16 @@ function (
         PlayerAction.setOptions({
             interval: OptionsView.getTimeInterval(),
             customFolders: OptionsView.getCustomFolders() || [],
-            playPined: isPlayPined,
-            playTags: OptionsView.getSelectedTags(),
-            playTypes: OptionsView.getSelectedTypes(),
-            tagsOperator: OptionsView.getTagsOperator()
+
+            PinedPicEngine: {
+                playPined: isPlayPined
+            },
+
+            BddEngine: {
+                Tags: OptionsView.getSelectedTags(),
+                types: OptionsView.getSelectedTypes(),
+                tagsOperator: OptionsView.getTagsOperator()
+            }
         });
 
         View.toggleStatePauseBtn(View.BTN_PAUSE);

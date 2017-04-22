@@ -17,10 +17,10 @@ define(
 
     // Actions
     'App/Actions/HistoryPicAction',
-    'App/Actions/TagsPicAction',
 
     // Engines
     'App/Engines/PinedPicEngine',
+    'App/Engines/BddEngine',
 ],
 function (
     $,
@@ -36,10 +36,10 @@ function (
 
     // Actions
     HistoryPicAction,
-    TagsPicAction,
 
     // Engines
-    PinedPicEngine
+    PinedPicEngine,
+    BddEngine
 ) {
     'use strict';
 
@@ -52,10 +52,17 @@ function (
             interval: DEFAULT_INTERVAL,
             customFolders: DEFAULT_CUSTOM_FOLDERS,
             insideFolder: '',
-            playPined: false,
-            playTags: [],
-            playTypes: [],
-            tagsOperator: '',
+
+            PinedPicEngine: {
+                playPined: false
+            },
+
+            BddEngine: {
+                Tags: [],
+                tagsOperator: '',
+                types: []
+            },
+
             events: {
                 onBeforeStart: () => {},
                 onStart: () => {},
@@ -178,7 +185,7 @@ function (
 
         onBeforeGetRandom();
 
-        if (_options.playPined) {
+        if (_options.PinedPicEngine.playPined) {
             let Pic = PinedPicEngine.getRandom();
 
             HistoryPicAction.add(Pic);
@@ -189,14 +196,14 @@ function (
                 _runEngine
             );
         } else if (
-            _options.playTags.length ||
-            _options.playTypes.length
+            _options.BddEngine.Tags.length ||
+            _options.BddEngine.types.length
         ) {
 
-            TagsPicAction.getRandom({
-                Tags: _options.playTags,
-                types: _options.playTypes,
-                operator: _options.tagsOperator,
+            BddEngine.getRandom({
+                Tags: _options.BddEngine.Tags,
+                tagsOperator: _options.BddEngine.tagsOperator,
+                types: _options.BddEngine.types,
                 onSuccess: (Pic) => {
 
                     HistoryPicAction.add(Pic);
@@ -424,12 +431,21 @@ function (
          *
          */
         setOptions: (opts) => {
+            let bddEngineOptions, PinedPicEngineOptions;
+
             $.extend(true, _options, opts || {});
 
             _options.customFolders = opts.customFolders || [];
-            _options.playTags = opts.playTags || [];
-            _options.playTypes = opts.playTypes || [];
-            _options.tagsOperator = opts.tagsOperator;
+
+            // Pined pic engine options.
+            PinedPicEngineOptions = _options.PinedPicEngine = _options.PinedPicEngine || {};
+            PinedPicEngineOptions.playPined = _options.PinedPicEngine.playPined,
+
+            // Bdd engine options.
+            bddEngineOptions = _options.BddEngine = _options.BddEngine || {};
+            bddEngineOptions.Tags = opts.BddEngine.Tags || [];
+            bddEngineOptions.tagsOperator = opts.BddEngine.tagsOperator;
+            bddEngineOptions.types = opts.BddEngine.types || [];
         }
     };
 
