@@ -6,21 +6,26 @@ define(
 [
     'jquery',
 
+    // App Actions
+    'App/Actions/PlayerAction',
+
     // App Views
     'App/Views/HeaderView',
     'App/Views/FooterView',
     'App/Views/OptionsView',
     'App/Views/InfosView',
-    'App/Views/PlayView'
+    'App/Views/PlayerView'
 ],
 function (
     $,
+
+    PlayerAction,
 
     HeaderView,
     FooterView,
     OptionsView,
     InfosView,
-    PlayView
+    PlayerView
 ) {
     'use strict';
 
@@ -66,7 +71,7 @@ function (
             clearTimeout(resizeTimeout);
 
             resizeTimeout = setTimeout(() => {
-                PlayView.getViewDimension(true);
+                PlayerView.getViewDimension(true);
             }, 500);
         });
     };
@@ -87,8 +92,8 @@ function (
         $(document).on('keydown', (e) => {
             let keyPressed = e.which,
                 doPreventDefault = false,
-                isPlaying = PlayView.isPlaying(),
-                isDisabled = PlayView.isDisabled();
+                isPlaying = PlayerAction.isPlaying(),
+                isDisabled = PlayerAction.isDisabled();
 
             // console.log(keyPressed);
 
@@ -96,7 +101,7 @@ function (
 
                 switch (keyPressed) {
                     case 72: // h (help)
-                        PlayView.pause(false);
+                        PlayerAction.pause(false);
                         _toggleShortcutsView();
                         break;
 
@@ -104,46 +109,46 @@ function (
                         if (ShortcutsView && ShortcutsView.isShow()) {
                             ShortcutsView.hide();
                         } else {
-                            PlayView.stop();
+                            PlayerAction.stop();
                         }
                         break;
 
                     case 32: // SPACE
                     case 40: // down arrow
-                        PlayView.pause();
+                        PlayerAction.pause();
                         doPreventDefault = true;
                         break;
 
                     case 73: // i (as inside)
                     case 38: // up arrow
-                        PlayView.askInsideFolder();
+                        PlayerView.askInsideFolder();
                         break;
 
                     case 65: // a (as add)
-                        PlayView.askAddFolder();
+                        PlayerView.askAddFolder();
                         break;
 
                     case 68: // d (as delete)
                     case 46: // supp
-                        PlayView.askDeletePic();
+                        PlayerView.askDeletePic();
                         break;
 
                     case 84: // t (as tags)
-                        PlayView.askTags();
+                        PlayerView.askTags();
                         doPreventDefault = true;
                         break;
 
                     case 80: // p (as pin)
                     case 16: // shift
-                        PlayView.pin();
+                        PlayerView.pin();
                         break;
 
                     case 37: // left arrow
-                        PlayView.displayPrevious();
+                        PlayerView.displayPrevious();
                         break;
 
                     case 39: // right arrow
-                        PlayView.displayNext();
+                        PlayerView.displayNext();
                         break;
                 }
 
@@ -174,7 +179,7 @@ function (
                     case 32: // SPACE
                     case 80: // p (as pause)
                         if (!OptionsView.hasFocus()) {
-                            PlayView.play();
+                            PlayerAction.play();
                             doPreventDefault = true;
                         }
                         break;
@@ -232,7 +237,7 @@ function (
                 root: mainCtn
             });
 
-            PlayView.init({
+            PlayerView.init({
                 root: mainCtn,
                 mainView: View
             });
