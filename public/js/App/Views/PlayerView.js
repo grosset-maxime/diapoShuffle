@@ -367,7 +367,7 @@ function (
                 },
                 error: () => {
                     console.error && console.error('Cannot display pic: "' + pic.src + '"');
-                    onFailure && onFailure();
+                    onFailure && onFailure(pic);
                 }
             })
             .css({
@@ -710,22 +710,6 @@ function (
 
         displayNext: _displayNext,
 
-        pause: (shouldPlay) => {
-            if (PlayerAction.isDisabled()) {
-                return;
-            }
-
-            PlayerAction.pause(shouldPlay);
-        },
-
-        stop: () => {
-            PlayerAction.stop();
-        },
-
-        play: () => {
-            PlayerAction.start();
-        },
-
         pin: () => {
             PinPicAction.add(View.currentPic);
             _setNbPinBtn(PinPicAction.getNbPined());
@@ -738,10 +722,6 @@ function (
             _displayNext();
             _doActionAnim();
         },
-
-        isPlaying: PlayerAction.isPlaying,
-
-        isDisabled: PlayerAction.isDisabled,
 
         /**
          * @param {Boolean} force -
