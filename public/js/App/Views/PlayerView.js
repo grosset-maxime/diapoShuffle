@@ -409,7 +409,10 @@ function (
 
         PlayerAction.setOptions({
             interval: OptionsView.getTimeInterval(),
-            customFolders: OptionsView.getCustomFolders() || [],
+
+            FoldersEngine: {
+                customFolders: OptionsView.getCustomFolders() || []
+            },
 
             PinedPicEngine: {
                 playPined: isPlayPined

@@ -44,14 +44,19 @@ function (
     'use strict';
 
     const DEFAULT_INTERVAL = 3,
-        DEFAULT_CUSTOM_FOLDERS = [],
         VIEW_MODE_CLASS = 'diapo_shuffle_view_mode';
 
     let Action, _idInterval,
         _defaultOptions = {
             interval: DEFAULT_INTERVAL,
-            customFolders: DEFAULT_CUSTOM_FOLDERS,
-            insideFolder: '',
+
+            FoldersEngine: {
+                customFolders: [],
+            },
+
+            InsideFolderEngine: {
+                folder: '',
+            },
 
             PinedPicEngine: {
                 playPined: false
@@ -87,7 +92,10 @@ function (
     // Private functons.
     let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _runEngine;
 
-    _getCustomFolders = () => (_options.insideFolder ? [_options.insideFolder] : '') || _options.customFolders;
+    _getCustomFolders = () => {
+        return (_options.InsideFolderEngine.folder ? [_options.InsideFolderEngine.folder] : '') ||
+            _options.FoldersEngine.customFolders;
+    };
 
 
     _setTheInterval = () => {
@@ -272,11 +280,6 @@ function (
         /**
          *
          */
-        DEFAULT_CUSTOM_FOLDERS: DEFAULT_CUSTOM_FOLDERS,
-
-        /**
-         *
-         */
         init: (opts) => {
             _options = {};
             $.extend(true, _options, _defaultOptions, opts || {});
@@ -358,14 +361,14 @@ function (
          *
          */
         isInside: () => {
-            return !!_options.insideFolder;
+            return !!_options.InsideFolderEngine.folder;
         },
 
         /**
          * @param {String} customFolders - Custom folder to add.
          */
         addCustomFolder: (customFolder = '') => {
-            let customFolders = _options.customFolders;
+            let customFolders = _options.FoldersEngine.customFolders;
 
             if (!customFolder || customFolders.indexOf(customFolder) !== -1) {
                 return;
@@ -401,16 +404,16 @@ function (
          *
          */
         setCustomFolders: (customFolders = []) => {
-            _options.customFolders = customFolders;
+            _options.FoldersEngine.customFolders = customFolders;
         },
 
         /**
          *
          */
-        setInsideFolder: (insideFolder = '') => {
-            _options.insideFolder = insideFolder;
+        setInsideFolder: (folder = '') => {
+            _options.InsideFolderEngine.folder = folder;
 
-            if (!insideFolder) {
+            if (!folder) {
                 _options.events.onResetInsideFolder();
             }
         },
@@ -418,28 +421,25 @@ function (
         /**
          * @returns {String} Inside folder path.
          */
-        getInsideFolder: () => _options.insideFolder,
-
-        /**
-         *
-         */
-        setTimeInterval: (timeInterval) => {
-            _options.interval = timeInterval;
-        },
+        getInsideFolder: () => _options.InsideFolderEngine.folder,
 
         /**
          *
          */
         setOptions: (opts) => {
-            let bddEngineOptions, PinedPicEngineOptions;
+            let bddEngineOptions, PinedPicEngineOptions, FoldersEngineOptions;
 
             $.extend(true, _options, opts || {});
 
-            _options.customFolders = opts.customFolders || [];
+            _options.interval = opts.interval || DEFAULT_INTERVAL;
+
+            // Folders engine options.
+            FoldersEngineOptions = _options.FoldersEngine = _options.FoldersEngine || {};
+            FoldersEngineOptions.customFolders = opts.FoldersEngine.customFolders || [],
 
             // Pined pic engine options.
             PinedPicEngineOptions = _options.PinedPicEngine = _options.PinedPicEngine || {};
-            PinedPicEngineOptions.playPined = _options.PinedPicEngine.playPined,
+            PinedPicEngineOptions.playPined = opts.PinedPicEngine.playPined,
 
             // Bdd engine options.
             bddEngineOptions = _options.BddEngine = _options.BddEngine || {};
