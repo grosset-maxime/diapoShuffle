@@ -26,7 +26,7 @@ function ($, API, Pic) {
             $.extend(true, _options, opts || {});
         },
 
-        getRandom: (options) => {
+        run: (options) => {
 
             function onSuccess (results) {
                 let navIndex, pic,
@@ -51,7 +51,7 @@ function ($, API, Pic) {
 
             if (!_results.length) {
 
-                API.getPicsFromTags({
+                API.getPicsFromBdd({
                     Tags: options.Tags,
                     tagsOperator: options.tagsOperator,
                     types: options.types,

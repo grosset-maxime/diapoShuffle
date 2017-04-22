@@ -132,6 +132,10 @@ function ($) {
             return _pined[_navIndex].incCounter();
         },
 
+        run: () => {
+            return Action.getRandom();
+        },
+
         /**
          *
          */

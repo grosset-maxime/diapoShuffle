@@ -69,22 +69,24 @@ class Pics extends Root
         $req; $data;
 
         $tags = !empty($options['tags']) ? $options['tags'] : array();
-        $operator = !empty($options['operator']) ? $options['operator'] : '';
-        $operator = $operator === 'OR' ? ' OR ' : ' AND ';
+        $tagsOperator = !empty($options['tagsOperator']) ? $options['tagsOperator'] : '';
+        $tagsOperator = $tagsOperator === 'OR' ? ' OR ' : ' AND ';
         $types = !empty($options['types']) ? $options['types'] : array();
 
+        // Tags filter.
         if (!empty($tags)) {
             $tags = array_map(function ($tag) {
                 return '%;' . $tag . ';%';
             }, $tags);
 
             foreach ($tags as $tag) {
-                $tagsWhere .= '(tags LIKE ?) ' . $operator;
+                $tagsWhere .= '(tags LIKE ?) ' . $tagsOperator;
             }
 
-            $where .= '(' . rtrim($tagsWhere, $operator) . ')';
+            $where .= '(' . rtrim($tagsWhere, $tagsOperator) . ')';
         }
 
+        // Types filter.
         if (!empty($types)) {
             foreach ($types as $type) {
                 if ($type === 'JPG') {
@@ -107,6 +109,7 @@ class Pics extends Root
             $where .= '(' . rtrim($typesWhere, 'OR') . ')';
         }
 
+        // If no where return empty array.
         if (empty($where)) {
             return $pics;
         }

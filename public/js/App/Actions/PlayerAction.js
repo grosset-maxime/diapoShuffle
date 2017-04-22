@@ -44,6 +44,7 @@ function (
 
     let Action, _idInterval,
         _defaultOptions = {
+            runMethod: 'random',
             interval: DEFAULT_INTERVAL,
 
             FoldersEngine: {
@@ -55,7 +56,7 @@ function (
             },
 
             PinedPicEngine: {
-                playPined: false
+                enabled: false
             },
 
             BddEngine: {
@@ -189,8 +190,10 @@ function (
 
         onBeforeGetPic();
 
-        if (_options.PinedPicEngine.playPined) {
-            let Pic = PinedPicEngine.getRandom();
+        if (_options.PinedPicEngine.enabled) {
+            let Pic = PinedPicEngine.run({
+                runMethod: _options.runMethod
+            });
 
             HistoryEngine.add(Pic);
 
@@ -204,7 +207,8 @@ function (
             _options.BddEngine.types.length
         ) {
 
-            BddEngine.getRandom({
+            BddEngine.run({
+                runMethod: _options.runMethod,
                 Tags: _options.BddEngine.Tags,
                 tagsOperator: _options.BddEngine.tagsOperator,
                 types: _options.BddEngine.types,
@@ -225,6 +229,7 @@ function (
         } else {
 
             API.getRandomPic({
+                runMethod: _options.runMethod,
                 customFolders: _getCustomFolders(),
                 onSuccess: (picInfo, warning) => {
                     let Pic = new PicClass(picInfo);
@@ -435,7 +440,7 @@ function (
 
             // Pined pic engine options.
             PinedPicEngineOptions = _options.PinedPicEngine = _options.PinedPicEngine || {};
-            PinedPicEngineOptions.playPined = opts.PinedPicEngine.playPined,
+            PinedPicEngineOptions.enabled = opts.PinedPicEngine.enabled,
 
             // Bdd engine options.
             bddEngineOptions = _options.BddEngine = _options.BddEngine || {};

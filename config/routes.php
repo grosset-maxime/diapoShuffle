@@ -56,9 +56,9 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/getRandomPic_json.php',
     ),
-    'getPicsFromTags_s' => array(
+    'getPicsFromBdd_s' => array(
         'isScript' => true,
-        'path' => '/api/script/getPicsFromTags_json.php',
+        'path' => '/api/script/getPicsFromBdd_json.php',
     ),
 );
 

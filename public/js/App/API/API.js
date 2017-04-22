@@ -154,21 +154,21 @@ function ($, PM) {
          * @param {Function} [onSuccess] - Success callback, returns {Object[]} - List of pic matching tags.
          * @param {Function} [onFailure] - Failure callback.
          */
-        getPicsFromTags: (options = {}) => {
+        getPicsFromBdd: (options = {}) => {
             let xhr,
                 onSuccess = options.onSuccess || (() => {}),
                 onFailure = options.onFailure || (() => {});
 
             xhr = $.ajax({
-                url: '/?r=getPicsFromTags_s',
+                url: '/?r=getPicsFromBdd_s',
                 type: 'POST',
                 dataType: 'json',
                 async: true,
                 data: {
-                    operator: options.tagsOperator,
                     tags: options.Tags.map(function (Tag) {
                         return Tag.getId();
                     }),
+                    tagsOperator: options.tagsOperator,
                     types: options.types
                 }
             });
@@ -184,7 +184,7 @@ function ($, PM) {
             });
 
             xhr.fail(function (jqXHR, textStatus, errorThrown) {
-                _onFail(jqXHR, textStatus, errorThrown, 'API.getPicsFromTags()', onFailure);
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getPicsFromBdd()', onFailure);
             });
         },
 

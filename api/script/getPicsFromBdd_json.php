@@ -1,6 +1,6 @@
 <?php
 /**
- * Description : Fetch all pics which have tags provided in parameter.
+ * Description : Fetch all pics from BDD matching parameters.
  * Return : JSON
  *
  * PHP version 5
@@ -30,7 +30,7 @@ use Bdd\Pics;
 
 
 $tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
-$operator = !empty($_POST['operator']) ? $_POST['operator'] : 'AND';
+$tagsOperator = !empty($_POST['tagsOperator']) ? $_POST['tagsOperator'] : 'AND';
 $types = !empty($_POST['types']) ? $_POST['types'] : array();
 
 $logError = array();
@@ -45,6 +45,7 @@ if (empty($tags) && empty($types)) {
             'types' => '= ' . print_r($types, true),
         ),
         'optional_fields' => array(
+            'tagsOperator' => '= ' . print_r($tagsOperator, true)
         ),
     );
     $jsonResult['error'] = $logError;
@@ -60,7 +61,7 @@ $success = false;
 try {
 
     $results = (new Pics())->fetch(array(
-        'operator' => $operator,
+        'tagsOperator' => $tagsOperator,
         'tags' => $tags,
         'types' => $types
     ));
@@ -73,9 +74,9 @@ try {
         if (empty($tags)) {
             $message .= 'types: ' . implode(' OR ', $types);
         } else if (empty($types)) {
-            $message .= 'tags: ' . implode(' ' . $operator . ' ', $tags);
+            $message .= 'tags: ' . implode(' ' . $tagsOperator . ' ', $tags);
         } else {
-            $message .= 'tags: ' . implode(' ' . $operator . ' ', $tags);
+            $message .= 'tags: ' . implode(' ' . $tagsOperator . ' ', $tags);
             $message .= ' and for types: ' . implode(' OR ', $types);
         }
         $jsonResult['error']['publicMessage'] = $message;

@@ -419,7 +419,7 @@ function (
             },
 
             PinedPicEngine: {
-                playPined: isPlayPined
+                enabled: isPlayPined
             },
 
             BddEngine: {
