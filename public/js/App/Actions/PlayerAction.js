@@ -15,10 +15,8 @@ define(
     // Class
     'App/Class/Pic',
 
-    // Actions
-    'App/Actions/HistoryPicAction',
-
     // Engines
+    'App/Engines/HistoryEngine',
     'App/Engines/PinedPicEngine',
     'App/Engines/BddEngine',
 ],
@@ -34,10 +32,8 @@ function (
     // Class
     PicClass,
 
-    // Actions
-    HistoryPicAction,
-
     // Engines
+    HistoryEngine,
     PinedPicEngine,
     BddEngine
 ) {
@@ -196,7 +192,7 @@ function (
         if (_options.PinedPicEngine.playPined) {
             let Pic = PinedPicEngine.getRandom();
 
-            HistoryPicAction.add(Pic);
+            HistoryEngine.add(Pic);
 
             onGetPic(
                 Pic,
@@ -214,7 +210,7 @@ function (
                 types: _options.BddEngine.types,
                 onSuccess: (Pic) => {
 
-                    HistoryPicAction.add(Pic);
+                    HistoryEngine.add(Pic);
 
                     onGetPic(
                         Pic,
@@ -233,7 +229,7 @@ function (
                 onSuccess: (picInfo, warning) => {
                     let Pic = new PicClass(picInfo);
 
-                    HistoryPicAction.add(Pic);
+                    HistoryEngine.add(Pic);
 
                     onGetPic(
                         Pic,

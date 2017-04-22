@@ -19,7 +19,6 @@ define(
 
     // Actions
     'App/Actions/PlayerAction',
-    'App/Actions/HistoryPicAction',
 
     // Modals
     'App/Modals/AddFolderModal',
@@ -28,6 +27,7 @@ define(
     'App/Modals/TagsModal',
 
     // Engines
+    'App/Engines/HistoryEngine',
     'App/Engines/PinedPicEngine',
 
     // Non AMD
@@ -49,7 +49,6 @@ function (
 
     // Actions
     PlayerAction,
-    HistoryPicAction,
 
     // Modals
     AddFolderModal,
@@ -58,6 +57,7 @@ function (
     TagsModal,
 
     // Engines
+    HistoryEngine,
     PinedPicEngine
 ) {
     'use strict';
@@ -321,7 +321,7 @@ function (
     };
 
     _displayPrevious = () => {
-        if (HistoryPicAction.isFirst()) {
+        if (HistoryEngine.isFirst()) {
             return;
         }
 
@@ -329,17 +329,17 @@ function (
             PlayerAction.pause();
         }
 
-        _setPic(HistoryPicAction.getPrevious());
+        _setPic(HistoryEngine.getPrevious());
     };
 
     _displayNext = () => {
-        if (HistoryPicAction.isLast()) {
+        if (HistoryEngine.isLast()) {
 
             PlayerAction.pause();
             PlayerAction.start();
 
         } else {
-            _setPic(HistoryPicAction.getNext());
+            _setPic(HistoryEngine.getNext());
         }
     };
 
@@ -544,7 +544,7 @@ function (
                 }
             });
 
-            HistoryPicAction.init({
+            HistoryEngine.init({
                 events: {
                     onFirst: () => {
                         View.disablePreviousBtn();
@@ -602,11 +602,11 @@ function (
                     _showLoading();
 
                     API.deletePic({
-                        Pic: HistoryPicAction.getCurrent(),
+                        Pic: HistoryEngine.getCurrent(),
                         onSuccess: () => {
                             _hideLoading();
                             _els.pauseIconCtn.show();
-                            HistoryPicAction.remove();
+                            HistoryEngine.remove();
                             PlayerAction.enable();
                             _displayNext();
                         },
@@ -620,7 +620,7 @@ function (
         },
 
         askTags: () => {
-            let Pic = HistoryPicAction.getCurrent();
+            let Pic = HistoryEngine.getCurrent();
 
             if (!PlayerAction.isPausing()) {
                 PlayerAction.pause();
@@ -677,7 +677,7 @@ function (
             }
 
             InsideFolderModal.ask({
-                Pic: HistoryPicAction.getCurrent(),
+                Pic: HistoryEngine.getCurrent(),
                 isInside: PlayerAction.isInside(),
                 insidePath: PlayerAction.getInsideFolder(),
                 onClose: () => {
@@ -711,7 +711,7 @@ function (
             }
 
             AddFolderModal.ask({
-                Pic: HistoryPicAction.getCurrent(),
+                Pic: HistoryEngine.getCurrent(),
                 onClose: () => {
                     PlayerAction.enable();
                 },
@@ -785,7 +785,7 @@ function (
 
                 View.disableNextBtn();
 
-                if (HistoryPicAction.isFirst()) {
+                if (HistoryEngine.isFirst()) {
                     View.disablePreviousBtn();
                 } else {
                     View.enablePreviousBtn();
