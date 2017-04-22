@@ -12,11 +12,11 @@ define(
 function ($, API, Pic) {
     'use strict';
 
-    let Action,
+    let Engine,
         _options = {},
         _results = [];
 
-    Action = {
+    Engine = {
 
         init: (opts = {}) => {
             _options = {};
@@ -71,5 +71,5 @@ function ($, API, Pic) {
         }
     };
 
-    return Action;
+    return Engine;
 });

@@ -9,12 +9,12 @@ define(
 function ($) {
     'use strict';
 
-    let Action,
+    let Engine,
         _options = {},
         _navIndex = -1,
         _pined = [];
 
-    Action = {
+    Engine = {
 
         /**
          *
@@ -98,7 +98,7 @@ function ($) {
 
             _navIndex--;
 
-            if (Action.isFirst()) {
+            if (Engine.isFirst()) {
                 onFirst();
             } else {
                 onMiddle();
@@ -117,7 +117,7 @@ function ($) {
 
             _navIndex++;
 
-            if (Action.isLast()) {
+            if (Engine.isLast()) {
                 onLast();
             } else {
                 onMiddle();
@@ -133,7 +133,7 @@ function ($) {
         },
 
         run: () => {
-            return Action.getRandom();
+            return Engine.getRandom();
         },
 
         /**
@@ -155,5 +155,5 @@ function ($) {
         }
     };
 
-    return Action;
+    return Engine;
 });
