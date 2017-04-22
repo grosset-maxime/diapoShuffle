@@ -16,7 +16,7 @@ define(
     'App/Views/FolderFinderView',
 
     // App Actions
-    'App/Actions/GetRandomPicAction',
+    'App/Actions/PlayerAction',
     'App/Actions/HistoryPicAction',
     'App/Actions/PinPicAction',
 
@@ -42,7 +42,7 @@ function (
     FolderFinderView,
 
     // App Actions
-    GetRandomPicAction,
+    PlayerAction,
     HistoryPicAction,
     PinPicAction,
 
@@ -120,7 +120,7 @@ function (
                 type: 'button',
                 value: 'Stop',
                 on: {
-                    click: GetRandomPicAction.stop
+                    click: PlayerAction.stop
                 }
             }).button();
 
@@ -130,7 +130,7 @@ function (
                 type: 'button',
                 value: BTN_PAUSE,
                 on: {
-                    click: GetRandomPicAction.pause
+                    click: PlayerAction.pause
                 }
             }).button();
 
@@ -317,8 +317,8 @@ function (
             return;
         }
 
-        if (!GetRandomPicAction.isPausing()) {
-            GetRandomPicAction.pause();
+        if (!PlayerAction.isPausing()) {
+            PlayerAction.pause();
         }
 
         _setPic(HistoryPicAction.getPrevious());
@@ -327,8 +327,8 @@ function (
     _displayNext = () => {
         if (HistoryPicAction.isLast()) {
 
-            GetRandomPicAction.pause();
-            GetRandomPicAction.start();
+            PlayerAction.pause();
+            PlayerAction.start();
 
         } else {
             _setPic(HistoryPicAction.getNext());
@@ -399,7 +399,7 @@ function (
     _onBeforeStart = () => {
         let isPlayPined = OptionsView.isPlayPinedOn();
 
-        GetRandomPicAction.setOptions({
+        PlayerAction.setOptions({
             interval: OptionsView.getTimeInterval(),
             customFolders: OptionsView.getCustomFolders() || [],
             playPined: isPlayPined,
@@ -510,7 +510,7 @@ function (
 
             _buildSkeleton();
 
-            GetRandomPicAction.init({
+            PlayerAction.init({
                 events: {
                     onBeforeStart: _onBeforeStart,
                     onStop: _onStop,
@@ -565,16 +565,16 @@ function (
         },
 
         askDeletePic: () => {
-            if (!GetRandomPicAction.isPausing()) {
-                GetRandomPicAction.pause();
+            if (!PlayerAction.isPausing()) {
+                PlayerAction.pause();
             }
 
             DeletePicModal.ask({
                 onClose: function () {
-                    GetRandomPicAction.enable();
+                    PlayerAction.enable();
                 },
                 onOpen: function () {
-                    GetRandomPicAction.disable();
+                    PlayerAction.disable();
                 },
                 onDelete: function () {
                     _els.pauseIconCtn.hide();
@@ -586,7 +586,7 @@ function (
                             _hideLoading();
                             _els.pauseIconCtn.show();
                             HistoryPicAction.remove();
-                            GetRandomPicAction.enable();
+                            PlayerAction.enable();
                             _displayNext();
                         },
                         onFailure: (error) => {
@@ -601,17 +601,17 @@ function (
         askTags: () => {
             let Pic = HistoryPicAction.getCurrent();
 
-            if (!GetRandomPicAction.isPausing()) {
-                GetRandomPicAction.pause();
+            if (!PlayerAction.isPausing()) {
+                PlayerAction.pause();
             }
 
             TagsModal.ask({
                 selectedTags: Pic.getTags(),
                 onClose: function () {
-                    GetRandomPicAction.enable();
+                    PlayerAction.enable();
                 },
                 onOpen: function () {
-                    GetRandomPicAction.disable();
+                    PlayerAction.disable();
                 },
                 onEnd: function (selectedTags) {
                     let previousPicTags;
@@ -619,7 +619,7 @@ function (
                     function onResponse () {
                         _hideLoading();
                         _els.pauseIconCtn.show();
-                        GetRandomPicAction.enable();
+                        PlayerAction.enable();
                     }
 
                     _els.pauseIconCtn.hide();
@@ -651,33 +651,33 @@ function (
         },
 
         askInsideFolder: () => {
-            if (!GetRandomPicAction.isPausing()) {
-                GetRandomPicAction.pause();
+            if (!PlayerAction.isPausing()) {
+                PlayerAction.pause();
             }
 
             InsideFolderModal.ask({
                 Pic: HistoryPicAction.getCurrent(),
-                isInside: GetRandomPicAction.isInside(),
-                insidePath: GetRandomPicAction.getInsideFolder(),
+                isInside: PlayerAction.isInside(),
+                insidePath: PlayerAction.getInsideFolder(),
                 onClose: () => {
-                    GetRandomPicAction.enable();
+                    PlayerAction.enable();
                 },
                 onOpen: () => {
-                    GetRandomPicAction.disable();
+                    PlayerAction.disable();
                 },
                 onInside: (insidePath) => {
                     _els.btnInside.val(BTN_OUTSIDE);
-                    GetRandomPicAction.setInsideFolder(insidePath);
-                    GetRandomPicAction.enable();
-                    GetRandomPicAction.resume();
+                    PlayerAction.setInsideFolder(insidePath);
+                    PlayerAction.enable();
+                    PlayerAction.resume();
 
                     OptionsView.setInsideFolder(insidePath);
                 },
                 onOutside: () => {
                     _els.btnInside.val(BTN_INSIDE);
-                    GetRandomPicAction.setInsideFolder();
-                    GetRandomPicAction.enable();
-                    GetRandomPicAction.resume();
+                    PlayerAction.setInsideFolder();
+                    PlayerAction.enable();
+                    PlayerAction.resume();
 
                     OptionsView.resetInsideFolder();
                 }
@@ -685,22 +685,22 @@ function (
         },
 
         askAddFolder: () => {
-            if (!GetRandomPicAction.isPausing()) {
-                GetRandomPicAction.pause();
+            if (!PlayerAction.isPausing()) {
+                PlayerAction.pause();
             }
 
             AddFolderModal.ask({
                 Pic: HistoryPicAction.getCurrent(),
                 onClose: () => {
-                    GetRandomPicAction.enable();
+                    PlayerAction.enable();
                 },
                 onOpen: () => {
-                    GetRandomPicAction.disable();
+                    PlayerAction.disable();
                 },
                 onAdd: (addPath) => {
                     FolderFinderView.clearUI();
-                    GetRandomPicAction.addCustomFolder(addPath);
-                    GetRandomPicAction.enable();
+                    PlayerAction.addCustomFolder(addPath);
+                    PlayerAction.enable();
                     _displayNext();
                 }
             });
@@ -711,19 +711,19 @@ function (
         displayNext: _displayNext,
 
         pause: (shouldPlay) => {
-            if (GetRandomPicAction.isDisabled()) {
+            if (PlayerAction.isDisabled()) {
                 return;
             }
 
-            GetRandomPicAction.pause(shouldPlay);
+            PlayerAction.pause(shouldPlay);
         },
 
         stop: () => {
-            GetRandomPicAction.stop();
+            PlayerAction.stop();
         },
 
         play: () => {
-            GetRandomPicAction.start();
+            PlayerAction.start();
         },
 
         pin: () => {
@@ -739,9 +739,9 @@ function (
             _doActionAnim();
         },
 
-        isPlaying: GetRandomPicAction.isPlaying,
+        isPlaying: PlayerAction.isPlaying,
 
-        isDisabled: GetRandomPicAction.isDisabled,
+        isDisabled: PlayerAction.isDisabled,
 
         /**
          * @param {Boolean} force -
@@ -771,7 +771,7 @@ function (
                 btnPrevious = _els.btnPrevious,
                 btnNext = _els.btnNext,
                 btnInside = _els.btnInside,
-                isPaused = GetRandomPicAction.isPausing();
+                isPaused = PlayerAction.isPausing();
 
             if ((isPaused && !force) || force === BTN_RESUME) {
 

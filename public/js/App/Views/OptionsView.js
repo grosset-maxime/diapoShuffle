@@ -11,7 +11,7 @@ define(
     'App/Notify',
 
     // App
-    'App/Actions/GetRandomPicAction',
+    'App/Actions/PlayerAction',
     'App/Actions/PinPicAction',
     'App/Actions/TagsPicAction',
     'App/Views/FolderFinderView',
@@ -27,7 +27,7 @@ function (
     API,
     Notify,
 
-    GetRandomPicAction,
+    PlayerAction,
     PinPicAction,
     TagsPicAction,
     FolderFinderView,
@@ -35,7 +35,7 @@ function (
 ) {
     'use strict';
 
-    const DEFAULT_INTERVAL = GetRandomPicAction.DEFAULT_INTERVAL,
+    const DEFAULT_INTERVAL = PlayerAction.DEFAULT_INTERVAL,
         DEFAULT_ZOOM = 1;
 
     let View,
@@ -59,7 +59,7 @@ function (
         switch (keyPressed) {
         case 13: // Enter
             doPreventDefault = true;
-            GetRandomPicAction.start();
+            PlayerAction.start();
             break;
         }
 
@@ -465,7 +465,7 @@ function (
             type: 'button',
             value: 'Start',
             on: {
-                click: GetRandomPicAction.start
+                click: PlayerAction.start
             }
         }).button();
 
@@ -558,10 +558,10 @@ function (
         TagsModal.ask({
             selectedTags: _selectedTags,
             onClose: function () {
-                GetRandomPicAction.enable();
+                PlayerAction.enable();
             },
             onOpen: function () {
-                GetRandomPicAction.disable();
+                PlayerAction.disable();
             },
             onEnd: _onTagsSelect
         });
@@ -699,7 +699,7 @@ function (
                     text: path,
                     on: {
                         click: () => {
-                            GetRandomPicAction.setInsideFolder(); // Remove Inside folder
+                            PlayerAction.setInsideFolder(); // Remove Inside folder
                         }
                     }
                 }).button()
