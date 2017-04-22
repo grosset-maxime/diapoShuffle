@@ -78,8 +78,8 @@ function (
     // Private functions.
     let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
         _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause,
-        _onGetPic, _setNbPinBtn, _onBeforeGetRandom, _onResume,
-        _hideLoading, _showLoading, _doActionAnim;
+        _onGetPic, _setNbPinBtn, _onBeforeGetPic, _onResume,
+        _hideLoading, _showLoading, _doActionAnim, _cleanPic;
 
     // Private vars.
     let _doActionTimeout;
@@ -396,6 +396,10 @@ function (
         InfosView.show(pic);
     };
 
+    _cleanPic = () => {
+        _els.img && _els.img.remove();
+    };
+
     _showLoading = () => {
         _els.loadingCtn.show();
     };
@@ -458,8 +462,9 @@ function (
         _els.pauseIconCtn.hide();
     };
 
-    _onBeforeGetRandom = () => {
+    _onBeforeGetPic = () => {
         _showLoading();
+        View.show();
     };
 
     _onGetPic = (Pic, onSuccess, onFailure) => {
@@ -532,7 +537,7 @@ function (
                     onStop: _onStop,
                     onPause: _onPause,
                     onResume: _onResume,
-                    onBeforeGetRandom: _onBeforeGetRandom,
+                    onBeforeGetPic: _onBeforeGetPic,
                     onGetPic: _onGetPic,
                     onResetInsideFolder: OptionsView.resetInsideFolder,
                     onAddCustomFolder: OptionsView.addCustomFolder
@@ -756,6 +761,7 @@ function (
 
         hide: () => {
             _els.mainCtn.hide();
+            _cleanPic();
         },
 
         /**

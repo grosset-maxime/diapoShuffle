@@ -77,7 +77,7 @@ function (
                 onResume: () => {},
                 onBeforeStop: () => {},
                 onStop: () => {},
-                onBeforeGetRandom: () => {},
+                onBeforeGetPic: () => {},
                 onGetPic: () => {},
                 onResetInsideFolder: () => {},
                 onAddCustomFolder: () => {}
@@ -177,7 +177,7 @@ function (
 
     _runEngine = () => {
         let events = _options.events,
-            onBeforeGetRandom = events.onBeforeGetRandom,
+            onBeforeGetPic = events.onBeforeGetPic,
             onGetPic = events.onGetPic;
 
         function onError (error) {
@@ -191,7 +191,7 @@ function (
 
         _clearTheInterval();
 
-        onBeforeGetRandom();
+        onBeforeGetPic();
 
         if (_options.PinedPicEngine.playPined) {
             let Pic = PinedPicEngine.getRandom();
