@@ -24,7 +24,8 @@ function ($, TagsChooser) {
         let body, tagsChooserCtn;
 
         _tagChooser = new TagsChooser({
-            selected: _options.selectedTags ? _options.selectedTags : []
+            selected: _options.selectedTags ? _options.selectedTags : [],
+            randomBtn: _options.randomBtn
         });
 
         tagsChooserCtn = $('<div>', {
@@ -44,7 +45,7 @@ function ($, TagsChooser) {
 
     _seeThroughModal = (event, hide) => {
         if (event.which === 17 || event.target === _els.modal[0]) { // 17 = Ctrl
-            _els.parentModal.css('opacity', hide ? 0.05 : 1);
+            _els.parentModal.css('opacity', hide ? 0 : 1);
         }
     };
 

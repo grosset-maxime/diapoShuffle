@@ -574,6 +574,7 @@ function (
     _onTagsSelectBtnClick = () => {
         TagsModal.ask({
             selectedTags: _selectedTags,
+            randomBtn: true,
             onClose: function () {
                 PlayerAction.enable();
             },

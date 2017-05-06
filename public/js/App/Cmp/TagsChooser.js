@@ -33,6 +33,7 @@ define([
             selected: '',
             available: '',
             container: null,
+            randomBtn: false,
             events: {
                 onSelect: () => {},
                 onDeselect: () => {}
@@ -117,17 +118,25 @@ define([
                 } else {
                     tag.removeClass('hide');
                 }
+
+                tag.removeClass('highlighted');
             });
+
+            tags = availableTagsCtn.find('.tag_el:not(.hide):first');
+            tags.length && tags.addClass('highlighted');
         },
 
         _clearFilterAvailableTags: function () {
-            let els = this.els;
+            let els = this.els,
+                tags = els.availableTagsCtn.find('.tag_el');
 
             els.searchAvailableInput.val('').focus();
 
-            els.availableTagsCtn.find('.tag_el').each(function(index, tagEl) {
-                $(tagEl).removeClass('hide');
+            tags.each(function(index, tagEl) {
+                $(tagEl).removeClass('hide highlighted');
             });
+
+            $(tags[0]).addClass('highlighted');
         },
 
         _selectRandomTag: function () {
@@ -140,6 +149,46 @@ define([
             randomTagEl && randomTagEl.click();
 
             els.searchAvailableInput.val('').focus();
+        },
+
+        _toggleSelectHighlightedTag: function () {
+            let tags,
+                els = this.els;
+
+            tags = els.availableTagsCtn.find('.tag_el.highlighted:first');
+            tags.length && tags.toggleClass('selected');
+        },
+
+        _highlightTag: function (way) {
+            let tags,
+                els = this.els,
+                fn = way === 'previous'
+                    ? (tags, i) => {
+                        if (i - 1 >= 0) {
+                            $(tags[i - 1]).addClass('highlighted');
+                        } else {
+                            $(tags[tags.length - 1]).addClass('highlighted');
+                        }
+                    }
+                    : (tags, i) => {
+                        if (i + 1 < tags.length) {
+                            $(tags[i + 1]).addClass('highlighted');
+                        } else {
+                            $(tags[0]).addClass('highlighted');
+                        }
+                    };
+
+            tags = els.availableTagsCtn.find('.tag_el:not(.hide)');
+
+            for (let i = 0; i < tags.length; i++) {
+                let tag = $(tags[i]);
+
+                if (tag.hasClass('highlighted')) {
+                    fn(tags, i);
+                    tag.removeClass('highlighted');
+                    break;
+                }
+            }
         },
 
         /**
@@ -181,18 +230,43 @@ define([
                     type: 'text',
                     placeholder: 'filter',
                     on: {
-                        keyup: function () {
+                        keyup: function (e) {
+                            let key = e.which;
+
+                            if ([13, 27, 37, 39].indexOf(key) >= 0) {
+                                return;
+                            }
+
                             that._onFilterAvailableTags(
                                 searchAvailableInput.val()
                             );
                         },
                         keydown: function (e) {
-                            if (e.which === 27) { // If ESC, prevent closing modal and clear field.
+                            let key = e.which,
+                                stopEvent = false;
+
+                            switch (key) {
+                                case 13: // Enter
+                                    that._toggleSelectHighlightedTag();
+                                    break;
+
+                                case 27: // ESC
+                                    that._clearFilterAvailableTags();
+                                    stopEvent = true; // Prevent closing modal.
+                                    break;
+
+                                case 37: // Left arrow
+                                    that._highlightTag('previous');
+                                    break;
+
+                                case 39: // Right arrow
+                                    that._highlightTag('next');
+                                    break;
+                            }
+
+                            if (stopEvent) {
                                 e.stopPropagation();
                                 e.preventDefault();
-
-                                // Clear search available tags input.
-                                searchAvailableInput.val('');
                             }
                         }
                     }
@@ -220,18 +294,20 @@ define([
             ctn.append(
                 selectedTagsCtn,
                 searchAvailableCtn,
-                selectRandomTagCtn,
+                that.options.randomBtn ? selectRandomTagCtn : null,
                 availableTagsCtn
             );
 
             if (TagsManager.hasFetchTags()) {
                 that._allTags = TagsManager.getTags();
                 that._buildTags();
+                that._clearFilterAvailableTags();
             } else {
                 TagsManager.init({
                     onSuccess: (Tags) => {
                         that._allTags = Tags;
                         that._buildTags();
+                        that._clearFilterAvailableTags();
                     }
                 });
             }

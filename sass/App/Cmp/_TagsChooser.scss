@@ -7,6 +7,7 @@
 .tagschooser_cmp {
     display: inline-block;
     margin-top: 5px;
+    width: 100%;
 
     .tag_el {
         border: 1px solid #ccc;
@@ -16,12 +17,26 @@
         display: inline-block;
         box-shadow: 2px 2px 5px #ccc;
         cursor: pointer;
-        transition: all .5s;
+        transition: all .4s;
+
+        &.selected,
+        &.highlighted,
+        &.selected.highlighted {
+            box-shadow: 2px 2px 5px #999;
+            color: #fff;
+        }
 
         &.selected {
             background-color: #666;
-            box-shadow: 2px 2px 5px #999;
-            color: #fff;
+        }
+
+        &.highlighted {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        &.selected.highlighted {
+            background-color: #888;
         }
     }
 
