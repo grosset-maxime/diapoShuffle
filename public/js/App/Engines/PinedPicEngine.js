@@ -4,9 +4,11 @@
 
 define(
 [
-    'jquery'
+    'jquery',
+
+    'App/Utils/Utils'
 ],
-function ($) {
+function ($, Utils) {
     'use strict';
 
     let Engine,
@@ -127,7 +129,7 @@ function ($) {
         },
 
         getRandom: () => {
-            _navIndex = Math.floor(Math.random() * _pined.length);
+            _navIndex = Utils.getRandomNum(_pined.length - 1);
 
             return _pined[_navIndex].incCounter();
         },

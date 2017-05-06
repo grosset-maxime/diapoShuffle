@@ -6,10 +6,11 @@ define(
 [
     'jquery',
 
+    'App/Utils/Utils',
     'App/API/API',
     'App/Class/Pic'
 ],
-function ($, API, Pic) {
+function ($, Utils, API, Pic) {
     'use strict';
 
     let Engine,
@@ -32,7 +33,7 @@ function ($, API, Pic) {
                 let navIndex, pic,
                     nbResult = results.length;
 
-                navIndex = Math.floor(Math.random() * nbResult);
+                navIndex = Utils.getRandomNum(nbResult - 1);
                 pic = results[navIndex];
 
                 if (!pic.incCounter) {
