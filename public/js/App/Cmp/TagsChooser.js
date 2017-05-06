@@ -10,11 +10,13 @@ define([
     'PM/Core',
     'PM/Cmp/Abstract',
 
+    'App/Utils/Utils',
+
     'App/TagsManager',
 
     // Non AMD
     'js!jquery-inherit'
-], function ($, PM, Abstract, TagsManager) {
+], function ($, PM, Abstract, Utils, TagsManager) {
     'use strict';
 
     let TagsChooser;
@@ -128,12 +130,24 @@ define([
             });
         },
 
+        _selectRandomTag: function () {
+            let randomTagEl,
+                els = this.els;
+
+            randomTagEl = Utils.getRandomElement(
+                els.availableTagsCtn.find('.tag_el:not(.selected)')
+            );
+            randomTagEl && randomTagEl.click();
+
+            els.searchAvailableInput.val('').focus();
+        },
+
         /**
          * Build the DOM of the Cmp.
          */
         build: function () {
             let ctn, selectedTagsCtn, availableTagsCtn, searchAvailableCtn,
-                searchAvailableInput,
+                searchAvailableInput, selectRandomTagCtn,
                 that = this,
                 els = that.els;
 
@@ -191,9 +205,22 @@ define([
                 })]
             });
 
+            selectRandomTagCtn = els.selectRandomTagCtn = $('<div>', {
+                'class': 'select_random_tag_ctn',
+                html: els.selectRandomTagBtn = $('<input>', {
+                    'class': 'btn',
+                    value: 'Select random',
+                    type: 'button',
+                    on: {
+                        click: that._selectRandomTag.bind(that)
+                    }
+                }).button()
+            });
+
             ctn.append(
                 selectedTagsCtn,
                 searchAvailableCtn,
+                selectRandomTagCtn,
                 availableTagsCtn
             );
 

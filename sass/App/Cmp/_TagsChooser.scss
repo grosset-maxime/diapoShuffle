@@ -35,6 +35,8 @@
 
     .search_available_tags_ctn {
         margin-bottom: 4px;
+        width: 50%;
+        display: inline-block;
 
         & .search_input {
             line-height: 25px;
@@ -58,5 +60,10 @@
                 opacity: 1;
             }
         }
+    }
+
+    .select_random_tag_ctn {
+        width: 50%;
+        display: inline-block;
     }
 }

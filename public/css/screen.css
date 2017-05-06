@@ -279,8 +279,10 @@ body {
 /* line 36, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn {
   margin-bottom: 4px;
+  width: 50%;
+  display: inline-block;
 }
-/* line 39, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 41, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .search_input {
   line-height: 25px;
   border-radius: 4px;
@@ -288,7 +290,7 @@ body {
   padding-left: 5px;
   font-size: 16px;
 }
-/* line 47, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 49, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .clear_search_btn {
   cursor: pointer;
   display: inline-block;
@@ -299,9 +301,14 @@ body {
   margin-left: 10px;
   opacity: 0.5;
 }
-/* line 57, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 59, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .clear_search_btn:hover {
   opacity: 1;
+}
+/* line 65, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .select_random_tag_ctn {
+  width: 50%;
+  display: inline-block;
 }
 
 /* line 72, ../../sass/screen.scss */
