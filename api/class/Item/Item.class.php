@@ -337,7 +337,7 @@ class Item extends Root
     protected function isJpgFormat()
     {
         $is = false;
-        $format = $this->format;
+        $format = strtolower($this->format);
 
         if (empty($format)) {
             return false;
