@@ -271,10 +271,12 @@ function (
      */
     _scalePic = (picInfos, picEl) => {
         let cssObj, dw, dh,
+            zoomGif = 2.5,
             widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             widthView = _viewDimension.width,
-            heightView = _viewDimension.height;
+            heightView = _viewDimension.height,
+            isGif = picInfos.name.toLowerCase().endsWith('.gif');
 
         if (!widthPic || !heightPic) {
             return;
@@ -284,9 +286,17 @@ function (
         dh = heightView / heightPic;
 
         if (dh >= dw) {
-            cssObj = {'min-width': widthView};
+            cssObj = {
+                'min-width': isGif && widthPic * zoomGif < widthView
+                    ? widthPic * zoomGif
+                    : widthView
+            };
         } else {
-            cssObj = {'min-height': heightView};
+            cssObj = {
+                'min-height': isGif && heightPic * zoomGif < heightView
+                    ? heightPic * zoomGif
+                    : heightView
+            };
         }
 
         picEl
