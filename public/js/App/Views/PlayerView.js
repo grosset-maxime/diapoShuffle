@@ -271,7 +271,7 @@ function (
      */
     _scalePic = (picInfos, picEl) => {
         let cssObj, dw, dh,
-            zoomGif = 2.5,
+            zoomGif = 2,
             widthPic = picInfos.width || 0,
             heightPic = picInfos.height || 0,
             widthView = _viewDimension.width,
