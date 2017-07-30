@@ -95,7 +95,7 @@ function (
                 isPlaying = PlayerAction.isPlaying(),
                 isDisabled = PlayerAction.isDisabled();
 
-            // console.log(keyPressed);
+            console.log(keyPressed);
 
             if (isPlaying && !isDisabled) {
 
@@ -139,7 +139,7 @@ function (
                         break;
 
                     case 80: // p (as pin)
-                    case 16: // shift
+                    // case 16: // shift
                         PlayerView.pin();
                         break;
 
@@ -149,6 +149,26 @@ function (
 
                     case 39: // right arrow
                         PlayerView.displayNext();
+                        break;
+
+                    case 111: // "/" slash
+                    case 191:
+                        PlayerView.setNaturalSize();
+                        break;
+
+                    case 106: // "*" asterix
+                    case 56:
+                        PlayerView.setScaleSize();
+                        break;
+
+                    case 107: // "+" plus
+                    case 187:
+                        PlayerView.zoomIn();
+                        break;
+
+                    case 109: // "-" minus
+                    case 189:
+                        PlayerView.zoomOut();
                         break;
                 }
 

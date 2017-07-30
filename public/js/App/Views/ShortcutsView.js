@@ -50,7 +50,7 @@ function ($) {
             shortcut: 'd / SUPP',
             desc: 'Ask to delete the current picture'
         }, {
-            shortcut: 'p / SHIFT',
+            shortcut: 'p',
             desc: 'Pin the current picture'
         }, {
             shortcut: 'left arrow',
@@ -58,6 +58,18 @@ function ($) {
         }, {
             shortcut: 'right arrow',
             desc: 'Display next picture'
+        }, {
+            shortcut: '/',
+            desc: 'Reset to original picture size'
+        }, {
+            shortcut: '*',
+            desc: 'Scale picture size to window size'
+        }, {
+            shortcut: '+',
+            desc: 'Zoom in picture size'
+        }, {
+            shortcut: '-',
+            desc: 'Zoom out picture size'
         }],
         _tagsModalShortuctsElements = [{
             shortcut: 'CTRL / mouse down',

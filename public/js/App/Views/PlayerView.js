@@ -77,7 +77,7 @@ function (
 
     // Private functions.
     let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
-        _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause,
+        _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause, _zoom,
         _onGetPic, _setNbPinBtn, _onBeforeGetPic, _onResume,
         _hideLoading, _showLoading, _doActionAnim, _cleanPic;
 
@@ -280,10 +280,6 @@ function (
             return;
         }
 
-        if (widthPic >= widthView || heightPic >= heightView) {
-            return;
-        }
-
         dw = widthView / widthPic;
         dh = heightView / heightPic;
 
@@ -293,7 +289,14 @@ function (
             cssObj = {'min-height': heightView};
         }
 
-        picEl.css(cssObj);
+        picEl
+            .css(cssObj)
+            .css({
+                'width': '',
+                height: '',
+                'max-width': widthView,
+                'max-height': heightView
+            });
     };
 
     /**
@@ -320,27 +323,39 @@ function (
         });
     };
 
-    _displayPrevious = () => {
-        if (HistoryEngine.isFirst()) {
+    _zoom = (way = 'out') => {
+        let dw, dh, newWidth, newHeight,
+            img = _els.img,
+            widthPic = img.width() || 0,
+            heightPic = img.height() || 0,
+            widthView = _viewDimension.width,
+            heightView = _viewDimension.height,
+            widthStep = Math.round(widthView / 10),
+            heightStep = Math.round(heightView / 10);
+
+        if (!widthPic || !heightPic) {
             return;
         }
 
-        if (!PlayerAction.isPausing()) {
-            PlayerAction.pause();
-        }
+        dw = widthView / widthPic;
+        dh = heightView / heightPic;
 
-        _setPic(HistoryEngine.getPrevious());
-    };
-
-    _displayNext = () => {
-        if (HistoryEngine.isLast()) {
-
-            PlayerAction.pause();
-            PlayerAction.start();
-
+        if (dh >= dw) {
+            newWidth = widthPic + (way === 'out' ? -widthStep : widthStep);
+            newHeight = heightPic * newWidth / widthPic;
         } else {
-            _setPic(HistoryEngine.getNext());
+            newHeight = heightPic + (way === 'out' ? -heightStep : heightStep);
+            newWidth = widthPic * newHeight / heightPic;
         }
+
+        img.css({
+            width: newWidth,
+            height: newHeight,
+            'max-width': '',
+            'max-height': '',
+            'min-height': '',
+            'min-width': ''
+        });
     };
 
     /**
@@ -367,27 +382,22 @@ function (
                         imgEl = img[0];
                         pic.width = imgEl.naturalWidth;
                         pic.height = imgEl.naturalHeight;
+                    }
+
+                    if (OptionsView.isScaleOn()) {
                         _scalePic(pic, img);
+                    } else if (OptionsView.getZoom() > 1) {
+                        _zoomPic(pic, img);
                     }
 
                     View.show();
                     onSuccess && onSuccess();
                 },
                 error: () => {
-                    console.error && console.error('Cannot display pic: "' + pic.src + '"');
+                    console.error('Cannot display pic: "' + pic.src + '"');
                     onFailure && onFailure(pic);
                 }
-            })
-            .css({
-                'max-width': _viewDimension.width,
-                'max-height': _viewDimension.height
             });
-
-        if (OptionsView.isScaleOn()) {
-            _scalePic(pic, img);
-        } else if (OptionsView.getZoom() > 1) {
-            _zoomPic(pic, img);
-        }
 
         _els.playCtn.html(img);
 
@@ -398,6 +408,29 @@ function (
 
     _cleanPic = () => {
         _els.img && _els.img.remove();
+    };
+
+    _displayPrevious = () => {
+        if (HistoryEngine.isFirst()) {
+            return;
+        }
+
+        if (!PlayerAction.isPausing()) {
+            PlayerAction.pause();
+        }
+
+        _setPic(HistoryEngine.getPrevious());
+    };
+
+    _displayNext = () => {
+        if (HistoryEngine.isLast()) {
+
+            PlayerAction.pause();
+            PlayerAction.start();
+
+        } else {
+            _setPic(HistoryEngine.getNext());
+        }
     };
 
     _showLoading = () => {
@@ -817,6 +850,29 @@ function (
 
         disableNextBtn: () => {
             _els.btnNext.button('disable');
+        },
+
+        setNaturalSize: () => {
+            _els.img.css({
+                'max-width': '',
+                'max-height': '',
+                'min-height': '',
+                'min-width': '',
+                width: '',
+                height: ''
+            });
+        },
+
+        setScaleSize: () => {
+            _scalePic(View.currentPic, _els.img);
+        },
+
+        zoomIn: () => {
+            _zoom('in');
+        },
+
+        zoomOut: () => {
+            _zoom('out');
         }
     };
 
