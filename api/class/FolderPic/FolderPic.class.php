@@ -66,14 +66,6 @@ class FolderPic extends Root
 {
     // protected $Utils = null;
 
-    protected $cacheFolder = array();
-    protected $cacheEmptyFolder = array();
-    protected $needUpdateCache = false;
-    protected $useCache = false;
-
-    protected $cacheManager = null;
-
-
     /**
      * RandomPic constructor.
      *
@@ -83,10 +75,6 @@ class FolderPic extends Root
     public function __construct(array $data = array())
     {
         // $this->Utils = new Utils();
-
-        $this->cacheManager = new CacheManager();
-        $this->cacheFolder = $this->cacheManager->getCacheFolder();
-        $this->cacheEmptyFolder = $this->cacheManager->getCacheEmptyFolder();
 
         parent::__construct($data);
     }
@@ -106,111 +94,41 @@ class FolderPic extends Root
     protected function getPicsList($folder)
     {
         // Init vars
-        $file;
-        $min;
-        $max;
-        $nb;
-        $nbItems;
         $item;
-        $itemType;
         $fileName;
-        $randomItem;
         $dir;
-        $isDir;
-        $folderPath;
         $listItems = array();
-        $useCache = false;
 
 
-        if (isset($this->cacheFolder[$folder]) || array_key_exists($folder, $this->cacheFolder)) {
-            $listItems = $this->cacheFolder[$folder];
-            $useCache = true;
-        } else {
-            try {
-                $dir = new DirectoryIterator($folder);
-            } catch (Exception $e) {
-                throw new ExceptionExtended(
-                    array(
-                        'publicMessage' => 'Folder "' . $folder . '" is not accessible.',
-                        'message' => $e->getMessage(),
-                        'severity' => ExceptionExtended::SEVERITY_ERROR
-                    )
-                );
-            }
-
-            foreach ($dir as $item) {
-                set_time_limit(30);
-
-                $fileName = $item->getFilename();
-                $isDir = $item->isDir();
-
-                if ($item->isDot()
-                    || preg_match('/^[\.].*/i', $fileName)
-                    || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
-                    || (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp)$/i', $fileName))
-                    || ($isDir && $fileName === '@eaDir')
-                ) {
-                    continue;
-                }
-
-                $listItems[$fileName] = $isDir;
-            }
-
-            $this->needUpdateCache = true;
-
-            if (count($listItems) > 0) {
-                $this->cacheFolder[$folder] = $listItems;
-            } else {
-                $this->cacheEmptyFolder[$folder] = 1;
-                return null;
-            }
-        }
-
-        $nbItems = count($listItems);
-
-        if ($nbItems <= 0) {
-            $this->removeEmptyFolder($folder);
-            return null;
-        }
-
-        $min = 0;
-        $max = $nbItems - 1;
-
-        do {
-            $nb = mt_rand($min, $max);
-            $fileName = array_keys($listItems)[$nb];
-            $itemType = $listItems[$fileName] ? Item::TYPE_FOLDER : Item::TYPE_FILE;
-
-            $folderPath = $folder . '/' . $fileName;
-
-            if (
-                $itemType === Item::TYPE_FOLDER &&
-                (
-                    isset($this->cacheEmptyFolder[$folderPath]) ||
-                    array_key_exists($folderPath, $this->cacheEmptyFolder)
+        try {
+            $dir = new DirectoryIterator($folder);
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'Folder "' . $folder . '" is not accessible.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
                 )
-            ) {
-                $this->removeEmptyFolder($folderPath);
-                $max--;
-            } else {
-                break;
-            }
-        } while ($max >= 0);
-
-        if ($max < 0) {
-            return null;
+            );
         }
 
-        $this->useCache = $useCache && $itemType === Item::TYPE_FILE;
+        foreach ($dir as $item) {
+            set_time_limit(30);
 
-        return new Item(
-            array(
-                'name' => $fileName,
-                'type' => $itemType,
-                'path' => $folder,
-                'format' => $itemType === Item::TYPE_FILE ? pathinfo($fileName)['extension'] : null,
-                'shouldFetch' => true
-            )
-        );
+            $fileName = $item->getFilename();
+
+            if ($item->isDot()
+                || $item->isDir()
+                || preg_match('/^[\.].*/i', $fileName)
+                || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
+                || !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp)$/i', $fileName)
+            ) {
+                continue;
+            }
+
+            $listItems[] = $fileName;
+        }
+
+        return $listItems
     }
-} // End Class RandomPic
+}
