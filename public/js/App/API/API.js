@@ -74,6 +74,42 @@ function ($, PM) {
 
         /**
          * @param {Object} options - Options.
+         * @param {String} [folder=""] - Folder path.
+         * @param {Function} [onSuccess] - Success callback, returns {String[]} - Pics list.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        getPicsList: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            xhr = $.ajax({
+                url: '/?r=getPicsList_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    folder: options.folder || ''
+                }
+            });
+
+            xhr.done((json) => {
+                _onDone(
+                    json,
+                    function (json) {
+                        onSuccess(json.pics);
+                    },
+                    onFailure
+                );
+            });
+
+            xhr.fail((jqXHR, textStatus, errorThrown) => {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getPicsList()', onFailure);
+            });
+        },
+
+        /**
+         * @param {Object} options - Options.
          * @param {Pic} Pic - Pic to delete.
          * @param {Function} [onSuccess] - Success callback.
          * @param {Function} [onFailure] - Failure callback.

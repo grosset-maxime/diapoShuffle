@@ -29,6 +29,7 @@ define(
     // Engines
     'App/Engines/HistoryEngine',
     'App/Engines/PinedPicEngine',
+    'App/Engines/InsideFolderEngine',
 
     // Non AMD
     'js!jquery-ui'
@@ -58,7 +59,8 @@ function (
 
     // Engines
     HistoryEngine,
-    PinedPicEngine
+    PinedPicEngine,
+    InsideFolderEngine
 ) {
     'use strict';
 
@@ -409,6 +411,12 @@ function (
                 }
             });
 
+        if (OptionsView.isScaleOn()) {
+            _scalePic(pic, img);
+        } else if (OptionsView.getZoom() > 1) {
+            _zoomPic(pic, img);
+        }
+
         _els.playCtn.html(img);
 
         View.currentPic = pic;
@@ -729,9 +737,9 @@ function (
                 onOpen: () => {
                     PlayerAction.disable();
                 },
-                onInside: (insidePath) => {
+                onInside: (insidePath, random) => {
                     _els.btnInside.val(BTN_OUTSIDE);
-                    PlayerAction.setInsideFolder(insidePath);
+                    PlayerAction.setInsideFolder(insidePath, random);
                     PlayerAction.enable();
                     PlayerAction.resume();
 
@@ -739,6 +747,7 @@ function (
                 },
                 onOutside: () => {
                     _els.btnInside.val(BTN_INSIDE);
+                    InsideFolderEngine.clear();
                     PlayerAction.setInsideFolder();
                     PlayerAction.enable();
                     PlayerAction.resume();

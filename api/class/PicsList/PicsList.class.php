@@ -1,6 +1,6 @@
 <?php
 /**
- * Folder Pic engine.
+ * Pics list engine.
  *
  * PHP version 5
  *
@@ -12,26 +12,20 @@
  */
 
 /* global
-    $_BASE_PIC_PATH, $_BASE_PIC_FOLDER_NAME, $_config
+    $_BASE_PIC_PATH
 */
 
-namespace RandomPic;
+namespace PicsList;
 
 // DS
 require_once dirname(__FILE__) . '/../../../config/config.inc.php';
 require_once dirname(__FILE__) . '/../../globals.php';
+
 require_once dirname(__FILE__) . '/../Root.class.php';
-require_once dirname(__FILE__) . '/../CacheManager.class.php';
 require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 
 // Utils
 require_once dirname(__FILE__) . '/../Utils/Utils.class.php';
-
-// DeleteItem
-require_once dirname(__FILE__) . '/../DeleteItem/DeleteItem.class.php';
-
-// Item
-require_once dirname(__FILE__) . '/../Item/Item.class.php';
 
 
 // PHP
@@ -40,21 +34,14 @@ use \Exception;
 
 // DS
 use DS\Root;
-use DS\CacheManager;
 use DS\ExceptionExtended;
 
 // Utils
 use Utils\Utils;
 
-// DeleteItem
-use DeleteItem\DeleteItem;
-
-// Item
-use Item\Item;
-
 
 /**
- * Class FolderPic.
+ * Class PicsList.
  *
  * @category Class
  * @package  No
@@ -62,50 +49,59 @@ use Item\Item;
  * @license  tag in file comment
  * @link     No
  */
-class FolderPic extends Root
+class PicsList extends Root
 {
-    // protected $Utils = null;
+    protected $Utils = null;
 
     /**
-     * RandomPic constructor.
-     *
-     * @param {array} $data : RandomPic data.
-     * * param {String[]} data.customFolders : List of custom folder.
+     * PicsList constructor.
      */
-    public function __construct(array $data = array())
+    public function __construct()
     {
-        // $this->Utils = new Utils();
+        $this->Utils = new Utils();
 
-        parent::__construct($data);
+        parent::__construct();
     }
 
+    /**
+     * Get pics list in the provided folder.
+     *
+     * @param {string} $folder : Folder where to get pics list (path from pic folder).
+     *
+     * @return {strting[]} Pics list in the folder.
+     */
     public function getPics($folder)
     {
-        return $this->getPicsList($folder);
+        global $_BASE_PIC_PATH;
+
+        $folder = $this->Utils->normalizePath($folder);
+
+        $rootPathFolder = $_BASE_PIC_PATH . $folder;
+
+        return $this->getPicsList($rootPathFolder);
     }
 
     /**
-     * get
+     * Get pics list from the provided folder.
      *
-     * @param {string} $folder : folder to scan
+     * @param {string} $folder : folder where to get pics list (Complete path from root).
      *
-     * @return {Item} Random item.
+     * @return {strting[]} Pics list in the folder.
      */
-    protected function getPicsList($folder)
+    protected function getPicsList($rootPathFolder)
     {
         // Init vars
         $item;
         $fileName;
         $dir;
-        $listItems = array();
-
+        $pics = array();
 
         try {
-            $dir = new DirectoryIterator($folder);
+            $dir = new DirectoryIterator($rootPathFolder);
         } catch (Exception $e) {
             throw new ExceptionExtended(
                 array(
-                    'publicMessage' => 'Folder "' . $folder . '" is not accessible.',
+                    'publicMessage' => 'Folder "' . $rootPathFolder . '" is not accessible.',
                     'message' => $e->getMessage(),
                     'severity' => ExceptionExtended::SEVERITY_ERROR
                 )
@@ -126,9 +122,9 @@ class FolderPic extends Root
                 continue;
             }
 
-            $listItems[] = $fileName;
+            $pics[] = $fileName;
         }
 
-        return $listItems
+        return $pics;
     }
 }
