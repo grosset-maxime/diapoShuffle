@@ -269,7 +269,7 @@ function (
      * @param {Object} picInfos -
      * @param {Element} picEl -
      */
-    _scalePic = (picInfos, picEl) => {
+    _scalePic = (picInfos, picEl, force) => {
         let cssObj, dw, dh,
             zoomGif = 2,
             widthPic = picInfos.width || 0,
@@ -287,13 +287,13 @@ function (
 
         if (dh >= dw) {
             cssObj = {
-                'min-width': isGif && widthPic * zoomGif < widthView
+                'min-width': isGif && widthPic * zoomGif < widthView && !force
                     ? widthPic * zoomGif
                     : widthView
             };
         } else {
             cssObj = {
-                'min-height': isGif && heightPic * zoomGif < heightView
+                'min-height': isGif && heightPic * zoomGif < heightView && !force
                     ? heightPic * zoomGif
                     : heightView
             };
@@ -874,7 +874,7 @@ function (
         },
 
         setScaleSize: () => {
-            _scalePic(View.currentPic, _els.img);
+            _scalePic(View.currentPic, _els.img, true);
         },
 
         zoomIn: () => {
