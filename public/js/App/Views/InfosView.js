@@ -23,12 +23,12 @@ function ($, Client, OptionsView) {
 
     // Private functions.
     let _buildSkeleton, _setPicFolderPath, _setPicCounter, _displayOsPicPath,
-        _setTags, _onTagsCtnClick;
+        _setTags, _onTagsCtnClick, _setPicIndice;
 
 
     _buildSkeleton = () => {
         let mainCtn, customFolderPathCtn, randomPublicPathCtn,
-            picturePathCtn, pictureCounterCtn, tagsCtn;
+            picturePathCtn, pictureCounterCtn, tagsCtn, pictureIndiceCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_infos_view'
@@ -56,6 +56,10 @@ function ($, Client, OptionsView) {
             'class': 'picture_counter_ctn'
         });
 
+        _els.pictureIndiceCtn = pictureIndiceCtn = $('<div>', {
+            'class': 'picture_counter_ctn'
+        });
+
         _els.tagsCtn = tagsCtn = $('<div>', {
             'class': 'tags_ctn',
             on: {
@@ -65,6 +69,7 @@ function ($, Client, OptionsView) {
 
         _els.mainCtn.append(
             pictureCounterCtn,
+            pictureIndiceCtn,
             picturePathCtn,
             tagsCtn
         );
@@ -82,6 +87,16 @@ function ($, Client, OptionsView) {
             counter = pic.nbResult ? (pic.nbResult + ' | ' + picCount) : picCount;
 
         _els.pictureCounterCtn.html(counter);
+    };
+
+    _setPicIndice = (pic = {}) => {
+        let picIndice = pic.indice,
+            indice = pic.nbResult
+                ? (pic.indice + ' / ' + pic.nbResult)
+                : picIndice;
+            indice += ' | ' + pic.count;
+
+        _els.pictureIndiceCtn.html(indice);
     };
 
     _setTags = (pic = {}) => {
@@ -192,6 +207,13 @@ function ($, Client, OptionsView) {
                 _els.pictureCounterCtn.show();
             } else {
                 _els.pictureCounterCtn.hide();
+            }
+
+            if (OptionsView.isInsideFolder()) {
+                _setPicIndice(pic);
+                _els.pictureIndiceCtn.show();
+            } else {
+                _els.pictureIndiceCtn.hide();
             }
 
             if (OptionsView.showTags()) {

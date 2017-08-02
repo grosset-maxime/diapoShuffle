@@ -49,6 +49,7 @@ function ($, Utils, API, Pic) {
             customFolderPath: _folder,
             publicPathWithName: picInfo.path,
             tags: picInfo.tags,
+            indice: navIndex + 1,
             nbResult: nbPics
         });
 

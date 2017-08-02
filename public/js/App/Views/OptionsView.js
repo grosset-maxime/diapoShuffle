@@ -59,7 +59,8 @@ function (
         _options = {},
         _els = {},
         _hasFocus = false,
-        _selectedTags = [];
+        _selectedTags = [],
+        _isInsideFolder = false;
 
     // Private functions.
     let _buildSkeleton, _clearCache, _onCloseFolderFinder, _updateNbCustomFolderSelected,
@@ -672,26 +673,6 @@ function (
             });
         },
 
-        getTimeInterval: () => {
-            let inputInterval = _els.inputInterval,
-                interval = inputInterval.spinner('value') || DEFAULT_INTERVAL;
-
-            inputInterval.spinner('value', interval);
-
-            return interval;
-        },
-
-        getZoom: () => {
-            let inputZoom = _els.inputZoom,
-                zoom = inputZoom.spinner('value') || DEFAULT_ZOOM;
-
-            inputZoom.spinner('value', zoom);
-
-            return zoom;
-        },
-
-        isPlayPinedOn: () => !!_els.inputPinPic[0].checked,
-
         showTags: () => !!_els.inputTags[0].checked,
 
         toggleFolderFinder: () => {
@@ -706,29 +687,6 @@ function (
             FolderFinderView.close();
         },
 
-        setInsideFolder: (path) => {
-            let css = {
-                opacity: 0.3
-            };
-
-            _els.insideFolder.html(
-                $('<div>', {
-                    'class': 'btn btn_inside_folder',
-                    text: path,
-                    on: {
-                        click: () => {
-                            PlayerAction.setInsideFolder(); // Remove Inside folder
-                        }
-                    }
-                }).button()
-            );
-
-            _els.insideFolderCtn.show();
-
-            _els.selectedCustomFolderCtn.css(css);
-            _els.customFolderCtn.css(css);
-        },
-
         resetInsideFolder: () => {
             let css = {
                 opacity: 1
@@ -739,6 +697,8 @@ function (
 
             _els.selectedCustomFolderCtn.css(css);
             _els.customFolderCtn.css(css);
+
+            _isInsideFolder = false;
         },
 
         addCustomFolder: (folder) => {
@@ -751,9 +711,11 @@ function (
 
         isFolderFinderOpen: () => FolderFinderView.isOpen(),
 
-        hasFocus: () => _hasFocus,
+        isPlayPinedOn: () => !!_els.inputPinPic[0].checked,
 
-        getCustomFolders: () => FolderFinderView.getSelectedPath(),
+        isInsideFolder: () => _isInsideFolder,
+
+        hasFocus: () => _hasFocus,
 
         onClearPined: () => {
             let inputPinPic = _els.inputPinPic,
@@ -789,6 +751,26 @@ function (
             }
         },
 
+        getTimeInterval: () => {
+            let inputInterval = _els.inputInterval,
+                interval = inputInterval.spinner('value') || DEFAULT_INTERVAL;
+
+            inputInterval.spinner('value', interval);
+
+            return interval;
+        },
+
+        getZoom: () => {
+            let inputZoom = _els.inputZoom,
+                zoom = inputZoom.spinner('value') || DEFAULT_ZOOM;
+
+            inputZoom.spinner('value', zoom);
+
+            return zoom;
+        },
+
+        getCustomFolders: () => FolderFinderView.getSelectedPath(),
+
         getSelectedTags: () => {
             return _selectedTags;
         },
@@ -801,6 +783,31 @@ function (
 
         getTagsOperator: () => {
             return _els.btnTagOperator.val();
+        },
+
+        setInsideFolder: (path) => {
+            let css = {
+                opacity: 0.3
+            };
+
+            _isInsideFolder = true;
+
+            _els.insideFolder.html(
+                $('<div>', {
+                    'class': 'btn btn_inside_folder',
+                    text: path,
+                    on: {
+                        click: () => {
+                            PlayerAction.setInsideFolder(); // Remove Inside folder
+                        }
+                    }
+                }).button()
+            );
+
+            _els.insideFolderCtn.show();
+
+            _els.selectedCustomFolderCtn.css(css);
+            _els.customFolderCtn.css(css);
         }
     };
 

@@ -447,6 +447,7 @@ function (
 
             if (!folder) {
                 _options.events.onResetInsideFolder();
+                InsideFolderEngine.clear();
             }
         },
 

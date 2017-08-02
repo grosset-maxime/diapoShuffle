@@ -54,18 +54,18 @@ function (
                     'font-weight': 'bold'
                 }),
                 $('<div>', {
-                    html: [
-                        $('<input>', {
-                            type: 'checkbox',
-                            id: 'getRandomlyCheckbox',
-                            name: 'getRandomlyBox',
-                            value: 1
-                        }),
-                        $('<label>', {
-                            text: 'Should display pic randomly ?',
-                            for: 'getRandomlyCheckbox'
-                        })
-                    ]
+                    html: $('<label>', {
+                        for: 'getRandomlyCheckbox',
+                        html: [
+                            $('<input/>', {
+                                type: 'checkbox',
+                                id: 'getRandomlyCheckbox',
+                                name: 'getRandomlyBox',
+                                value: 'true'
+                            }),
+                            'Should display pic randomly ?'
+                        ]
+                    })
                 })
             ]
         });
