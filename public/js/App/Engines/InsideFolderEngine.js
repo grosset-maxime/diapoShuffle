@@ -17,7 +17,45 @@ function ($, Utils, API, Pic) {
         _options = {},
         _folder = '',
         _pics = [],
-        _currentIndex = 0;
+        _currentIndex = -1;
+
+    // Private functions
+    let _getNextRandomly, _getNextAfter, _createPic;
+
+    _getNextRandomly = () => {
+        let navIndex, pic,
+            nbPics = _pics.length;
+
+        navIndex = Utils.getRandomNum(nbPics - 1);
+
+        pic = _pics[navIndex];
+
+        return !pic.incCounter ? _createPic(pic, navIndex, nbPics) : pic;
+    };
+
+    _getNextAfter = () => {
+        let pic,
+            nbPics = _pics.length;
+
+        _currentIndex++;
+        _currentIndex = _currentIndex >= nbPics ? 0 : _currentIndex;
+        pic = _pics[_currentIndex];
+
+        return !pic.incCounter ? _createPic(pic, _currentIndex, nbPics) : pic;
+    };
+
+    _createPic = (picInfo, navIndex, nbPics) => {
+         let pic = new Pic({
+            customFolderPath: _folder,
+            publicPathWithName: picInfo.path,
+            tags: picInfo.tags,
+            nbResult: nbPics
+        });
+
+         _pics[navIndex] = pic;
+
+         return pic;
+    };
 
     Engine = {
 
@@ -29,50 +67,43 @@ function ($, Utils, API, Pic) {
             $.extend(true, _options, opts || {});
         },
 
+        getNext: (options) => {
+            let pic;
+
+            pic = options.getRandomly ? _getNextRandomly() : _getNextAfter();
+            pic.incCounter();
+
+            options.onSuccess && options.onSuccess(pic);
+
+            return pic;
+        },
+
         run: (options) => {
-
-            function onSuccess (results) {
-                let navIndex, pic,
-                    nbResult = results.length;
-
-                navIndex = Utils.getRandomNum(nbResult - 1);
-                pic = results[navIndex];
-
-                if (!pic.incCounter) {
-                    pic = new Pic({
-                        publicPathWithName: 'pic/' + options.folder + '/' + pic,
-                        // tags: pic.tags,
-                        nbResult: nbResult
-                    });
-                    _pics[navIndex] = pic;
-                }
-
-                pic.incCounter();
-
-                options.onSuccess && options.onSuccess(pic);
-            }
-
             if (!_pics.length) {
-
                 API.getPicsList({
                     folder: options.folder,
                     onSuccess: (picsList) => {
                         _pics = picsList;
-                        _currentIndex = 0;
+                        _folder = options.folder;
+                        _currentIndex = -1;
 
-                        onSuccess(_pics);
+                        Engine.getNext(options);
                     },
                     onFailure: options.onFailure
                 });
             } else {
-                onSuccess(_pics);
+                Engine.getNext(options);
             }
+        },
+
+        onRemove: (pic) => {
+            // _pics;
         },
 
         clear: () => {
             _pics = [];
             _folder = '';
-            _currentIndex = 0;
+            _currentIndex = -1;
         }
     };
 

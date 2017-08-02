@@ -39,7 +39,8 @@ function (
             html: [
                 $('<span>', {
                     text: message
-                }), $('<span>', {
+                }),
+                $('<span>', {
                     html: (new PathChooser({
                         fullPath: Pic.getFullPath(),
                         selectedPath: opts.insidePath,
@@ -51,6 +52,20 @@ function (
                     })).build()
                 }).css({
                     'font-weight': 'bold'
+                }),
+                $('<div>', {
+                    html: [
+                        $('<input>', {
+                            type: 'checkbox',
+                            id: 'getRandomlyCheckbox',
+                            name: 'getRandomlyBox',
+                            value: 1
+                        }),
+                        $('<label>', {
+                            text: 'Should display pic randomly ?',
+                            for: 'getRandomlyCheckbox'
+                        })
+                    ]
                 })
             ]
         });
@@ -106,7 +121,7 @@ function (
                 },
                 buttons: [{
                     text: 'Go outside',
-                    tabIndex: opts.isInside ? 0 : -1,
+                    tabIndex: opts.isInside ? 0 : 1,
                     click: () => {
                         modal.dialog('close');
 
@@ -122,12 +137,13 @@ function (
                     }
                 }, {
                     text: 'Go inside',
-                    tabIndex: opts.isInside ? -1 : 0,
+                    tabIndex: opts.isInside ? 1 : 0,
                     click: () => {
                         modal.dialog('close');
 
                         opts.onInside(
-                            _getInsidePath()
+                            _getInsidePath(),
+                            modal.find('#getRandomlyCheckbox').is(':checked')
                         );
                     }
                 }]

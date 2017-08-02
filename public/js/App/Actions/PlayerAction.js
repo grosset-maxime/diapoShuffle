@@ -55,7 +55,7 @@ function (
 
             InsideFolderEngine: {
                 folder: '',
-                random: false
+                getRandomly: false
             },
 
             PinedPicEngine: {
@@ -235,13 +235,13 @@ function (
 
         } else if (
             _options.InsideFolderEngine.folder &&
-            !_options.InsideFolderEngine.random
+            !_options.InsideFolderEngine.getRandomly
         ) {
 
             InsideFolderEngine.run({
                 runMethod: _options.runMethod,
                 folder: _options.InsideFolderEngine.folder,
-                random: _options.InsideFolderEngine.random,
+                getRandomly: _options.InsideFolderEngine.getRandomly,
                 onSuccess: (Pic) => {
 
                     HistoryEngine.add(Pic);
@@ -441,9 +441,9 @@ function (
         /**
          *
          */
-        setInsideFolder: (folder = '', random = false) => {
+        setInsideFolder: (folder = '', getRandomly = false) => {
             _options.InsideFolderEngine.folder = folder;
-            _options.InsideFolderEngine.random = random;
+            _options.InsideFolderEngine.getRandomly = getRandomly;
 
             if (!folder) {
                 _options.events.onResetInsideFolder();

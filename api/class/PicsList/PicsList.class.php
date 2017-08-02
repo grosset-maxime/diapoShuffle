@@ -27,6 +27,8 @@ require_once dirname(__FILE__) . '/../ExceptionExtended.class.php';
 // Utils
 require_once dirname(__FILE__) . '/../Utils/Utils.class.php';
 
+// Item
+require_once dirname(__FILE__) . '/../Item/Item.class.php';
 
 // PHP
 use \DirectoryIterator;
@@ -38,6 +40,9 @@ use DS\ExceptionExtended;
 
 // Utils
 use Utils\Utils;
+
+// Item
+use Item\Item;
 
 
 /**
@@ -74,6 +79,8 @@ class PicsList extends Root
     {
         global $_BASE_PIC_PATH;
 
+        $rootPathFolder = '';
+
         $folder = $this->Utils->normalizePath($folder);
 
         $rootPathFolder = $_BASE_PIC_PATH . $folder;
@@ -92,8 +99,11 @@ class PicsList extends Root
     {
         // Init vars
         $item;
+        $pic;
         $fileName;
         $dir;
+        $tags;
+        $warningMessage = '';
         $pics = array();
 
         try {
@@ -122,7 +132,30 @@ class PicsList extends Root
                 continue;
             }
 
-            $pics[] = $fileName;
+            $pic = new Item(
+                array(
+                    'name' => $fileName,
+                    'type' => Item::TYPE_FILE,
+                    'path' => $rootPathFolder,
+                    'format' => pathinfo($fileName)['extension'],
+                    'shouldFetch' => true
+                )
+            );
+
+            try {
+                $tags = $pic->getTags();
+            } catch (ExceptionExtended $e) {
+                $tags = array();
+                $warningMessage = $e->getPublicMessage() . ' - ' . $e->getMessage();
+            } catch (Exception $e) {
+                throw $e;
+            }
+
+            $pics[] = array(
+                'path' => $pic->getPublicPathWithName(),
+                'tags' => $tags,
+                'warning' => $warningMessage
+            );
         }
 
         return $pics;

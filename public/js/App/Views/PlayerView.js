@@ -737,9 +737,9 @@ function (
                 onOpen: () => {
                     PlayerAction.disable();
                 },
-                onInside: (insidePath, random) => {
+                onInside: (insidePath, getRandomly) => {
                     _els.btnInside.val(BTN_OUTSIDE);
-                    PlayerAction.setInsideFolder(insidePath, random);
+                    PlayerAction.setInsideFolder(insidePath, getRandomly);
                     PlayerAction.enable();
                     PlayerAction.resume();
 
