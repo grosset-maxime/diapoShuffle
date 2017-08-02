@@ -92,7 +92,7 @@ div {
 
 /* line 27, ../../sass/base/_base.scss */
 .ui-dialog {
-  z-index: 800;
+  z-index: 2000;
 }
 
 /* line 7, ../../sass/base/_uikit.scss */

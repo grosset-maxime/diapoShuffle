@@ -19,6 +19,7 @@ define(
     'App/Engines/HistoryEngine',
     'App/Engines/PinedPicEngine',
     'App/Engines/BddEngine',
+    'App/Engines/InsideFolderEngine',
 ],
 function (
     $,
@@ -35,7 +36,8 @@ function (
     // Engines
     HistoryEngine,
     PinedPicEngine,
-    BddEngine
+    BddEngine,
+    InsideFolderEngine
 ) {
     'use strict';
 
@@ -53,6 +55,7 @@ function (
 
             InsideFolderEngine: {
                 folder: '',
+                getRandomly: false
             },
 
             PinedPicEngine: {
@@ -63,6 +66,10 @@ function (
                 Tags: [],
                 tagsOperator: '',
                 types: []
+            },
+
+            FolderPicsEngine: {
+                folder: '',
             },
 
             events: {
@@ -212,6 +219,29 @@ function (
                 Tags: _options.BddEngine.Tags,
                 tagsOperator: _options.BddEngine.tagsOperator,
                 types: _options.BddEngine.types,
+                onSuccess: (Pic) => {
+
+                    HistoryEngine.add(Pic);
+
+                    onGetPic(
+                        Pic,
+                        _setTheInterval,
+                        _runEngine
+                    );
+
+                },
+                onFailure: onError
+            });
+
+        } else if (
+            _options.InsideFolderEngine.folder &&
+            !_options.InsideFolderEngine.getRandomly
+        ) {
+
+            InsideFolderEngine.run({
+                runMethod: _options.runMethod,
+                folder: _options.InsideFolderEngine.folder,
+                getRandomly: _options.InsideFolderEngine.getRandomly,
                 onSuccess: (Pic) => {
 
                     HistoryEngine.add(Pic);
@@ -411,8 +441,9 @@ function (
         /**
          *
          */
-        setInsideFolder: (folder = '') => {
+        setInsideFolder: (folder = '', getRandomly = false) => {
             _options.InsideFolderEngine.folder = folder;
+            _options.InsideFolderEngine.getRandomly = getRandomly;
 
             if (!folder) {
                 _options.events.onResetInsideFolder();

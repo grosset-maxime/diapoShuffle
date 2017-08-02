@@ -53,4 +53,35 @@ class Utils extends root
         return str_replace(self::WIN_SEP, self::UNIX_SEP, $s);
     }
 
+    /**
+     * Normalize path.
+     *
+     * @param {String} $p : Path to normalize.
+     *
+     * @return {String} Normalized path.
+     */
+    public function normalizePath($p)
+    {
+        $p = $this->replaceWinSlaches($p);
+
+        if ($p === '/') {
+            $p = '';
+        }
+
+        // Manage '/' for start and end of the path.
+        if ($p) {
+            // Begin of path
+            if ($p[0] !== '/') {
+                $p = '/' . $p;
+            }
+
+            // End of path
+            if ($p[strlen($p) - 1] !== '/') {
+                $p .= '/';
+            }
+        }
+
+        return $p;
+    }
+
 }

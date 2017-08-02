@@ -60,6 +60,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/getPicsFromBdd_json.php',
     ),
+    'getPicsList_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/getPicsList_json.php',
+    ),
 );
 
 // Static - Views - Errors

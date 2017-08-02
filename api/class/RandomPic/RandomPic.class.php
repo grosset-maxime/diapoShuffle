@@ -256,8 +256,6 @@ class RandomPic extends Root
      */
     protected function searchRandomPic($folder)
     {
-        global $_BASE_PIC_FOLDER_NAME;
-
         static $levelCurrent = 0;
         $item; $isFolder;
 
@@ -405,44 +403,6 @@ class RandomPic extends Root
     } // End function getRandomPic()
 
     /**
-     * Normalize a custom folder.
-     *
-     * @param {String} $customFolder : List of custom folder.
-     *
-     * @return {String} Normalized custom folder.
-     */
-    protected function normalizeCustomFolder($customFolder = '')
-    {
-        // Init vars.
-        $lenghtCustoFolder = 0;
-        $firstCharCustomFolder = '';
-
-        $customFolder = $this->Utils->replaceWinSlaches($customFolder);
-        $lenghtCustoFolder = strlen($customFolder);
-
-        if ($customFolder === '/') {
-            $customFolder = '';
-        }
-
-        // Manage '/' for begining end end of the customFolder.
-        if ($customFolder) {
-            $firstCharCustomFolder = $customFolder[0];
-
-            // Begin of customFolder
-            if ($firstCharCustomFolder !== '/') {
-                $customFolder = '/' . $customFolder;
-            }
-
-            // End of customFolder
-            if ($customFolder[$lenghtCustoFolder - 1] !== '/') {
-                $customFolder .= '/';
-            }
-        }
-
-        return $customFolder;
-    } // End function normalizeCustomFolder()
-
-    /**
      * Get randomly one of custom folders.
      *
      * @return {String} One custom folder get randomly.
@@ -496,7 +456,7 @@ class RandomPic extends Root
         $customFolder;
 
         foreach ($customFolders as $customFolder) {
-            $customFolder = $this->normalizeCustomFolder($customFolder);
+            $customFolder = $this->Utils->normalizePath($customFolder);
 
             $rootPathFolder = $_BASE_PIC_PATH . $customFolder;
 
