@@ -67,6 +67,10 @@ function ($, Utils, API, Pic) {
             }
         },
 
+        onRemove: (pic) => {
+            // TODO: Manage deleted pic.
+        },
+
         clear: () => {
             _results = [];
         }

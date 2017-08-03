@@ -88,6 +88,11 @@ function ($, Utils, API, Pic) {
                         _folder = options.folder;
                         _currentIndex = -1;
 
+                        if (!picsList.length) {
+                            options.onFailure && options.onFailure();
+                            return;
+                        }
+
                         Engine.getNext(options);
                     },
                     onFailure: options.onFailure
@@ -97,8 +102,22 @@ function ($, Utils, API, Pic) {
             }
         },
 
-        onRemove: (pic) => {
-            // _pics;
+        remove: () => {
+            let nbPics = _pics.length;
+
+            if (!nbPics) {
+                return;
+            }
+
+            // Remove pic from the list.
+            _pics.splice(_currentIndex, 1);
+
+            // Set for each pic the new number of pics in the folder.
+            _pics.forEach(function (pic) {
+                pic.nbResult = nbPics - 1;
+            });
+
+            _currentIndex--;
         },
 
         clear: () => {

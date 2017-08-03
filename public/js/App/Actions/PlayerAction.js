@@ -191,6 +191,8 @@ function (
                 message: error,
                 autoHide: false
             });
+
+            // TODO: Remove from bdd pics which throw error.
         }
 
         _clearTheInterval();
@@ -253,7 +255,20 @@ function (
                     );
 
                 },
-                onFailure: onError
+                onFailure: (error) => {
+                    if (!error) {
+                        Notify.info({
+                            message: 'No more pic into: "' + Action.getInsideFolder() + '"'
+                        });
+
+                        // Remove inside folder.
+                        Action.setInsideFolder();
+
+                        _runEngine();
+                    } else {
+                        onError(error);
+                    }
+                }
             });
 
         } else {

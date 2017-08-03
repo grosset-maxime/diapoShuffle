@@ -657,7 +657,10 @@ function (
                         onSuccess: () => {
                             _hideLoading();
                             _els.pauseIconCtn.show();
+
                             HistoryEngine.remove();
+                            InsideFolderEngine.remove();
+
                             PlayerAction.enable();
                             _displayNext();
                         },
