@@ -202,14 +202,19 @@ function ($, Client, OptionsView) {
                 _els.picturePathCtn.hide();
             }
 
-            if (OptionsView.isPlayPinedOn() || OptionsView.getSelectedTags().length) {
+            if (
+                OptionsView.isPlayPinedOn()
+            ) {
                 _setPicCounter(pic);
                 _els.pictureCounterCtn.show();
             } else {
                 _els.pictureCounterCtn.hide();
             }
 
-            if (OptionsView.isInsideFolder()) {
+            if (
+                OptionsView.isInsideFolder() ||
+                OptionsView.getSelectedTags().length
+            ) {
                 _setPicIndice(pic);
                 _els.pictureIndiceCtn.show();
             } else {

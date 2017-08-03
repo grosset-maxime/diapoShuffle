@@ -55,6 +55,10 @@ function ($) {
          *
          */
         remove: () => {
+            if (!_history.length) {
+                return;
+            }
+
             _history.splice(_navIndex, 1);
             _navIndex--;
         },

@@ -228,11 +228,32 @@ function (
                     onGetPic(
                         Pic,
                         _setTheInterval,
-                        _runEngine
+                        function (item) {
+                            BddEngine.remove();
+                            HistoryEngine.remove();
+
+                            API.deletePic({
+                                Pic: item,
+                                deleteOnlyFromBdd: true
+                            });
+
+                            _runEngine();
+                        }
+
                     );
 
                 },
-                onFailure: onError
+                onFailure: (error) => {
+                    if (error === '##empty##') {
+                        Notify.info({
+                            message: 'No more pic for current filter criterias'
+                        });
+
+                        _stop();
+                    } else {
+                        onError(error);
+                    }
+                }
             });
 
         } else if (
@@ -256,7 +277,7 @@ function (
 
                 },
                 onFailure: (error) => {
-                    if (!error) {
+                    if (error === '##empty##') {
                         Notify.info({
                             message: 'No more pic into: "' + Action.getInsideFolder() + '"'
                         });

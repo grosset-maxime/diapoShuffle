@@ -30,6 +30,7 @@ define(
     'App/Engines/HistoryEngine',
     'App/Engines/PinedPicEngine',
     'App/Engines/InsideFolderEngine',
+    'App/Engines/BddEngine',
 
     // Non AMD
     'js!jquery-ui'
@@ -60,7 +61,8 @@ function (
     // Engines
     HistoryEngine,
     PinedPicEngine,
-    InsideFolderEngine
+    InsideFolderEngine,
+    BddEngine
 ) {
     'use strict';
 
@@ -660,6 +662,7 @@ function (
 
                             HistoryEngine.remove();
                             InsideFolderEngine.remove();
+                            BddEngine.remove();
 
                             PlayerAction.enable();
                             _displayNext();

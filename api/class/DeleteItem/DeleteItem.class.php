@@ -228,7 +228,7 @@ class DeleteItem extends Root
      *
      * @return {Object}.
      */
-    public function deletePic($path = '', array $cacheFolder = array())
+    public function deletePic($path = '', array $cacheFolder = array(), $continueIfNotExist = false)
     {
 
         // Init vars
@@ -236,8 +236,9 @@ class DeleteItem extends Root
         $explodedPath;
         $folderPath;
         $success;
+        $isFileExist = file_exists($path);
 
-        if (!file_exists($path)) {
+        if (!$isFileExist && !$continueIfNotExist) {
             throw new ExceptionExtended(
                 array(
                     'publicMessage' => 'Pic doesn\'t exist: ' . $path,
@@ -249,7 +250,7 @@ class DeleteItem extends Root
 
         try {
 
-            $success = unlink($path);
+            $success = $isFileExist ? unlink($path) : true;
 
         } catch (Exception $e) {
             throw new ExceptionExtended(

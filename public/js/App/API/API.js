@@ -110,7 +110,9 @@ function ($, PM) {
 
         /**
          * @param {Object} options - Options.
-         * @param {Pic} Pic - Pic to delete.
+         * @param {Pic} Pic - Item to delete.
+         * @param {Boolean} [continueIfNotExist=false] - Continue delete script if item doesn't exist in file system.
+         * @param {Boolean} [deleteOnlyFromBdd=false] - Delete item only from the bdd, do not remove it from file system.
          * @param {Function} [onSuccess] - Success callback.
          * @param {Function} [onFailure] - Failure callback.
          */
@@ -131,7 +133,9 @@ function ($, PM) {
                 dataType: 'json',
                 async: true,
                 data: {
-                    picPath: Pic.src
+                    picPath: Pic.src,
+                    continueIfNotExist: options.continueIfNotExist,
+                    deleteOnlyFromBdd: options.deleteOnlyFromBdd
                 }
             });
 

@@ -23,14 +23,14 @@ function ($, Utils, API, Pic) {
     let _getNextRandomly, _getNextAfter, _createPic;
 
     _getNextRandomly = () => {
-        let navIndex, pic,
+        let pic,
             nbPics = _pics.length;
 
-        navIndex = Utils.getRandomNum(nbPics - 1);
+        _currentIndex = Utils.getRandomNum(nbPics - 1);
 
-        pic = _pics[navIndex];
+        pic = _pics[_currentIndex];
 
-        return !pic.incCounter ? _createPic(pic, navIndex, nbPics) : pic;
+        return !pic.incCounter ? _createPic(pic, _currentIndex, nbPics) : pic;
     };
 
     _getNextAfter = () => {
@@ -44,16 +44,16 @@ function ($, Utils, API, Pic) {
         return !pic.incCounter ? _createPic(pic, _currentIndex, nbPics) : pic;
     };
 
-    _createPic = (picInfo, navIndex, nbPics) => {
+    _createPic = (picInfo, index, nbPics) => {
          let pic = new Pic({
             customFolderPath: _folder,
             publicPathWithName: picInfo.path,
             tags: picInfo.tags,
-            indice: navIndex + 1,
+            indice: index + 1,
             nbResult: nbPics
         });
 
-         _pics[navIndex] = pic;
+         _pics[index] = pic;
 
          return pic;
     };
@@ -89,7 +89,7 @@ function ($, Utils, API, Pic) {
                         _currentIndex = -1;
 
                         if (!picsList.length) {
-                            options.onFailure && options.onFailure();
+                            options.onFailure && options.onFailure('##empty##');
                             return;
                         }
 

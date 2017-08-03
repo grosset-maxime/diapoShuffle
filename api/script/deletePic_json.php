@@ -1,6 +1,6 @@
 <?php
 /**
- * Description : Delete a pic.
+ * Description : Delete an Item.
  * Return : JSON
  *
  * PHP version 5
@@ -41,12 +41,16 @@ use Bdd\Pic;
 // ====================
 
 $picPath = trim($_POST['picPath']) ? trim($_POST['picPath']) : '';
+$continueIfNotExist = !empty($_POST['continueIfNotExist']) ? !!$_POST['continueIfNotExist'] : false;
+$deleteOnlyFromBdd = !empty($_POST['deleteOnlyFromBdd']) ? !!$_POST['deleteOnlyFromBdd'] : false;
 
 $logError = array(
     'mandatory_fields' => array(
         'picPath' => '= ' . $picPath
     ),
     'optional_fields' => array(
+        'continueIfNotExist' => '= ' . ($continueIfNotExist ? 'true' : 'false'),
+        'deleteOnlyFromBdd' => '= ' . ($deleteOnlyFromBdd ? 'true' : 'false')
     ),
 );
 
@@ -78,12 +82,18 @@ $absolutePicPath = $_BASE_PIC_PATH . $path;
 $cacheManager = new CacheManager();
 
 try {
+    $result = null;
 
-    $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder());
+    if (!$deleteOnlyFromBdd) {
+        $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder(), $continueIfNotExist);
+    }
 
-    if (is_array($result) && $result['success'] === true) {
-        // Remove pic from cache.
-        $cacheManager->setCacheFolder($result['cacheFolder']);
+
+    if ($deleteOnlyFromBdd || is_array($result) && $result['success'] === true) {
+        if (!$deleteOnlyFromBdd) {
+            // Remove pic from cache.
+            $cacheManager->setCacheFolder($result['cacheFolder']);
+        }
 
         try {
 
