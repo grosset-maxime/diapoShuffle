@@ -77,7 +77,7 @@ function ($, Utils, API, Pic) {
         getNext: (options) => {
             let item;
 
-            item = options.getRandomly ? _getNextRandomly() : _getNextAfter();
+            item = options.runMethod === 'random' ? _getNextRandomly() : _getNextAfter();
             item.incCounter();
 
             options.onSuccess && options.onSuccess(item);

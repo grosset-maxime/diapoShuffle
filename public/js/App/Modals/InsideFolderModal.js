@@ -52,20 +52,6 @@ function (
                     })).build()
                 }).css({
                     'font-weight': 'bold'
-                }),
-                $('<div>', {
-                    html: $('<label>', {
-                        for: 'getRandomlyCheckbox',
-                        html: [
-                            $('<input/>', {
-                                type: 'checkbox',
-                                id: 'getRandomlyCheckbox',
-                                name: 'getRandomlyBox',
-                                value: 'true'
-                            }),
-                            'Should display pic randomly ?'
-                        ]
-                    })
                 })
             ]
         });
@@ -121,7 +107,7 @@ function (
                 },
                 buttons: [{
                     text: 'Go outside',
-                    tabIndex: opts.isInside ? 0 : 1,
+                    tabIndex: opts.isInside ? 0 : -1,
                     click: () => {
                         modal.dialog('close');
 
@@ -137,13 +123,12 @@ function (
                     }
                 }, {
                     text: 'Go inside',
-                    tabIndex: opts.isInside ? 1 : 0,
+                    tabIndex: opts.isInside ? -1 : 0,
                     click: () => {
                         modal.dialog('close');
 
                         opts.onInside(
-                            _getInsidePath(),
-                            modal.find('#getRandomlyCheckbox').is(':checked')
+                            _getInsidePath()
                         );
                     }
                 }]

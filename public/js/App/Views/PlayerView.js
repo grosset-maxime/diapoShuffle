@@ -94,7 +94,7 @@ function (
 
         let buildCmd = () => {
             let btnStop, btnPrevious, btnNext, btnPause, btnDelete,
-                btnInside, btnAddFolder, btnPin, btnUnPin;
+                btnInside, btnAddFolder, btnPin, btnUnPin, selectRunMethod;
 
             // Btn delete
             btnDelete = _els.btnDelete = $('<input>', {
@@ -187,6 +187,25 @@ function (
                 .button()
                 .hide();
 
+            selectRunMethod = _els.selectRunMethod = $('<select>', {
+                'class': 'select run_method_select',
+                html: [
+                    $('<option>', {
+                        value: 'random',
+                        text: 'Random',
+                        selected: 'selected'
+                    }),
+                    $('<option>', {
+                        value: 'normal',
+                        text: 'Normal'
+                    }),
+                    $('<option>', {
+                        value: 'randomAsBefore',
+                        text: 'Random as before'
+                    })
+                ]
+            });
+
             cmdCtn.append(
                 btnDelete, btnPrevious,
                 btnNext,
@@ -195,7 +214,8 @@ function (
                 btnInside,
                 btnAddFolder,
                 btnPin,
-                btnUnPin
+                btnUnPin,
+                selectRunMethod
             );
         }; // End function buildCmd()
 
@@ -465,6 +485,7 @@ function (
         let isPlayPined = OptionsView.isPlayPinedOn();
 
         PlayerAction.setOptions({
+            runMethod: _els.selectRunMethod.find(':selected').val(),
             interval: OptionsView.getTimeInterval(),
 
             FoldersEngine: {
@@ -732,9 +753,9 @@ function (
                 onOpen: () => {
                     PlayerAction.disable();
                 },
-                onInside: (insidePath, getRandomly) => {
+                onInside: (insidePath) => {
                     _els.btnInside.val(BTN_OUTSIDE);
-                    PlayerAction.setInsideFolder(insidePath, getRandomly);
+                    PlayerAction.setInsideFolder(insidePath);
                     PlayerAction.enable();
                     PlayerAction.resume();
 

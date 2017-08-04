@@ -42,11 +42,12 @@ function (
     'use strict';
 
     const DEFAULT_INTERVAL = 3,
+        DEFAULT_RUN_METHOD = 'random',
         VIEW_MODE_CLASS = 'diapo_shuffle_view_mode';
 
     let Action, _idInterval,
         _defaultOptions = {
-            runMethod: 'random',
+            runMethod: DEFAULT_RUN_METHOD,
             interval: DEFAULT_INTERVAL,
 
             FoldersEngine: {
@@ -54,8 +55,7 @@ function (
             },
 
             InsideFolderEngine: {
-                folder: '',
-                getRandomly: false
+                folder: ''
             },
 
             PinedEngine: {
@@ -219,7 +219,7 @@ function (
         ) {
 
             BddEngine.run({
-                runMethod: _options.runMethod, // TODO: add UI to choose runMethod.
+                runMethod: _options.runMethod,
                 Tags: _options.BddEngine.Tags,
                 tagsOperator: _options.BddEngine.tagsOperator,
                 types: _options.BddEngine.types,
@@ -260,13 +260,12 @@ function (
 
         } else if (
             _options.InsideFolderEngine.folder &&
-            !_options.InsideFolderEngine.getRandomly
+            _options.runMethod !== 'randomAsBefore'
         ) {
 
             InsideFolderEngine.run({
                 runMethod: _options.runMethod,
                 folder: _options.InsideFolderEngine.folder,
-                getRandomly: _options.InsideFolderEngine.getRandomly,
                 onSuccess: (Pic) => {
 
                     HistoryEngine.add(Pic);
@@ -479,9 +478,8 @@ function (
         /**
          *
          */
-        setInsideFolder: (folder = '', getRandomly = false) => {
+        setInsideFolder: (folder = '') => {
             _options.InsideFolderEngine.folder = folder;
-            _options.InsideFolderEngine.getRandomly = getRandomly;
 
             if (!folder) {
                 _options.events.onResetInsideFolder();
@@ -502,6 +500,7 @@ function (
 
             $.extend(true, _options, opts || {});
 
+            _options.runMethod = opts.runMethod || DEFAULT_RUN_METHOD;
             _options.interval = opts.interval || DEFAULT_INTERVAL;
 
             // Folders engine options.

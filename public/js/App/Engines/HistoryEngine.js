@@ -16,9 +16,6 @@ function ($) {
 
     Engine = {
 
-        /**
-         *
-         */
         init: (opts = {}) => {
             _options = {};
 
@@ -34,26 +31,17 @@ function ($) {
                 },
                 opts
             );
-        }, // End init()
+        },
 
-        /**
-         *
-         */
         setOptions: (opts) => {
             $.extend(true, _options, opts || {});
-        }, // End setOptions()
+        },
 
-        /**
-         *
-         */
         add: (pic) => {
             _history.push(pic);
             _navIndex = _history.length - 1;
         },
 
-        /**
-         *
-         */
         remove: () => {
             if (!_history.length) {
                 return;
@@ -63,16 +51,10 @@ function ($) {
             _navIndex--;
         },
 
-        /**
-         *
-         */
         getCurrent: () => {
             return _history[_navIndex];
         },
 
-        /**
-         *
-         */
         getPrevious: () => {
             let events = _options.events,
                 onMiddle = events.onMiddle,
@@ -89,9 +71,6 @@ function ($) {
             return _history[_navIndex];
         },
 
-        /**
-         *
-         */
         getNext: () => {
             let events = _options.events,
                 onMiddle = events.onMiddle,
@@ -108,16 +87,10 @@ function ($) {
             return _history[_navIndex];
         },
 
-        /**
-         *
-         */
         isFirst: () => {
             return _navIndex <= 0;
         },
 
-        /**
-         *
-         */
         isLast: () => {
             return _navIndex >= (_history.length - 1);
         }
