@@ -16,46 +16,52 @@ function ($, Utils, API, Pic) {
     let Engine,
         _options = {},
         _folder = '',
-        _pics = [],
+        _items = [],
         _currentIndex = -1;
 
     // Private functions
-    let _getNextRandomly, _getNextAfter, _createPic;
+    let _getNextRandomly, _getNextAfter, _createItem;
 
     _getNextRandomly = () => {
-        let pic,
-            nbPics = _pics.length;
+        let item,
+            nbItems = _items.length;
 
-        _currentIndex = Utils.getRandomNum(nbPics - 1);
+        _currentIndex = Utils.getRandomNum(nbItems - 1);
 
-        pic = _pics[_currentIndex];
+        item = _items[_currentIndex];
+        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
+        item.index = _currentIndex + 1;
+        item.nbResult = nbItems;
 
-        return !pic.incCounter ? _createPic(pic, _currentIndex, nbPics) : pic;
+        return item;
     };
 
     _getNextAfter = () => {
-        let pic,
-            nbPics = _pics.length;
+        let item,
+            nbItems = _items.length;
 
         _currentIndex++;
-        _currentIndex = _currentIndex >= nbPics ? 0 : _currentIndex;
-        pic = _pics[_currentIndex];
+        _currentIndex = _currentIndex >= nbItems ? 0 : _currentIndex;
+        item = _items[_currentIndex];
+        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
+        item.index = _currentIndex + 1;
+        item.nbResult = nbItems;
 
-        return !pic.incCounter ? _createPic(pic, _currentIndex, nbPics) : pic;
+        return item;
     };
 
-    _createPic = (picInfo, index, nbPics) => {
-         let pic = new Pic({
+    _createItem = (itemInfo, index, nbItems) => {
+         let item = new Pic({
             customFolderPath: _folder,
-            publicPathWithName: picInfo.path,
-            tags: picInfo.tags,
-            indice: index + 1,
-            nbResult: nbPics
+            publicPathWithName: itemInfo.path,
+            tags: itemInfo.tags,
+            index: index + 1,
+            nbResult: nbItems
         });
 
-         _pics[index] = pic;
+         _items[index] = item;
 
-         return pic;
+         return item;
     };
 
     Engine = {
@@ -69,26 +75,26 @@ function ($, Utils, API, Pic) {
         },
 
         getNext: (options) => {
-            let pic;
+            let item;
 
-            pic = options.getRandomly ? _getNextRandomly() : _getNextAfter();
-            pic.incCounter();
+            item = options.getRandomly ? _getNextRandomly() : _getNextAfter();
+            item.incCounter();
 
-            options.onSuccess && options.onSuccess(pic);
+            options.onSuccess && options.onSuccess(item);
 
-            return pic;
+            return item;
         },
 
         run: (options) => {
-            if (!_pics.length) {
+            if (!_items.length) {
                 API.getPicsList({
                     folder: options.folder,
-                    onSuccess: (picsList) => {
-                        _pics = picsList;
+                    onSuccess: (items) => {
+                        _items = items;
                         _folder = options.folder;
                         _currentIndex = -1;
 
-                        if (!picsList.length) {
+                        if (!items.length) {
                             options.onFailure && options.onFailure('##empty##');
                             return;
                         }
@@ -103,25 +109,19 @@ function ($, Utils, API, Pic) {
         },
 
         remove: () => {
-            let nbPics = _pics.length;
+            let nbItems = _items.length;
 
-            if (!nbPics) {
+            if (!nbItems) {
                 return;
             }
 
-            // Remove pic from the list.
-            _pics.splice(_currentIndex, 1);
-
-            // Set for each pic the new number of pics in the folder.
-            _pics.forEach(function (pic) {
-                pic.nbResult = nbPics - 1;
-            });
-
+            // Remove item from the list.
+            _items.splice(_currentIndex, 1);
             _currentIndex--;
         },
 
         clear: () => {
-            _pics = [];
+            _items = [];
             _folder = '';
             _currentIndex = -1;
         }

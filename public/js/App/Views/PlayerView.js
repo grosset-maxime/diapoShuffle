@@ -28,7 +28,7 @@ define(
 
     // Engines
     'App/Engines/HistoryEngine',
-    'App/Engines/PinedPicEngine',
+    'App/Engines/PinedEngine',
     'App/Engines/InsideFolderEngine',
     'App/Engines/BddEngine',
 
@@ -60,7 +60,7 @@ function (
 
     // Engines
     HistoryEngine,
-    PinedPicEngine,
+    PinedEngine,
     InsideFolderEngine,
     BddEngine
 ) {
@@ -471,7 +471,7 @@ function (
                 customFolders: OptionsView.getCustomFolders() || []
             },
 
-            PinedPicEngine: {
+            PinedEngine: {
                 enabled: isPlayPined
             },
 
@@ -614,20 +614,8 @@ function (
                 }
             });
 
-            PinedPicEngine.init({
+            PinedEngine.init({
                 events: {
-                    onFirst: () => {
-                        View.disablePreviousBtn();
-                        View.enableNextBtn();
-                    },
-                    onLast: () => {
-                        View.disableNextBtn();
-                        View.enablePreviousBtn();
-                    },
-                    onMiddle: () => {
-                        View.enablePreviousBtn();
-                        View.enableNextBtn();
-                    },
                     onAdd: OptionsView.onAddPined,
                     onRemove: OptionsView.onRemovePined,
                     onClear: () => {
@@ -663,6 +651,7 @@ function (
                             HistoryEngine.remove();
                             InsideFolderEngine.remove();
                             BddEngine.remove();
+                            PinedEngine.remove();
 
                             PlayerAction.enable();
                             _displayNext();
@@ -790,14 +779,14 @@ function (
         displayNext: _displayNext,
 
         pin: () => {
-            PinedPicEngine.add(View.currentPic);
-            _setNbPinBtn(PinedPicEngine.getNbPined());
+            PinedEngine.add(View.currentPic);
+            _setNbPinBtn(PinedEngine.getNbPined());
             _doActionAnim();
         },
 
         unPin: () => {
-            PinedPicEngine.remove();
-            _setNbPinBtn(PinedPicEngine.getNbPined());
+            PinedEngine.remove();
+            _setNbPinBtn(PinedEngine.getNbPined());
             _displayNext();
             _doActionAnim();
         },

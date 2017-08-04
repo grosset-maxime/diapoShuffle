@@ -17,7 +17,7 @@ define(
 
     // Engines
     'App/Engines/HistoryEngine',
-    'App/Engines/PinedPicEngine',
+    'App/Engines/PinedEngine',
     'App/Engines/BddEngine',
     'App/Engines/InsideFolderEngine',
 ],
@@ -35,7 +35,7 @@ function (
 
     // Engines
     HistoryEngine,
-    PinedPicEngine,
+    PinedEngine,
     BddEngine,
     InsideFolderEngine
 ) {
@@ -58,7 +58,7 @@ function (
                 getRandomly: false
             },
 
-            PinedPicEngine: {
+            PinedEngine: {
                 enabled: false
             },
 
@@ -191,16 +191,14 @@ function (
                 message: error,
                 autoHide: false
             });
-
-            // TODO: Remove from bdd pics which throw error.
         }
 
         _clearTheInterval();
 
         onBeforeGetPic();
 
-        if (_options.PinedPicEngine.enabled) {
-            let Pic = PinedPicEngine.run({
+        if (_options.PinedEngine.enabled) {
+            let Pic = PinedEngine.run({
                 runMethod: _options.runMethod
             });
 
@@ -209,7 +207,11 @@ function (
             onGetPic(
                 Pic,
                 _setTheInterval,
-                _runEngine
+                function () {
+                    PinedEngine.remove();
+                    HistoryEngine.remove();
+                    _runEngine();
+                }
             );
         } else if (
             _options.BddEngine.Tags.length ||
@@ -217,7 +219,7 @@ function (
         ) {
 
             BddEngine.run({
-                runMethod: _options.runMethod,
+                runMethod: _options.runMethod, // TODO: add UI to choose runMethod.
                 Tags: _options.BddEngine.Tags,
                 tagsOperator: _options.BddEngine.tagsOperator,
                 types: _options.BddEngine.types,
@@ -496,7 +498,7 @@ function (
          *
          */
         setOptions: (opts) => {
-            let bddEngineOptions, PinedPicEngineOptions, FoldersEngineOptions;
+            let bddEngineOptions, PinedEngineOptions, FoldersEngineOptions;
 
             $.extend(true, _options, opts || {});
 
@@ -507,8 +509,8 @@ function (
             FoldersEngineOptions.customFolders = opts.FoldersEngine.customFolders || [],
 
             // Pined pic engine options.
-            PinedPicEngineOptions = _options.PinedPicEngine = _options.PinedPicEngine || {};
-            PinedPicEngineOptions.enabled = opts.PinedPicEngine.enabled,
+            PinedEngineOptions = _options.PinedEngine = _options.PinedEngine || {};
+            PinedEngineOptions.enabled = opts.PinedEngine.enabled,
 
             // Bdd engine options.
             bddEngineOptions = _options.BddEngine = _options.BddEngine || {};

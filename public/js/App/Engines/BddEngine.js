@@ -19,7 +19,7 @@ function ($, Utils, API, Item) {
         _currentIndex = -1;
 
     // Private functions
-    let _getNextRandomly, _getNextAfter, _createPic;
+    let _getNextRandomly, _getNextAfter, _createItem;
 
     _getNextRandomly = () => {
         let item,
@@ -28,8 +28,11 @@ function ($, Utils, API, Item) {
         _currentIndex = Utils.getRandomNum(nbItems - 1);
 
         item = _items[_currentIndex];
+        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
+        item.index = _currentIndex + 1;
+        item.nbResult = nbItems;
 
-        return !item.incCounter ? _createPic(item, _currentIndex, nbItems) : item;
+        return item;
     };
 
     _getNextAfter = () => {
@@ -39,15 +42,18 @@ function ($, Utils, API, Item) {
         _currentIndex++;
         _currentIndex = _currentIndex >= nbItems ? 0 : _currentIndex;
         item = _items[_currentIndex];
+        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
+        item.index = _currentIndex + 1;
+        item.nbResult = nbItems;
 
-        return !item.incCounter ? _createPic(item, _currentIndex, nbItems) : item;
+        return item;
     };
 
-    _createPic = (itemInfo, index, nbItems) => {
+    _createItem = (itemInfo, index, nbItems) => {
          let item = new Item({
             publicPathWithName: itemInfo.path,
             tags: itemInfo.tags,
-            indice: index + 1,
+            index: index + 1,
             nbResult: nbItems
         });
 
@@ -102,21 +108,15 @@ function ($, Utils, API, Item) {
             }
         },
 
-        remove: (pic) => {
+        remove: () => {
             let nbItems = _items.length;
 
             if (!nbItems) {
                 return;
             }
 
-            // Remove pic from the list.
+            // Remove item from the list.
             _items.splice(_currentIndex, 1);
-
-            // Set for each pic the new number of pics in the folder.
-            _items.forEach(function (pic) {
-                pic.nbResult = nbItems - 1;
-            });
-
             _currentIndex--;
         },
 

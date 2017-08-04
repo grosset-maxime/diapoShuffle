@@ -34,7 +34,7 @@ function (
             width: 0,
             height: 0,
             count: 0,
-            indice: 0,
+            index: 0,
             tags: [],
             nbResult: 0
         },
@@ -50,7 +50,7 @@ function (
         width: 0,
         height: 0,
         count: 0,  // Count of nb of display.
-        indice: 0, // Indice of the pic inside a pics list.
+        index: 0, // Indice of the pic inside a pics list.
 
         tags: [],
 
@@ -102,7 +102,7 @@ function (
             }
 
             that.count = options.count || 0;
-            that.indice = options.indice || 0;
+            that.index = options.index || 0;
             that.nbResult = options.nbResult || 0;
 
             that.setTags(options.tags || []);

@@ -22,7 +22,7 @@ define(
     'App/Modals/TagsModal',
 
     // Engines
-    'App/Engines/PinedPicEngine',
+    'App/Engines/PinedEngine',
     'App/Engines/BddEngine',
 
     // Non AMD
@@ -47,7 +47,7 @@ function (
     TagsModal,
 
     // Engines
-    PinedPicEngine,
+    PinedEngine,
     BddEngine
 ) {
     'use strict';
@@ -423,7 +423,7 @@ function (
                 'class': 'title clear_btn text_btn',
                 text: 'clear',
                 on: {
-                    click: PinedPicEngine.clear
+                    click: PinedEngine.clear
                 }
             }).hide()
         );
@@ -732,7 +732,7 @@ function (
             let inputPinPic = _els.inputPinPic,
                 parent = inputPinPic.parent();
 
-            parent.find('.count').text('(' + PinedPicEngine.getNbPined() + ')');
+            parent.find('.count').text('(' + PinedEngine.getNbPined() + ')');
             parent.removeClass('disabled');
             parent.find('.clear_btn').show();
         },
@@ -740,7 +740,7 @@ function (
         onRemovePined: () => {
             let inputPinPic = _els.inputPinPic,
                 parent = inputPinPic.parent(),
-                nbPined = PinedPicEngine.getNbPined();
+                nbPined = PinedEngine.getNbPined();
 
             parent.find('.count').text('(' + nbPined + ')');
 

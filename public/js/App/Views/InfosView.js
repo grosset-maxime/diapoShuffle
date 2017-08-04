@@ -22,13 +22,13 @@ function ($, Client, OptionsView) {
 
 
     // Private functions.
-    let _buildSkeleton, _setPicFolderPath, _setPicCounter, _displayOsPicPath,
-        _setTags, _onTagsCtnClick, _setPicIndice;
+    let _buildSkeleton, _setPicFolderPath, _displayOsPicPath,
+        _setTags, _onTagsCtnClick, _setItemIndex;
 
 
     _buildSkeleton = () => {
         let mainCtn, customFolderPathCtn, randomPublicPathCtn,
-            picturePathCtn, pictureCounterCtn, tagsCtn, pictureIndiceCtn;
+            picturePathCtn, tagsCtn, itemIndexCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'ds_infos_view'
@@ -52,11 +52,7 @@ function ($, Client, OptionsView) {
             }
         });
 
-        _els.pictureCounterCtn = pictureCounterCtn = $('<div>', {
-            'class': 'picture_counter_ctn'
-        });
-
-        _els.pictureIndiceCtn = pictureIndiceCtn = $('<div>', {
+        _els.itemIndexCtn = itemIndexCtn = $('<div>', {
             'class': 'picture_counter_ctn'
         });
 
@@ -68,8 +64,7 @@ function ($, Client, OptionsView) {
         });
 
         _els.mainCtn.append(
-            pictureCounterCtn,
-            pictureIndiceCtn,
+            itemIndexCtn,
             picturePathCtn,
             tagsCtn
         );
@@ -82,21 +77,18 @@ function ($, Client, OptionsView) {
         _els.randomPublicPathCtn.html(pic.randomPublicPath);
     };
 
-    _setPicCounter = (pic = {}) => {
-        let picCount = pic.count,
-            counter = pic.nbResult ? (pic.nbResult + ' | ' + picCount) : picCount;
+    _setItemIndex = (item = {}) => {
+        let itemIndex = item.index,
+            index = itemIndex
+                ? item.nbResult
+                    ? (itemIndex + ' / ' + item.nbResult)
+                    : itemIndex
+                : '';
+            index += index && item.count ? ' | ' + item.count : '';
 
-        _els.pictureCounterCtn.html(counter);
-    };
-
-    _setPicIndice = (pic = {}) => {
-        let picIndice = pic.indice,
-            indice = pic.nbResult
-                ? (pic.indice + ' / ' + pic.nbResult)
-                : picIndice;
-            indice += ' | ' + pic.count;
-
-        _els.pictureIndiceCtn.html(indice);
+        index
+            ? _els.itemIndexCtn.html(index)
+            : _els.itemIndexCtn.hide();
     };
 
     _setTags = (pic = {}) => {
@@ -203,22 +195,15 @@ function ($, Client, OptionsView) {
             }
 
             if (
-                OptionsView.isPlayPinedOn()
-            ) {
-                _setPicCounter(pic);
-                _els.pictureCounterCtn.show();
-            } else {
-                _els.pictureCounterCtn.hide();
-            }
-
-            if (
+                OptionsView.isPlayPinedOn() ||
                 OptionsView.isInsideFolder() ||
-                OptionsView.getSelectedTags().length
+                OptionsView.getSelectedTags().length ||
+                OptionsView.getSelectedTypes().length
             ) {
-                _setPicIndice(pic);
-                _els.pictureIndiceCtn.show();
+                _setItemIndex(pic);
+                _els.itemIndexCtn.show();
             } else {
-                _els.pictureIndiceCtn.hide();
+                _els.itemIndexCtn.hide();
             }
 
             if (OptionsView.showTags()) {
