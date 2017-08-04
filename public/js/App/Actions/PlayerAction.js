@@ -487,6 +487,10 @@ function (
             }
         },
 
+        setRunMethod: (runMethod) => {
+            _options.runMethod = runMethod || DEFAULT_RUN_METHOD;
+        },
+
         /**
          * @returns {String} Inside folder path.
          */

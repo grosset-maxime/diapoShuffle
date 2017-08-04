@@ -53,6 +53,9 @@ function ($) {
             shortcut: 'p',
             desc: 'Pin the current picture'
         }, {
+            shortcut: 'm',
+            desc: 'Toggle run method between "Random" and "Normal"'
+        }, {
             shortcut: 'left arrow',
             desc: 'Display previous picture'
         }, {

@@ -143,6 +143,10 @@ function (
                         PlayerView.pin();
                         break;
 
+                    case 77: // m (as method)
+                        PlayerView.toggleRunMethod();
+                        break;
+
                     case 37: // left arrow
                         PlayerView.displayPrevious();
                         break;

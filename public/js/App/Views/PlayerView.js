@@ -82,7 +82,7 @@ function (
     // Private functions.
     let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
         _zoomPic, _displayPrevious, _displayNext, _setPic, _onPause, _zoom,
-        _onGetPic, _setNbPinBtn, _onBeforeGetPic, _onResume,
+        _onGetPic, _setNbPinBtn, _onBeforeGetPic, _onResume, _onSelectRunMethodChange,
         _hideLoading, _showLoading, _doActionAnim, _cleanPic;
 
     // Private vars.
@@ -192,8 +192,7 @@ function (
                 html: [
                     $('<option>', {
                         value: 'random',
-                        text: 'Random',
-                        selected: 'selected'
+                        text: 'Random'
                     }),
                     $('<option>', {
                         value: 'normal',
@@ -203,7 +202,10 @@ function (
                         value: 'randomAsBefore',
                         text: 'Random as before'
                     })
-                ]
+                ],
+                on: {
+                    change: _onSelectRunMethodChange
+                }
             });
 
             cmdCtn.append(
@@ -485,7 +487,7 @@ function (
         let isPlayPined = OptionsView.isPlayPinedOn();
 
         PlayerAction.setOptions({
-            runMethod: _els.selectRunMethod.find(':selected').val(),
+            runMethod: _els.selectRunMethod.val(),
             interval: OptionsView.getTimeInterval(),
 
             FoldersEngine: {
@@ -547,6 +549,10 @@ function (
         if (Pic) {
             _setPic(Pic, onSuccess, onFailure);
         }
+    };
+
+    _onSelectRunMethodChange = () => {
+        PlayerAction.setRunMethod(_els.selectRunMethod.val());
     };
 
     _setNbPinBtn = (nb) => {
@@ -869,6 +875,15 @@ function (
                 btnInside.hide();
 
             }
+        },
+
+        toggleRunMethod: () => {
+            let selectRunMethodEl = _els.selectRunMethod,
+                selectedMethod = selectRunMethodEl.find(':selected').val();
+
+            selectRunMethodEl.val(selectedMethod === 'random' ? 'normal': 'random');
+
+            _onSelectRunMethodChange();
         },
 
         enablePreviousBtn: () => {
