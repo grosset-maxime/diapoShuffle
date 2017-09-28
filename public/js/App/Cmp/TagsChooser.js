@@ -184,8 +184,8 @@ define([
                 let tag = $(tags[i]);
 
                 if (tag.hasClass('highlighted')) {
-                    fn(tags, i);
                     tag.removeClass('highlighted');
+                    fn(tags, i);
                     break;
                 }
             }
