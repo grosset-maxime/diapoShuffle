@@ -30,10 +30,12 @@ $FOOTER_HEIGHT: 44px;
 
 .ds_middle_ctn {
     order: 2;
-    width: 100;
+    width: 100%;
     min-height: 1px;
+    @include calc(max-height, unquote("100vh -")($HEADER_HEIGHT + $FOOTER_HEIGHT));
     align-items: flex-start;
     position: relative;
+    overflow: auto;
 }
 
 .ds_footer_ctn {

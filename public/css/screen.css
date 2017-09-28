@@ -360,12 +360,14 @@ body {
 /* line 31, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ds_middle_ctn {
   order: 2;
-  width: 100;
+  width: 100%;
   min-height: 1px;
+  max-height: calc(100vh - 94px);
   align-items: flex-start;
   position: relative;
+  overflow: auto;
 }
-/* line 39, ../../sass/App/Views/_MainView.scss */
+/* line 41, ../../sass/App/Views/_MainView.scss */
 .diapo_shuffle .ds_footer_ctn {
   order: 3;
   height: 44px;
