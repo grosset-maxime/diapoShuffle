@@ -67,7 +67,7 @@ function (
         _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick, _buildTagsFilter, _buildFolderFilter,
         _buildInsideOption, _buildIntervalOption, _keyUpInput, _buildZoomOption, _buildScaleOption,
         _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect, _buildTypesFilter,
-        _onTypesSelectBtnClick;
+        _onTypesSelectBtnClick, _removeTagFromSelected;
 
 
     _keyUpInput = (e) => {
@@ -539,6 +539,14 @@ function (
         _options.root.append(mainCtn);
     };
 
+    _removeTagFromSelected = (tagId) => {
+        _onTagsSelect(
+            _selectedTags.filter(function (tag) {
+                return tag.getId() !== tagId;
+            })
+        );
+    };
+
     _onTagsSelect = (selectedTags) => {
         let selectedTagsCtn = _els.selectedTagsCtn,
             btnUnSelectAllTags = _els.btnUnSelectAllTags,
@@ -554,8 +562,13 @@ function (
             selectedTags.forEach(function (Tag) {
                 selectedTagsCtn.append(
                     $('<div>', {
-                        'class': 'tag_el thumb',
-                        text: Tag.getName()
+                        'class': 'tag_el thumb btn',
+                        text: Tag.getName(),
+                        on: {
+                            click: function () {
+                                _removeTagFromSelected(Tag.getId());
+                            }
+                        }
                     }).button()
                 );
             });

@@ -2,12 +2,22 @@
 
 $ORANGE: #FDECD0;
 $ORANGE_LIGHT: #FCF3E5;
+$BLUE: #d0dffd;
+$BLUE_LIGHT: #e5ecfc;
 
 
 .btn.ui-button {
     background: $ORANGE_LIGHT;
     transition: 0.1s;
     outline: none;
+
+    &.thumb {
+        background: $BLUE_LIGHT;
+
+        &.ui-state-hover {
+            background: $BLUE;
+        }
+    }
 
     &.ui-state-hover {
         background: $ORANGE;
