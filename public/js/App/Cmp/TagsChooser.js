@@ -285,6 +285,7 @@ define([
                     'class': 'btn',
                     value: 'Select random',
                     type: 'button',
+                    tabIndex: -1,
                     on: {
                         click: that._selectRandomTag.bind(that)
                     }
