@@ -199,7 +199,7 @@ function (
                     case 32: // SPACE
                     case 80: // p (as pause)
                         if (!OptionsView.hasFocus()) {
-                            PlayerAction.play();
+                            PlayerAction.start();
                             doPreventDefault = true;
                         }
                         break;
