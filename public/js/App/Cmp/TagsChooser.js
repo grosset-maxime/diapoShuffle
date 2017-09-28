@@ -122,8 +122,36 @@ define([
                 tag.removeClass('highlighted');
             });
 
+            // Highlight the first tag in filtered list.
             tags = availableTagsCtn.find('.tag_el:not(.hide):first');
             tags.length && tags.addClass('highlighted');
+        },
+
+        _onFilterSelectedTags: function (search) {
+            let tags, els, selectedTagsCtn,
+                that = this;
+
+            if (!search) {
+                that._clearFilterSelectedTags();
+                return;
+            }
+
+            els = that.els;
+            selectedTagsCtn = els.selectedTagsCtn;
+
+            search = search.toLowerCase();
+
+            tags = selectedTagsCtn.find('.tag_el');
+
+            tags.each(function(index, tagEl) {
+                let tag = $(tagEl);
+
+                if (tag.data('Tag').getName().toLowerCase().indexOf(search) < 0) {
+                    tag.addClass('hide');
+                } else {
+                    tag.removeClass('hide');
+                }
+            });
         },
 
         _clearFilterAvailableTags: function () {
@@ -137,6 +165,17 @@ define([
             });
 
             $(tags[0]).addClass('highlighted');
+
+            this._clearFilterSelectedTags();
+        },
+
+        _clearFilterSelectedTags: function () {
+            let els = this.els,
+                tags = els.selectedTagsCtn.find('.tag_el');
+
+            tags.each(function(index, tagEl) {
+                $(tagEl).removeClass('hide');
+            });
         },
 
         _selectRandomTag: function () {
@@ -231,15 +270,17 @@ define([
                     placeholder: 'filter',
                     on: {
                         keyup: function (e) {
-                            let key = e.which;
+                            let key = e.which,
+                                searchVal;
 
                             if ([13, 27, 37, 39].indexOf(key) >= 0) {
                                 return;
                             }
 
-                            that._onFilterAvailableTags(
-                                searchAvailableInput.val()
-                            );
+                            searchVal = searchAvailableInput.val();
+
+                            that._onFilterAvailableTags(searchVal);
+                            that._onFilterSelectedTags(searchVal);
                         },
                         keydown: function (e) {
                             let key = e.which,
