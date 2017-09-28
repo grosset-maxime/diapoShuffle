@@ -183,7 +183,7 @@ define([
                 els = this.els;
 
             randomTagEl = Utils.getRandomElement(
-                els.availableTagsCtn.find('.tag_el:not(.selected)')
+                els.availableTagsCtn.find('.tag_el:not(.selected):not(.hide)')
             );
             randomTagEl && randomTagEl.click();
 
