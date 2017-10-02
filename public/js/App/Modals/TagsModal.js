@@ -79,6 +79,7 @@ function ($, TagsChooser) {
                 close: (event) => {
                     event.stopPropagation();
                     _options.onClose();
+                    modal.remove();
                 },
                 open: () => {
                     _options.onOpen();
@@ -87,14 +88,14 @@ function ($, TagsChooser) {
                     text: 'Cancel',
                     tabIndex: -1,
                     click: () => {
-                        modal.dialog('close');
                         _options.onCancel();
+                        modal.dialog('close');
                     }
                 }, {
                     text: 'Set',
                     click: () => {
-                        modal.dialog('close');
                         _options.onEnd(_getTags());
+                        modal.dialog('close');
                     }
                 }]
             };
