@@ -101,6 +101,7 @@ function (
                 close: (event) => {
                     event.stopPropagation();
                     opts.onClose();
+                    modal.remove();
                 },
                 open: () => {
                     opts.onOpen();
@@ -109,27 +110,24 @@ function (
                     text: 'Go outside',
                     tabIndex: opts.isInside ? 0 : -1,
                     click: () => {
-                        modal.dialog('close');
-
                         opts.onOutside();
+                        modal.dialog('close');
                     }
                 }, {
                     text: 'Cancel',
                     tabIndex: -1,
                     click: () => {
-                        modal.dialog('close');
-
                         opts.onCancel();
+                        modal.dialog('close');
                     }
                 }, {
                     text: 'Go inside',
                     tabIndex: opts.isInside ? -1 : 0,
                     click: () => {
-                        modal.dialog('close');
-
                         opts.onInside(
                             _getInsidePath()
                         );
+                        modal.dialog('close');
                     }
                 }]
             };

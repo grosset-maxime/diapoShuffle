@@ -92,6 +92,7 @@ function (
                 close: (event) => {
                     event.stopPropagation();
                     opts.onClose();
+                    modal.remove();
                 },
                 open: () => {
                     opts.onOpen();
@@ -100,18 +101,17 @@ function (
                     text: 'Cancel',
                     tabIndex: -1,
                     click: () => {
-                        modal.dialog('close');
                         opts.onCancel();
+                        modal.dialog('close');
                     }
                 }, {
                     text: 'Add',
                     tabIndex: 0,
                     click: () => {
-                        modal.dialog('close');
-
                         opts.onAdd(
                             _getAddPath()
                         );
+                        modal.dialog('close');
                     }
                 }]
             };

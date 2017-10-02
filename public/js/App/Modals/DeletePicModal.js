@@ -44,6 +44,7 @@ function ($) {
                 close: (event) => {
                     event.stopPropagation();
                     opts.onClose();
+                    modal.remove();
                 },
                 open: () => {
                     opts.onOpen();
@@ -52,14 +53,14 @@ function ($) {
                     text: 'Cancel',
                     tabIndex: -1,
                     click: () => {
-                        modal.dialog('close');
                         opts.onCancel();
+                        modal.dialog('close');
                     }
                 }, {
                     text: 'Delete',
                     click: () => {
-                        modal.dialog('close');
                         opts.onDelete();
+                        modal.dialog('close');
                     }
                 }]
             };
