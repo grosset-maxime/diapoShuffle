@@ -105,6 +105,10 @@ function (
     _setTheInterval = () => {
         _clearTheInterval();
 
+        if (!_isPlaying) {
+            return;
+        }
+
         _idInterval = setTimeout(
             _runEngine,
             _options.interval * 1000
@@ -131,10 +135,10 @@ function (
 
         $(document.body).addClass(VIEW_MODE_CLASS);
 
-        _runEngine();
-
         _isPlaying = true;
         _isPausing = false;
+
+        _runEngine();
     };
 
     _stop = () => {
@@ -195,6 +199,10 @@ function (
 
         _clearTheInterval();
 
+        if (!_isPlaying) {
+            return;
+        }
+
         onBeforeGetPic();
 
         if (_options.PinedEngine.enabled) {
@@ -224,6 +232,9 @@ function (
                 tagsOperator: _options.BddEngine.tagsOperator,
                 types: _options.BddEngine.types,
                 onSuccess: (Pic) => {
+                    if (!_isPlaying) {
+                        return;
+                    }
 
                     HistoryEngine.add(Pic);
 
@@ -241,7 +252,6 @@ function (
 
                             _runEngine();
                         }
-
                     );
 
                 },
@@ -267,6 +277,9 @@ function (
                 runMethod: _options.runMethod,
                 folder: _options.InsideFolderEngine.folder,
                 onSuccess: (Pic) => {
+                    if (!_isPlaying) {
+                        return;
+                    }
 
                     HistoryEngine.add(Pic);
 
@@ -299,6 +312,10 @@ function (
                 runMethod: _options.runMethod,
                 customFolders: _getCustomFolders(),
                 onSuccess: (picInfo, warning) => {
+                    if (!_isPlaying) {
+                        return;
+                    }
+
                     let Pic = new PicClass(picInfo);
 
                     HistoryEngine.add(Pic);
@@ -316,7 +333,10 @@ function (
                                 _setTheInterval();
                             }
                         },
-                        _runEngine // Failure callback of _setPic()
+                        function () { // Failure callback of _setPic()
+                            _runEngine();
+                        }
+
                     );
                 },
                 onFailure: (error) => {
