@@ -80,6 +80,7 @@ function ($, TagsChooser) {
                     event.stopPropagation();
                     _options.onClose();
                     modal.remove();
+                    _tagChooser = null;
                 },
                 open: () => {
                     _options.onOpen();
