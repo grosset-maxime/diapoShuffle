@@ -8,9 +8,11 @@ define(
 
     'App/Utils/Utils',
     'App/API/API',
-    'App/Class/Pic'
+    'App/Class/Pic',
+
+    'App/Engines/HistoryEngine'
 ],
-function ($, Utils, API, Pic) {
+function ($, Utils, API, Pic, HistoryEngine) {
     'use strict';
 
     let Engine,
@@ -20,35 +22,7 @@ function ($, Utils, API, Pic) {
         _currentIndex = -1;
 
     // Private functions
-    let _getNextRandomly, _getNextAfter, _createItem;
-
-    _getNextRandomly = () => {
-        let item,
-            nbItems = _items.length;
-
-        _currentIndex = Utils.getRandomNum(nbItems - 1);
-
-        item = _items[_currentIndex];
-        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
-        item.index = _currentIndex + 1;
-        item.nbResult = nbItems;
-
-        return item;
-    };
-
-    _getNextAfter = () => {
-        let item,
-            nbItems = _items.length;
-
-        _currentIndex++;
-        _currentIndex = _currentIndex >= nbItems ? 0 : _currentIndex;
-        item = _items[_currentIndex];
-        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
-        item.index = _currentIndex + 1;
-        item.nbResult = nbItems;
-
-        return item;
-    };
+    let _getNextRandomly, _getNextAfter, _createItem, _getPreviousAfter, _getItem;
 
     _createItem = (itemInfo, index, nbItems) => {
          let item = new Pic({
@@ -63,6 +37,38 @@ function ($, Utils, API, Pic) {
 
          return item;
     };
+
+    _getItem = (index) => {
+        let nbItems = _items.length,
+            item = _items[index || _currentIndex];
+
+        item = !item.incCounter ? _createItem(item, _currentIndex, nbItems) : item;
+        item.index = _currentIndex + 1;
+        item.nbResult = nbItems;
+
+        return item;
+    };
+
+    _getNextRandomly = () => {
+        _currentIndex = Utils.getRandomNum(_items.length - 1);
+
+        return _getItem();
+    };
+
+    _getNextAfter = () => {
+        _currentIndex++;
+        _currentIndex = _currentIndex >= _items.length ? 0 : _currentIndex;
+
+        return _getItem();
+    };
+
+    _getPreviousAfter = () => {
+        _currentIndex--;
+        _currentIndex = _currentIndex < 0 ? _items.length - 1 : _currentIndex;
+
+        return _getItem();
+    };
+
 
     Engine = {
 
@@ -85,7 +91,22 @@ function ($, Utils, API, Pic) {
             return item;
         },
 
+        getPrevious: (options) => {
+            let item;
+
+            item = options.runMethod === 'random' ? HistoryEngine.getPrevious() : _getPreviousAfter();
+            item.incCounter();
+
+            options.onSuccess && options.onSuccess(item);
+
+            return item;
+        },
+
         run: (options) => {
+            function getItem () {
+                 Engine['get' + (options.way === 'previous' ? 'Previous' : 'Next')](options);
+            }
+
             if (!_items.length) {
                 API.getPicsList({
                     folder: options.folder,
@@ -99,12 +120,12 @@ function ($, Utils, API, Pic) {
                             return;
                         }
 
-                        Engine.getNext(options);
+                        getItem();
                     },
                     onFailure: options.onFailure
                 });
             } else {
-                Engine.getNext(options);
+                getItem();
             }
         },
 

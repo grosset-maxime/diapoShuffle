@@ -434,7 +434,7 @@ function (
             // TODO: factorize success callback with image one.
             View.show();
             onSuccess && onSuccess();
-            PlayerAction.pause(); // TODO: Add option to choose if video/gif should pause player.
+            !PlayerAction.isPausing() && PlayerAction.pause(false); // TODO: Add option to choose if video/gif should pause player.
 
             if (OptionsView.isScaleOn()) {
                 _scalePic(Item, img);
@@ -490,21 +490,21 @@ function (
     };
 
     _displayPrevious = () => {
+        let isPausing = PlayerAction.isPausing();
+
         if (HistoryEngine.isFirst()) {
+            !isPausing && PlayerAction.pause(false);
             return;
         }
 
-        if (!PlayerAction.isPausing()) {
-            PlayerAction.pause();
-        }
-
-        _setPic(HistoryEngine.getPrevious());
+        !isPausing && PlayerAction.pause(false);
+        PlayerAction.start({ way: 'previous', pause: true });
     };
 
     _displayNext = () => {
         if (HistoryEngine.isLast()) {
 
-            PlayerAction.pause();
+            !PlayerAction.isPausing() && PlayerAction.pause(false);
             PlayerAction.start();
 
         } else {
@@ -692,7 +692,7 @@ function (
 
         askDeletePic: () => {
             if (!PlayerAction.isPausing()) {
-                PlayerAction.pause();
+                PlayerAction.pause(false);
             }
 
             DeletePicModal.ask({
@@ -733,7 +733,7 @@ function (
             let Pic = HistoryEngine.getCurrent();
 
             if (!PlayerAction.isPausing()) {
-                PlayerAction.pause();
+                PlayerAction.pause(false);
             }
 
             TagsModal.ask({
@@ -783,7 +783,7 @@ function (
 
         askInsideFolder: () => {
             if (!PlayerAction.isPausing()) {
-                PlayerAction.pause();
+                PlayerAction.pause(false);
             }
 
             InsideFolderModal.ask({
@@ -818,7 +818,7 @@ function (
 
         askAddFolder: () => {
             if (!PlayerAction.isPausing()) {
-                PlayerAction.pause();
+                PlayerAction.pause(false);
             }
 
             AddFolderModal.ask({

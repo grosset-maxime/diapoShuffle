@@ -6,9 +6,11 @@ define(
 [
     'jquery',
 
-    'App/Utils/Utils'
+    'App/Utils/Utils',
+
+    'App/Engines/HistoryEngine'
 ],
-function ($, Utils) {
+function ($, Utils, HistoryEngine) {
     'use strict';
 
     let Engine,
@@ -18,31 +20,36 @@ function ($, Utils) {
 
 
     // Private functions
-    let _getNextRandomly, _getNextAfter;
+    let _getNextRandomly, _getNextAfter, _getPreviousAfter, _getItem;
 
-    _getNextRandomly = () => {
+    _getItem = (index) => {
         let nbItems = _pined.length,
-            item;
+            item = _pined[index || _currentIndex];
 
-        _currentIndex = Utils.getRandomNum(nbItems - 1);
-        item = _pined[_currentIndex];
         item.index = _currentIndex + 1;
         item.nbResult = nbItems;
 
         return item;
     };
 
+    _getNextRandomly = () => {
+        _currentIndex = Utils.getRandomNum(_pined.length - 1);
+
+        return _getItem();
+    };
+
     _getNextAfter = () => {
-        let nbItems = _pined.length,
-            item;
-
         _currentIndex++;
-        _currentIndex = _currentIndex >= nbItems ? 0 : _currentIndex;
-        item = _pined[_currentIndex];
-        item.index = _currentIndex + 1;
-        item.nbResult = nbItems;
+        _currentIndex = _currentIndex >= _pined.length ? 0 : _currentIndex;
 
-        return item;
+        return _getItem();
+    };
+
+    _getPreviousAfter = () => {
+        _currentIndex--;
+        _currentIndex = _currentIndex < 0 ? _pined.length - 1 : _currentIndex;
+
+        return _getItem();
     };
 
     Engine = {
@@ -119,8 +126,17 @@ function ($, Utils) {
             return item;
         },
 
+        getPrevious: (options) => {
+            let item;
+
+            item = options.runMethod === 'random' ? HistoryEngine.getPrevious() : _getPreviousAfter();
+            item.incCounter();
+
+            return item;
+        },
+
         run: (options) => {
-            return Engine.getNext(options);
+            return Engine['get' + (options.way === 'previous' ? 'Previous' : 'Next')](options);
         },
 
         isFirst: () => {

@@ -56,16 +56,15 @@ function ($) {
         },
 
         getPrevious: () => {
-            let events = _options.events,
-                onMiddle = events.onMiddle,
-                onFirst = events.onFirst;
+            let events = _options.events;
 
             _navIndex--;
+            _navIndex = _navIndex < 0 ? 0 : _navIndex;
 
             if (Engine.isFirst()) {
-                onFirst();
+                events.onFirst();
             } else {
-                onMiddle();
+                events.onMiddle();
             }
 
             return _history[_navIndex];
@@ -73,15 +72,15 @@ function ($) {
 
         getNext: () => {
             let events = _options.events,
-                onMiddle = events.onMiddle,
-                onLast = events.onLast;
+                nbItem = _history.length;
 
             _navIndex++;
+            _navIndex = _navIndex >= nbItem ? nbItem - 1 : _navIndex;
 
             if (Engine.isLast()) {
-                onLast();
+                events.onLast();
             } else {
-                onMiddle();
+                events.onMiddle();
             }
 
             return _history[_navIndex];

@@ -94,7 +94,8 @@ function (
 
 
     // Private functons.
-    let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _runEngine;
+    let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _runEngine,
+        _runInsideFolderEngine, _onRunEngineError, _runBddEngine, _runPinedEngine, _runGetRandomPic;
 
     _getCustomFolders = () => {
         return (_options.InsideFolderEngine.folder ? [_options.InsideFolderEngine.folder] : '') ||
@@ -120,7 +121,7 @@ function (
         _idInterval = null;
     };
 
-    _start = () => {
+    _start = (options) => {
         let onBeforeStart = _options.events.onBeforeStart;
 
         if (_isPlaying && !_isPausing) {
@@ -138,7 +139,7 @@ function (
         _isPlaying = true;
         _isPausing = false;
 
-        _runEngine();
+        _runEngine(options);
     };
 
     _stop = () => {
@@ -159,152 +160,207 @@ function (
     };
 
     _pause = (shouldPlay = true) => {
-        let events = _options.events,
-            onBeforePause = events.onBeforePause,
-            onBeforeResume = events.onBeforeResume,
-            onPause = events.onPause,
-            onResume = events.onResume;
+        let events = _options.events;
 
         if (_idInterval || !shouldPlay) {
-            onBeforePause();
+            events.onBeforePause();
 
             _clearTheInterval();
 
             _isPausing = true;
 
-            onPause();
+            events.onPause();
         } else if (shouldPlay) {
-            onBeforeResume();
+            events.onBeforeResume();
 
             _start();
             _isPausing = false;
 
-            onResume();
+            events.onResume();
         }
     };
 
-    _runEngine = () => {
-        let events = _options.events,
-            onBeforeGetPic = events.onBeforeGetPic,
-            onGetPic = events.onGetPic;
-
-        function onError (error) {
-            _stop();
-
-            Notify.error({
-                message: error,
-                autoHide: false
-            });
-        }
+    _runEngine = (options) => {
+        options = options || {};
 
         _clearTheInterval();
 
-        if (!_isPlaying) {
+        if (!_isPlaying || _isPausing) {
             return;
         }
 
-        onBeforeGetPic();
+        _options.events.onBeforeGetPic();
 
         if (_options.PinedEngine.enabled) {
-            let Pic = PinedEngine.run({
-                runMethod: _options.runMethod
-            });
+            _runPinedEngine(options);
+            return;
+        }
 
-            HistoryEngine.add(Pic);
-
-            onGetPic(
-                Pic,
-                _setTheInterval,
-                function () {
-                    PinedEngine.remove();
-                    HistoryEngine.remove();
-                    _runEngine();
-                }
-            );
-        } else if (
+        if (
             _options.BddEngine.Tags.length ||
             _options.BddEngine.types.length
         ) {
+            _runBddEngine(options);
+            return;
+        }
 
-            BddEngine.run({
-                runMethod: _options.runMethod,
-                Tags: _options.BddEngine.Tags,
-                tagsOperator: _options.BddEngine.tagsOperator,
-                types: _options.BddEngine.types,
-                onSuccess: (Pic) => {
-                    if (!_isPlaying) {
-                        return;
-                    }
-
-                    HistoryEngine.add(Pic);
-
-                    onGetPic(
-                        Pic,
-                        _setTheInterval,
-                        function (item) {
-                            BddEngine.remove();
-                            HistoryEngine.remove();
-
-                            API.deletePic({
-                                Pic: item,
-                                deleteOnlyFromBdd: true
-                            });
-
-                            _runEngine();
-                        }
-                    );
-
-                },
-                onFailure: (error) => {
-                    if (error === '##empty##') {
-                        Notify.info({
-                            message: 'No more pic for current filter criterias'
-                        });
-
-                        _stop();
-                    } else {
-                        onError(error);
-                    }
-                }
-            });
-
-        } else if (
+        if (
             _options.InsideFolderEngine.folder &&
             _options.runMethod !== 'randomAsBefore'
         ) {
+            _runInsideFolderEngine(options);
+            return;
+        } else {
+            _runGetRandomPic(options);
+            return;
+        }
+    };
 
-            InsideFolderEngine.run({
+    _runPinedEngine = (options) => {
+        let way = options.way,
+            Pic = PinedEngine.run({
                 runMethod: _options.runMethod,
-                folder: _options.InsideFolderEngine.folder,
-                onSuccess: (Pic) => {
-                    if (!_isPlaying) {
-                        return;
-                    }
+                way: way
+            });
 
-                    HistoryEngine.add(Pic);
+        way !== 'previous' && HistoryEngine.add(Pic);
 
-                    onGetPic(
-                        Pic,
-                        _setTheInterval,
-                        _runEngine
-                    );
+        _options.events.onGetPic(
+            Pic,
+            _setTheInterval,
+            function () {
+                PinedEngine.remove();
+                HistoryEngine.remove();
+                _runEngine(options);
+            }
+        );
+    };
 
-                },
-                onFailure: (error) => {
-                    if (error === '##empty##') {
-                        Notify.info({
-                            message: 'No more pic into: "' + Action.getInsideFolder() + '"'
+    _runBddEngine = (options) => {
+        BddEngine.run({
+            runMethod: _options.runMethod,
+            way: options.way,
+            Tags: _options.BddEngine.Tags,
+            tagsOperator: _options.BddEngine.tagsOperator,
+            types: _options.BddEngine.types,
+            onSuccess: (Pic) => {
+                if (!_isPlaying) {
+                    return;
+                }
+
+                options.way !== 'previous' && HistoryEngine.add(Pic);
+
+                _options.events.onGetPic(
+                    Pic,
+                    function () {
+                        if (options.pause) {
+                            _pause(false);
+                        } else {
+                            _setTheInterval();
+                        }
+                    },
+                    function (item) {
+                        BddEngine.remove();
+                        HistoryEngine.remove();
+
+                        API.deletePic({
+                            Pic: item,
+                            deleteOnlyFromBdd: true
                         });
 
-                        // Remove inside folder.
-                        Action.setInsideFolder();
-
-                        _runEngine();
-                    } else {
-                        onError(error);
+                        _runEngine(options);
                     }
+                );
+            },
+            onFailure: (error) => {
+                if (error === '##empty##') {
+                    Notify.info({
+                        message: 'No more pic for current filter criterias'
+                    });
+
+                    _stop();
+                } else {
+                    _onRunEngineError(error);
                 }
-            });
+            }
+        });
+    };
+
+    _runInsideFolderEngine = (options) => {
+        InsideFolderEngine.run({
+            runMethod: _options.runMethod,
+            folder: _options.InsideFolderEngine.folder,
+            way: options.way,
+            onSuccess: (Pic) => {
+                if (!_isPlaying) {
+                    return;
+                }
+
+                options.way !== 'previous' && HistoryEngine.add(Pic);
+
+                _options.events.onGetPic(
+                    Pic,
+                    function () {
+                        if (options.pause) {
+                            _pause(false);
+                        } else {
+                            _setTheInterval();
+                        }
+                    },
+                    function () {
+                        HistoryEngine.remove();
+                        _runEngine(options);
+                    }
+                );
+
+            },
+            onFailure: (error) => {
+                if (error === '##empty##') {
+                    Notify.info({
+                        message: 'No more pic into: "' + Action.getInsideFolder() + '"'
+                    });
+
+                    // Remove inside folder.
+                    Action.setInsideFolder();
+
+                    _runEngine();
+                } else {
+                    _onRunEngineError(error);
+                }
+            }
+        });
+    };
+
+    _runGetRandomPic = (options) => {
+        function onGetPic (Pic, warning) {
+            _options.events.onGetPic(
+                Pic,
+                function () { // Success callback of _setPic()
+                    if (warning) {
+                        _pause(false);
+                        Notify.warning({
+                            message: warning,
+                            autoHide: false
+                        });
+                    } else {
+
+                        if (options.pause) {
+                            _pause(false);
+                        } else {
+                            _setTheInterval();
+                        }
+                    }
+                },
+                function () { // Failure callback of _setPic()
+                    HistoryEngine.remove();
+                    _runEngine(options);
+                }
+            );
+        }
+
+        if (options.way === 'previous') {
+
+            onGetPic(HistoryEngine.getPrevious());
 
         } else {
 
@@ -320,24 +376,7 @@ function (
 
                     HistoryEngine.add(Pic);
 
-                    onGetPic(
-                        Pic,
-                        function () { // Success callback of _setPic()
-                            if (warning) {
-                                _pause(false);
-                                Notify.warning({
-                                    message: warning,
-                                    autoHide: false
-                                });
-                            } else {
-                                _setTheInterval();
-                            }
-                        },
-                        function () { // Failure callback of _setPic()
-                            _runEngine();
-                        }
-
-                    );
+                    onGetPic(Pic, warning);
                 },
                 onFailure: (error) => {
                     if (Action.isInside()) {
@@ -351,11 +390,20 @@ function (
 
                         _runEngine();
                     } else {
-                        onError(error);
+                        _onRunEngineError(error);
                     }
                 }
             });
         }
+    };
+
+    _onRunEngineError = (error) => {
+        _stop();
+
+        Notify.error({
+            message: error,
+            autoHide: false
+        });
     };
 
     Action = {
@@ -407,7 +455,7 @@ function (
                 return;
             }
 
-            _pause();
+            _pause(true);
         },
 
         /**
