@@ -95,7 +95,8 @@ function (
 
     // Private functons.
     let _getCustomFolders, _setTheInterval, _clearTheInterval, _start, _stop, _pause, _runEngine,
-        _runInsideFolderEngine, _onRunEngineError, _runBddEngine, _runPinedEngine, _runGetRandomPic;
+        _runInsideFolderEngine, _onRunEngineError, _runBddEngine, _runPinedEngine, _runGetRandomPic,
+        _togglePause;
 
     _getCustomFolders = () => {
         return (_options.InsideFolderEngine.folder ? [_options.InsideFolderEngine.folder] : '') ||
@@ -159,24 +160,32 @@ function (
         onStop();
     };
 
-    _pause = (shouldPlay = true) => {
+    _pause = () => {
         let events = _options.events;
 
-        if (_idInterval || !shouldPlay) {
-            events.onBeforePause();
+        _clearTheInterval();
 
-            _clearTheInterval();
+        if (!_isPausing) {
+            events.onBeforePause();
 
             _isPausing = true;
 
             events.onPause();
-        } else if (shouldPlay) {
+        }
+    };
+
+    _togglePause = (forcePlaying = false) => {
+        let events = _options.events;
+
+        if (_isPausing || forcePlaying) {
             events.onBeforeResume();
 
             _start();
             _isPausing = false;
 
             events.onResume();
+        } else {
+            _pause();
         }
     };
 
@@ -254,7 +263,7 @@ function (
                     Pic,
                     function () {
                         if (options.pause) {
-                            _pause(false);
+                            _pause();
                         } else {
                             _setTheInterval();
                         }
@@ -302,7 +311,7 @@ function (
                     Pic,
                     function () {
                         if (options.pause) {
-                            _pause(false);
+                            _pause();
                         } else {
                             _setTheInterval();
                         }
@@ -337,7 +346,7 @@ function (
                 Pic,
                 function () { // Success callback of _setPic()
                     if (warning) {
-                        _pause(false);
+                        _pause();
                         Notify.warning({
                             message: warning,
                             autoHide: false
@@ -345,7 +354,7 @@ function (
                     } else {
 
                         if (options.pause) {
-                            _pause(false);
+                            _pause();
                         } else {
                             _setTheInterval();
                         }
@@ -442,12 +451,12 @@ function (
         /**
          *
          */
-        pause: (shouldPlay) => {
+        pause: () => {
             if (_isDisabled) {
                 return;
             }
 
-            _pause(shouldPlay);
+            _pause();
         },
 
         resume: () => {
@@ -455,7 +464,7 @@ function (
                 return;
             }
 
-            _pause(true);
+            _togglePause(true);
         },
 
         /**

@@ -101,7 +101,7 @@ function (
 
                 switch (keyPressed) {
                     case 72: // h (help)
-                        PlayerAction.pause(false);
+                        PlayerAction.pause();
                         _toggleShortcutsView();
                         break;
 
@@ -115,7 +115,11 @@ function (
 
                     case 32: // SPACE
                     case 40: // down arrow
-                        PlayerAction.pause();
+                        if (PlayerAction.isPausing()) {
+                            PlayerAction.resume();
+                        } else {
+                            PlayerAction.pause();
+                        }
                         doPreventDefault = true;
                         break;
 
