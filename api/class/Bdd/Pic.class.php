@@ -45,6 +45,7 @@ class Pic extends Root
     const TYPE_JPG = 1;
     const TYPE_PNG = 2;
     const TYPE_GIF = 3;
+    const TYPE_WEBM = 4;
 
     protected $bdd = null;
 
@@ -98,6 +99,8 @@ class Pic extends Root
                 $type = 'png';
             } else if ($type === self::TYPE_GIF) {
                 $type = 'gif';
+            } else if ($type === self::TYPE_WEBM) {
+                $type = 'webm';
             } else {
                 $type = self::TYPE_JPG;
             }
@@ -119,6 +122,9 @@ class Pic extends Root
                     break;
                 case 'gif':
                     $type = self::TYPE_GIF;
+                    break;
+                case 'webm':
+                    $type = self::TYPE_WEBM;
                     break;
                 default:
                     $type = self::TYPE_JPG;

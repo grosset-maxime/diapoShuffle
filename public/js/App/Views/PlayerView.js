@@ -399,53 +399,90 @@ function (
      * @param {Function} onSuccess -
      * @param {Function} onFailure -
      */
-    _setPic = (pic, onSuccess, onFailure) => {
+    _setPic = (Item, onSuccess, onFailure) => {
         let img = _els.img;
 
         if (img) {
             img.remove();
+            _els.img = null;
         }
 
-        img = _els.img = $('<img>', {
-            'class': 'random_pic',
-            src: pic.src || '',
-        })
-            .on({
-                load: () => {
-                    let imgEl;
-
-                    if (!pic.width || !pic.height) {
-                        imgEl = img[0];
-                        pic.width = imgEl.naturalWidth;
-                        pic.height = imgEl.naturalHeight;
+        // TODO: do the same with .mp4 and other compatible video formats.
+        if (Item.extension === 'webm') {
+            img = _els.img = $('<video>', {
+                'class': 'random_pic',
+                src: Item.src || '',
+                autoplay: true,
+                loop: true,
+                muted: true,
+                controls: true
+            })
+                .on({
+                    load: () => {
+                        // TODO: call success on load.
+                        // TODO: scale video on view.
+                        // TODO: zoom video on view.
+                        // TODO: factorize scale and zoom call.
+                    },
+                    error: () => {
+                        // TODO: test error callback and factorize with image one.
+                        console.error('Cannot display webm: "' + Item.src + '"');
+                        onFailure && onFailure(Item);
                     }
+                });
 
-                    if (OptionsView.isScaleOn()) {
-                        _scalePic(pic, img);
-                    } else if (OptionsView.getZoom() > 1) {
-                        _zoomPic(pic, img);
+            // TODO: factorize success callback with image one.
+            View.show();
+            onSuccess && onSuccess();
+            PlayerAction.pause(); // TODO: Add option to choose if video/gif should pause player.
+
+            if (OptionsView.isScaleOn()) {
+                _scalePic(Item, img);
+            } else if (OptionsView.getZoom() > 1) {
+                _zoomPic(Item, img);
+            }
+        } else {
+            img = _els.img = $('<img>', {
+                'class': 'random_pic',
+                src: Item.src || '',
+            })
+                .on({
+                    load: () => {
+                        let imgEl;
+
+                        if (!Item.width || !Item.height) {
+                            imgEl = img[0];
+                            Item.width = imgEl.naturalWidth;
+                            Item.height = imgEl.naturalHeight;
+                        }
+
+                        if (OptionsView.isScaleOn()) {
+                            _scalePic(Item, img);
+                        } else if (OptionsView.getZoom() > 1) {
+                            _zoomPic(Item, img);
+                        }
+
+                        View.show();
+                        onSuccess && onSuccess();
+                    },
+                    error: () => {
+                        console.error('Cannot display pic: "' + Item.src + '"');
+                        onFailure && onFailure(Item);
                     }
+                });
 
-                    View.show();
-                    onSuccess && onSuccess();
-                },
-                error: () => {
-                    console.error('Cannot display pic: "' + pic.src + '"');
-                    onFailure && onFailure(pic);
-                }
-            });
-
-        if (OptionsView.isScaleOn()) {
-            _scalePic(pic, img);
-        } else if (OptionsView.getZoom() > 1) {
-            _zoomPic(pic, img);
+            if (OptionsView.isScaleOn()) {
+                _scalePic(Item, img);
+            } else if (OptionsView.getZoom() > 1) {
+                _zoomPic(Item, img);
+            }
         }
 
         _els.playCtn.html(img);
 
-        View.currentPic = pic;
+        View.currentPic = Item;
 
-        InfosView.show(pic);
+        InfosView.show(Item);
     };
 
     _cleanPic = () => {

@@ -92,9 +92,11 @@ class Pics extends Root
                 if ($type === 'JPG') {
                     $typesId[] = Pic::TYPE_JPG;
                 } else if ($type === 'GIF') {
-                    $typesId[] = PIC::TYPE_GIF;
+                    $typesId[] = Pic::TYPE_GIF;
                 } else if ($type === 'PNG') {
-                    $typesId[] = PIC::TYPE_PNG;
+                    $typesId[] = Pic::TYPE_PNG;
+                } else if ($type === 'WEBM') {
+                    $typesId[] = Pic::TYPE_WEBM;
                 } else {
                     throw new Exception('Type not found: ' . $type);
                 }

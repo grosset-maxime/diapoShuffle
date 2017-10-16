@@ -168,6 +168,14 @@ function (
                 on: {
                     click: _onTypesSelectBtnClick
                 }
+            }).button(),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'WEBM',
+                on: {
+                    click: _onTypesSelectBtnClick
+                }
             }).button()
         );
 

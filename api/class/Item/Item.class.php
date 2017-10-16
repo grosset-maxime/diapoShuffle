@@ -57,10 +57,10 @@ class Item extends Root
     const TYPE_FILE = 'file';
 
     protected $name = '';
-    protected $type = '';
-    protected $path = '';
+    protected $type = ''; // Item type (folder or file).
+    protected $path = ''; // Item absolute path without name.
     protected $tags = array();
-    protected $format = '';
+    protected $format = ''; // Item extension format (jpg, gif, png, webm).
     protected $Pic = null;
 
 
@@ -69,9 +69,9 @@ class Item extends Root
      *
      * @param {array} $data : RandomPic data.
      * * param {String} data.name : Item name.
-     * * param {String} data.type : Item type.
+     * * param {String} data.type : Item type (folder or file).
      * * param {String} data.path : Item absolute path without name.
-     * * param {String} data.format : Item extension format (jpg, gif, png).
+     * * param {String} data.format : Item extension format (jpg, gif, png, webm).
      */
     public function __construct(array $data = array())
     {

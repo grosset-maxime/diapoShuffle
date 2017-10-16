@@ -180,7 +180,7 @@ class RandomPic extends Root
                 if ($item->isDot()
                     || preg_match('/^[\.].*/i', $fileName)
                     || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
-                    || (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp)$/i', $fileName))
+                    || (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp|.webm)$/i', $fileName))
                     || ($isDir && $fileName === '@eaDir')
                 ) {
                     continue;
@@ -386,6 +386,7 @@ class RandomPic extends Root
             ),
             'customFolderPath' => $randomCustomFolder,
             'name' => $randomPic->getName(),
+            'extension' => $randomPic->getFormat(),
             'width' => $width,
             'height' => $height,
             'tags' => $tags,

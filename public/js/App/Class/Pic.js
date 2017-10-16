@@ -30,6 +30,7 @@ function (
             src: '',
             path: '',
             name: '',
+            extension: '',
             useCache: false,
             width: 0,
             height: 0,
@@ -44,6 +45,7 @@ function (
         src: '',
         path: '',
         name: '',
+        extension: '',
 
         useCache: false,
 
@@ -77,6 +79,9 @@ function (
 
                 that.name = pathParts[pathParts.length - 1];
 
+                that.extension = that.name.split('.').pop();
+                that.extension = that.extension !== that.name ? that.extension.toLowerCase() : '';
+
                 pathParts.shift();
                 pathParts.pop();
                 path = pathParts.join('/');
@@ -94,6 +99,7 @@ function (
                 that.path = options.path || path;
 
                 that.name = options.name;
+                that.extension = (options.extension || '').toLowerCase();
 
                 that.useCache = options.useCache;
 

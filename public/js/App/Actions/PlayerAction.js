@@ -326,7 +326,7 @@ function (
                             if (warning) {
                                 _pause(false);
                                 Notify.warning({
-                                    message: warning || 'teset',
+                                    message: warning,
                                     autoHide: false
                                 });
                             } else {
