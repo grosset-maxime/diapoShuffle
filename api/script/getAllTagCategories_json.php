@@ -1,6 +1,6 @@
 <?php
 /**
- * Description : Get all available tags.
+ * Description : Get all tag categories.
  * Return : JSON
  *
  * PHP version 5
@@ -19,14 +19,14 @@
 
 require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 
-require_once ROOT_DIR . '/api/class/Bdd/Tags.class.php';
+require_once ROOT_DIR . '/api/class/Bdd/TagCategories.class.php';
 
 
 // DS
 use DS\ExceptionExtended;
 
 // Bdd
-use Bdd\Tags;
+use Bdd\TagCategories;
 
 
 $logError = array();
@@ -39,9 +39,9 @@ $success = false;
 
 try {
 
-    $Tags = new Tags(array('shouldFetchAll' => true));
+    $TagCategories = new TagCategories(array('shouldFetchAll' => true));
 
-    $jsonResult['tags'] = $Tags->export();
+    $jsonResult['tagCategories'] = $TagCategories->export();
     $success = true;
 
 } catch (ExceptionExtended $e) {

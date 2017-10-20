@@ -15,7 +15,7 @@ function (
 ) {
     'use strict';
 
-    let Tag = $.inherit(Class, {
+    let TagCategory = $.inherit(Class, {
 
         /**
          * @property {Object} defaultOptions - Default options values.
@@ -23,16 +23,19 @@ function (
         defaultOptions: {
             id: '',
             name: '',
-            category: ''
+            color: ''
         },
 
         id: '',
         name: '',
-        category: '',
+        color: '',
 
         /**
-         * @constructor Tag.
-         * @param {Object} options - Options values.
+         * @constructor Tag category.
+         * @param {Object} options - Options.
+         * @param {String} options.id - Id.
+         * @param {String} options.name - Name.
+         * @param {String} options.color - Color.
          */
         __constructor: function (options) {
             let that = this;
@@ -41,7 +44,7 @@ function (
 
             that.id = options.id;
             that.name = options.name;
-            that.category = options.category;
+            that.color = options.color;
         },
 
         getId: function () {
@@ -52,11 +55,10 @@ function (
             return this.name || this.id;
         },
 
-        getCategory: function () {
-            return this.category;
+        getColor: function () {
+            return this.color || '';
         }
-
     });
 
-    return Tag;
+    return TagCategory;
 });

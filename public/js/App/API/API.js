@@ -298,6 +298,38 @@ function ($, PM) {
 
         /**
          * @param {Object} options - Options.
+         * @param {Function} [onSuccess] - Success callback, returns {TagCategory[]} - All tag categories.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        getAllTagCategories: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            xhr = $.ajax({
+                url: '/?r=getAllTagCategories_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true
+            });
+
+            xhr.done((json) => {
+                _onDone(
+                    json,
+                    function() {
+                        onSuccess(json.tagCategories);
+                    },
+                    onFailure
+                );
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.getAllTagCategories()', onFailure);
+            });
+        },
+
+        /**
+         * @param {Object} options - Options.
          * @param {Function} [onSuccess] - Success callback.
          * @param {Function} [onFailure] - Failure callback.
          */

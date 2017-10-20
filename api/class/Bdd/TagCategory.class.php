@@ -1,6 +1,6 @@
 <?php
 /**
- * Tag item in bdd.
+ * Tag category item in bdd.
  *
  * PHP version 5
  *
@@ -32,7 +32,7 @@ use Bdd\BddConnector;
 
 
 /**
- * Class Pic.
+ * Class Tag category.
  *
  * @category Class
  * @package  No
@@ -40,16 +40,16 @@ use Bdd\BddConnector;
  * @license  tag in file comment
  * @link     No
  */
-class Tag extends Root
+class TagCategory extends Root
 {
     protected $bdd = null;
 
-    protected $id = '';
+    protected $id = 0;
     protected $name = '';
-    protected $category = 0;
+    protected $color = '';
 
     /**
-     * Pic constructor.
+     * Constructor.
      */
     public function __construct(Array $data = array())
     {
@@ -62,7 +62,7 @@ class Tag extends Root
         }
     }
 
-    public function setId($id)
+    public function setId($id = 0)
     {
         $this->id = $id;
     }
@@ -82,14 +82,14 @@ class Tag extends Root
         return $this->name;
     }
 
-    public function setCategory($id = 0)
+    public function setColor($color = '')
     {
-        $this->category = $id;
+        $this->color = $color;
     }
 
-    public function getCategory()
+    public function getColor()
     {
-        return $this->category;
+        return $this->color;
     }
 
     public function export()
@@ -97,14 +97,15 @@ class Tag extends Root
         return array(
             'id' => $this->id,
             'name' => $this->name,
-            'category' => $this->category
+            'color' => $this->color
         );
     }
 
     public function fetch(Array $options = array())
     {
-        $SELECT = 'SELECT * FROM tags WHERE ';
+        $SELECT = 'SELECT * FROM tagCategories WHERE ';
 
+        $errorMsg;
         $bdd = $this->bdd;
         $query = '';
         $param = array();
@@ -121,10 +122,12 @@ class Tag extends Root
             $param[] = $this->name;
 
         } else {
+            $errorMsg = 'Tag category has no id and no name';
+
             throw new ExceptionExtended(
                 array(
-                    'publicMessage' => 'Tag has no id and no name',
-                    'message' => 'Tag has no id and no name',
+                    'publicMessage' => $errorMsg,
+                    'message' => $errorMsg,
                     'severity' => ExceptionExtended::SEVERITY_ERROR
                 )
             );
@@ -156,13 +159,13 @@ class Tag extends Root
         }
 
         try {
-            $query = 'INSERT INTO tags (id, name, category) VALUES (:id, :name, :category) ON DUPLICATE KEY UPDATE name = :name, category = :category';
+            $query = 'INSERT INTO tags (id, name, color) VALUES (:id, :name, :color) ON DUPLICATE KEY UPDATE name = :name, color = :color';
             $req = $bdd->prepare($query);
 
             $success = $req->execute(array(
                 'id' => $this->id,
                 'name' => !empty($this->name) ? $this->name : $this->id,
-                'category' => $this->category
+                'color' => $this->color
             ));
         } catch (Exception $e) {
             $data = $this->fetch(array('shouldNotHydrate' => true));
@@ -191,15 +194,19 @@ class Tag extends Root
 
     public function delete(Array $options = array())
     {
+        $errorMsg;
         $bdd = $this->bdd;
-        $query = 'DELETE FROM tags WHERE id = ?';
+        $query = 'DELETE FROM tagCategories WHERE id = ?';
 
         if (empty($this->id)) {
             if ($this->fetch() === false) {
+
+                $errorMsg = 'Tag category to delete is not in the Bdd.';
+
                 throw new ExceptionExtended(
                     array(
-                        'publicMessage' => 'Tag to delete is not in the Bdd.',
-                        'message' => 'Tag to delete is not in the Bdd.',
+                        'publicMessage' => $errorMsg,
+                        'message' => $errorMsg,
                         'severity' => ExceptionExtended::SEVERITY_INFO
                     )
                 );
@@ -223,10 +230,10 @@ class Tag extends Root
         }
 
         $bdd = $this->bdd;
-        $query = 'UPDATE tags SET name = ?, category = ? WHERE id = ?';
+        $query = 'UPDATE tagCategories SET name = ?, color = ? WHERE id = ?';
         $req = $bdd->prepare($query);
 
-        $result = $req->execute(array($this->name, $this->category, $this->id));
+        $result = $req->execute(array($this->name, $this->color, $this->id));
 
         $req->closeCursor();
 

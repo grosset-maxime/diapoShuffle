@@ -23,6 +23,34 @@ define([
 
     const CLASS_NAME = 'tagschooser_cmp';
 
+    function hideEl (el) {
+        el.addClass('hide');
+    }
+
+    function showEl (el) {
+        el.removeClass('hide');
+    }
+
+    function selectEl (el) {
+        el.addClass('selected');
+    }
+
+    function unSelectEl (el) {
+        el.removeClass('selected');
+    }
+
+    function toggleSelectEl (el) {
+        el.toggleClass('selected');
+    }
+
+    function highlightEl (el) {
+        el.addClass('highlighted');
+    }
+
+    function unHighlightEl (el) {
+        el.removeClass('highlighted');
+    }
+
     TagsChooser = $.inherit(Abstract, {
 
         /**
@@ -57,7 +85,22 @@ define([
         _onTagClick: function (e) {
             let tag = e.target;
 
-            $(tag).toggleClass('selected');
+            toggleSelectEl($(tag));
+        },
+
+        _onTagCategoryClick: function (e) {
+            let tagCategoryEl = $(e.target),
+                els = this.els,
+                selectedCategoryEl = els.tagCategoriesCtn.find('.tag_category_el.selected');
+
+            selectedCategoryEl[0] && unSelectEl(selectedCategoryEl);
+
+            tagCategoryEl[0] !== selectedCategoryEl[0] && toggleSelectEl(tagCategoryEl);
+
+            this._onFilterAvailableTags();
+            this._onFilterSelectedTags();
+
+            els.searchAvailableInput.focus();
         },
 
         _buildTags: function () {
@@ -77,6 +120,9 @@ define([
                 let tagEl = $('<div>', {
                     'class': 'tag_el ' + (selected ? 'selected' : ''),
                     text: Tag.getName(),
+                    css: {
+                        'border-color': '#' + ((TagsManager.getTagCategoryById(Tag.getCategory()) || {}).color || '000')
+                    },
                     on: {
                         click: that._onTagClick
                     }
@@ -94,11 +140,36 @@ define([
             });
         },
 
-        _onFilterAvailableTags: function (search) {
-            let tags, els, availableTagsCtn,
-                that = this;
+        _buildTagCategories: function () {
+            let that = this;
 
-            if (!search) {
+            function createTagEl (TagCategory) {
+                let tagEl = $('<div>', {
+                    'class': 'tag_el tag_category_el',
+                    text: TagCategory.getName(),
+                    css: {
+                        'border-color': '#' + (TagCategory.color || '000')
+                    },
+                    on: {
+                        click: that._onTagCategoryClick.bind(that)
+                    }
+                }).data('TagCategory', TagCategory);
+
+                return tagEl;
+            }
+
+            that._allCategories.forEach(function (TagCategory) {
+                that.els.tagCategoriesCtn.append(createTagEl(TagCategory));
+            });
+        },
+
+        _onFilterAvailableTags: function () {
+
+            let tags, els, availableTagsCtn, searchFilter, categoryFilter,
+                that = this,
+                filters = that._getFilters();
+
+            if (!filters) {
                 that._clearFilterAvailableTags();
                 return;
             }
@@ -106,32 +177,37 @@ define([
             els = that.els;
             availableTagsCtn = els.availableTagsCtn;
 
-            search = search.toLowerCase();
+            searchFilter = filters.search ? filters.search.toLowerCase() : '';
+            categoryFilter = filters.category || '';
 
             tags = availableTagsCtn.find('.tag_el');
 
+            showEl(tags);
+            unHighlightEl(tags);
+
             tags.each(function(index, tagEl) {
-                let tag = $(tagEl);
+                let tag = $(tagEl),
+                    Tag = tag.data('Tag');
 
-                if (tag.data('Tag').getName().toLowerCase().indexOf(search) < 0) {
-                    tag.addClass('hide');
-                } else {
-                    tag.removeClass('hide');
+                if (
+                    searchFilter && Tag.getName().toLowerCase().indexOf(searchFilter) === -1
+                    || categoryFilter && categoryFilter !== Tag.getCategory()
+                ) {
+                    hideEl(tag);
                 }
-
-                tag.removeClass('highlighted');
             });
 
             // Highlight the first tag in filtered list.
             tags = availableTagsCtn.find('.tag_el:not(.hide):first');
-            tags.length && tags.addClass('highlighted');
+            tags.length && highlightEl(tags);
         },
 
-        _onFilterSelectedTags: function (search) {
-            let tags, els, selectedTagsCtn,
-                that = this;
+        _onFilterSelectedTags: function () {
+            let tags, els, selectedTagsCtn, searchFilter, categoryFilter,
+                that = this,
+                filters = that._getFilters();
 
-            if (!search) {
+            if (!filters) {
                 that._clearFilterSelectedTags();
                 return;
             }
@@ -139,18 +215,48 @@ define([
             els = that.els;
             selectedTagsCtn = els.selectedTagsCtn;
 
-            search = search.toLowerCase();
+            searchFilter = filters.search ? filters.search.toLowerCase() : '';
+            categoryFilter = filters.category || '';
 
             tags = selectedTagsCtn.find('.tag_el');
 
-            tags.each(function(index, tagEl) {
-                let tag = $(tagEl);
+            showEl(tags);
 
-                if (tag.data('Tag').getName().toLowerCase().indexOf(search) < 0) {
-                    tag.addClass('hide');
-                } else {
-                    tag.removeClass('hide');
+            tags.each(function(index, tagEl) {
+                let tag = $(tagEl),
+                    Tag = tag.data('Tag');
+
+                if (
+                    searchFilter && Tag.getName().toLowerCase().indexOf(searchFilter) === -1
+                    || categoryFilter && categoryFilter !== Tag.getCategory()
+                ) {
+                    hideEl(tag);
                 }
+            });
+        },
+
+        _onFilterTagCategories: function () {
+            let categories, els, searchFilter,
+                that = this,
+                filters = that._getFilters();
+
+            if (!filters) {
+                that._clearFilterTagCategories();
+                return;
+            }
+
+            els = that.els;
+
+            searchFilter = filters.search ? filters.search.toLowerCase() : '';
+
+            categories = els.tagCategoriesCtn.find('.tag_el');
+
+            categories.each(function(index, categoryEl) {
+                let category = $(categoryEl);
+
+                category.data('TagCategory').getName().toLowerCase().indexOf(searchFilter) === -1
+                    ? hideEl(category)
+                    : showEl(category);
             });
         },
 
@@ -161,21 +267,54 @@ define([
             els.searchAvailableInput.val('').focus();
 
             tags.each(function(index, tagEl) {
-                $(tagEl).removeClass('hide highlighted');
+                let el = $(tagEl);
+                unHighlightEl(el);
+                showEl(el);
             });
 
-            $(tags[0]).addClass('highlighted');
-
-            this._clearFilterSelectedTags();
+            highlightEl($(tags[0]));
         },
 
         _clearFilterSelectedTags: function () {
             let els = this.els,
-                tags = els.selectedTagsCtn.find('.tag_el');
+                tags = els.selectedTagsCtn.find('.tag_el.hide');
 
             tags.each(function(index, tagEl) {
-                $(tagEl).removeClass('hide');
+                showEl($(tagEl));
             });
+        },
+
+        _clearFilterTagCategories: function () {
+            let els = this.els,
+                tags = els.tagCategoriesCtn.find('.tag_category_el');
+
+            tags.each(function(index, tagEl) {
+                let el = $(tagEl);
+                showEl(el);
+                unSelectEl(el);
+            });
+        },
+
+        _clearFilters: function () {
+            this._clearFilterAvailableTags();
+            this._clearFilterSelectedTags();
+            this._clearFilterTagCategories();
+        },
+
+        _getFilters: function () {
+            let selectedCategory,
+                filters = {};
+
+            filters.search = this.els.searchAvailableInput.val();
+
+            selectedCategory = this.els.tagCategoriesCtn.find('.tag_category_el.selected');
+            filters.category = selectedCategory[0]
+                ? selectedCategory.data('TagCategory').getId()
+                : null;
+
+            return filters.search || filters.category
+                ? filters
+                : null;
         },
 
         _selectRandomTag: function () {
@@ -187,7 +326,7 @@ define([
             );
             randomTagEl && randomTagEl.click();
 
-            els.searchAvailableInput.val('').focus();
+            els.searchAvailableInput.focus();
         },
 
         _toggleSelectHighlightedTag: function () {
@@ -195,7 +334,7 @@ define([
                 els = this.els;
 
             tags = els.availableTagsCtn.find('.tag_el.highlighted:first');
-            tags.length && tags.toggleClass('selected');
+            tags.length && toggleSelectEl(tags);
         },
 
         _highlightTag: function (way) {
@@ -203,18 +342,22 @@ define([
                 els = this.els,
                 fn = way === 'previous'
                     ? (tags, i) => {
-                        if (i - 1 >= 0) {
-                            $(tags[i - 1]).addClass('highlighted');
-                        } else {
-                            $(tags[tags.length - 1]).addClass('highlighted');
-                        }
+                        highlightEl(
+                            $(tags[
+                                i - 1 >= 0
+                                    ? i - 1
+                                    : tags.length - 1
+                            ])
+                        );
                     }
                     : (tags, i) => {
-                        if (i + 1 < tags.length) {
-                            $(tags[i + 1]).addClass('highlighted');
-                        } else {
-                            $(tags[0]).addClass('highlighted');
-                        }
+                        highlightEl(
+                            $(tags[
+                                i + 1 < tags.length
+                                    ? i + 1
+                                    : 0
+                            ])
+                        );
                     };
 
             tags = els.availableTagsCtn.find('.tag_el:not(.hide)');
@@ -223,7 +366,7 @@ define([
                 let tag = $(tags[i]);
 
                 if (tag.hasClass('highlighted')) {
-                    tag.removeClass('highlighted');
+                    unHighlightEl(tag);
                     fn(tags, i);
                     break;
                 }
@@ -235,9 +378,19 @@ define([
          */
         build: function () {
             let ctn, selectedTagsCtn, availableTagsCtn, searchAvailableCtn,
-                searchAvailableInput, selectRandomTagCtn,
+                searchAvailableInput, selectRandomTagCtn, tagCategoriesCtn,
                 that = this,
                 els = that.els;
+
+            function builds () {
+                that._allTags = TagsManager.getTags();
+                that._allCategories = TagsManager.getTagCategories();
+
+                that._buildTags();
+                that._buildTagCategories();
+
+                that._clearFilters();
+            }
 
             // Main ctn.
             ctn = els.container = $('<div>', {
@@ -270,17 +423,15 @@ define([
                     placeholder: 'filter',
                     on: {
                         keyup: function (e) {
-                            let key = e.which,
-                                searchVal;
+                            let key = e.which;
 
                             if ([13, 27, 37, 39].indexOf(key) >= 0) {
                                 return;
                             }
 
-                            searchVal = searchAvailableInput.val();
-
-                            that._onFilterAvailableTags(searchVal);
-                            that._onFilterSelectedTags(searchVal);
+                            that._onFilterAvailableTags();
+                            that._onFilterSelectedTags();
+                            that._onFilterTagCategories();
                         },
                         keydown: function (e) {
                             let key = e.which,
@@ -315,7 +466,7 @@ define([
                     'class': 'clear_search_btn',
                     text: 'x',
                     on: {
-                        click: that._clearFilterAvailableTags.bind(that)
+                        click: that._clearFilters.bind(that)
                     }
                 })]
             });
@@ -333,25 +484,22 @@ define([
                 }).button()
             });
 
+            tagCategoriesCtn = els.tagCategoriesCtn = $('<div>', {
+                'class': 'tag_categories_ctn'
+            });
+
             ctn.append(
                 selectedTagsCtn,
                 searchAvailableCtn,
                 that.options.randomBtn ? selectRandomTagCtn : null,
+                tagCategoriesCtn,
                 availableTagsCtn
             );
 
             if (TagsManager.hasFetchTags()) {
-                that._allTags = TagsManager.getTags();
-                that._buildTags();
-                that._clearFilterAvailableTags();
+                builds();
             } else {
-                TagsManager.init({
-                    onSuccess: (Tags) => {
-                        that._allTags = Tags;
-                        that._buildTags();
-                        that._clearFilterAvailableTags();
-                    }
-                });
+                TagsManager.init({ onSuccess: builds });
             }
 
             return ctn;

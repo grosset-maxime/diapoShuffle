@@ -48,6 +48,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/getAllTags_json.php',
     ),
+    'getAllTagCategories_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/getAllTagCategories_json.php',
+    ),
     'getFolderList_s' => array(
         'isScript' => true,
         'path' => '/api/script/getFolderList_json.php',
