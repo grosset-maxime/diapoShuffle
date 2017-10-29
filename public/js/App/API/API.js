@@ -187,6 +187,49 @@ function ($, PM) {
         },
 
         /**
+         * @param {Object}   options  - Options.
+         * @param {Boolean}  isNew    - Is a new tag.
+         * @param {Boolean}  isDelete - Should delete tag.
+         * @param {String}   id       - Tag id.
+         * @param {String}   name     - Tag name.
+         * @param {Integer}  category - Tag category id.
+         * @param {Function} [onSuccess] - Success callback.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        editTag: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (!options.id && !options.name) {
+                onFailure('Missing id or name tag information to edit tag.');
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=editTag_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    isNew: options.isNew,
+                    isDelete: options.isDelete,
+                    id: options.id,
+                    name: options.name,
+                    category: options.category
+                }
+            });
+
+            xhr.done((json) => {
+                _onDone(json, onSuccess, onFailure);
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.editTag()', onFailure);
+            });
+        },
+
+        /**
          * @param {Object} options - Options.
          * @param {Array}  [options.Tags] - Tags.
          * @param {Array}  [options.types] - Types (JPG, GIF, PNG).

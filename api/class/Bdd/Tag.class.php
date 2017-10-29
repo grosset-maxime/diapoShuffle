@@ -189,7 +189,7 @@ class Tag extends Root
         return $success;
     }
 
-    public function delete(Array $options = array())
+    public function delete()
     {
         $bdd = $this->bdd;
         $query = 'DELETE FROM tags WHERE id = ?';
@@ -224,9 +224,16 @@ class Tag extends Root
 
         $bdd = $this->bdd;
         $query = 'UPDATE tags SET name = ?, category = ? WHERE id = ?';
+
         $req = $bdd->prepare($query);
 
-        $result = $req->execute(array($this->name, $this->category, $this->id));
+        $result = $req->execute(
+            array(
+                $this->name,
+                $this->category,
+                $this->id
+            )
+        );
 
         $req->closeCursor();
 

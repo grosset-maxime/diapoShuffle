@@ -17,7 +17,8 @@
         display: inline-block;
         box-shadow: 2px 2px 5px #ccc;
         cursor: pointer;
-        transition: all .4s;
+        transition: color .4s, background-color .4s;
+        position: relative;
 
         &.selected,
         &.highlighted,
@@ -37,6 +38,53 @@
 
         &.selected.highlighted {
             background-color: #888;
+        }
+
+        &.add_tag_el {
+            display: none;
+            height: 28px;
+            padding: 0;
+        }
+
+        .edit_btn {
+            display: none;
+            position: absolute;
+            opacity: .5;
+            top: 0;
+            right: 0px;
+            width: 20px;
+            height: 100%;
+            line-height: 28px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #FCF3E5;
+            border-left: 1px solid #d3d3d3;
+
+            &:hover {
+                border-left: 1px solid #aaa;
+                background-color: #FDECD0;
+                opacity: 1;
+            }
+        }
+    }
+
+    &.edit_mode {
+        .tag_el {
+            .text {
+                padding-right: 20px;
+            }
+
+            .edit_btn {
+                display: block;
+            }
+        }
+
+        .add_tag_el {
+            display: inline-block;
+
+            .text {
+                padding: 0;
+            }
         }
     }
 
@@ -59,6 +107,7 @@
             border: 1px solid #aaa;
             padding-left: 5px;
             font-size: 16px;
+            outline-width: 3px;
         }
 
         & .clear_search_btn {
@@ -77,8 +126,9 @@
         }
     }
 
-    .select_random_tag_ctn {
-        width: 50%;
+    .select_random_tag_ctn,
+    .edit_btn_ctn {
+        width: 25%;
         display: inline-block;
     }
 }

@@ -42,6 +42,8 @@ function (
             that.id = options.id;
             that.name = options.name;
             that.category = options.category;
+
+            delete that.options;
         },
 
         getId: function () {

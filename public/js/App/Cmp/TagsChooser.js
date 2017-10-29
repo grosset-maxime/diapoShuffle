@@ -1,6 +1,6 @@
 
 /*global
-    define
+    define, curl
 */
 
 define([
@@ -51,6 +51,16 @@ define([
         el.removeClass('highlighted');
     }
 
+    function setTagElCss (tagEl) {
+        let Tag = tagEl.data('Tag');
+
+        tagEl.css({
+            'border-color': '#' + ((TagsManager.getTagCategoryById(Tag.getCategory()) || {}).color || '000')
+        });
+
+        return tagEl;
+    }
+
     TagsChooser = $.inherit(Abstract, {
 
         /**
@@ -62,6 +72,7 @@ define([
             available: '',
             container: null,
             randomBtn: false,
+            editBtn: false,
             events: {
                 onSelect: () => {},
                 onDeselect: () => {}
@@ -69,6 +80,7 @@ define([
         },
 
         _allTags: null,
+        _allTagCategories: null,
 
         /**
          * @constructor TagsChooser.
@@ -83,13 +95,13 @@ define([
         },
 
         _onTagClick: function (e) {
-            let tag = e.target;
+            let tag = $(e.target.parentElement);
 
-            toggleSelectEl($(tag));
+            toggleSelectEl(tag);
         },
 
         _onTagCategoryClick: function (e) {
-            let tagCategoryEl = $(e.target),
+            let tagCategoryEl = $(e.target.parentElement),
                 els = this.els,
                 selectedCategoryEl = els.tagCategoriesCtn.find('.tag_category_el.selected');
 
@@ -101,6 +113,69 @@ define([
             this._onFilterSelectedTags();
 
             els.searchAvailableInput.focus();
+        },
+
+        _onEditTagClick: function (options) {
+            let that = this,
+                tagEl = options.tagEl,
+                isNew = options.isNew;
+
+            curl('App/Modals/EditTagModal', function (EditTagModal) {
+                EditTagModal.ask({
+                    isNew: isNew,
+                    Tag: !isNew && tagEl.data('Tag'),
+                    onClose: function () {
+                    },
+                    onOpen: function () {
+                    },
+                    onEnd: function (Tag) {
+                        if (Tag.deleted) { // Delete tag.
+
+                            tagEl.remove();
+
+                        } else if (!isNew) { // Update tag.
+
+                            tagEl.find('.text').text(Tag.getName());
+                            setTagElCss(tagEl);
+                            tagEl.data('Tag', Tag);
+
+                        } else { // Add tag.
+                            tagEl = that._createTagEl(that, Tag, false);
+                            that.els.availableTagsCtn.append(tagEl);
+                        }
+                    }
+                });
+            });
+        },
+
+        _createTagEl: (scope, Tag, selected) => {
+            let tagEl = $('<div>', {
+                'class': 'tag_el ' + (selected ? 'selected' : ''),
+                html: [
+                        $('<div>', {
+                            'class': 'text',
+                            text: Tag.getName(),
+                            on: {
+                                click: scope._onTagClick
+                            }
+                        }),
+                        $('<div>', {
+                        'class': 'edit_btn',
+                        text: 'o',
+                        on: {
+                            click: function () {
+                                scope._onEditTagClick({
+                                    tagEl: tagEl
+                                });
+                            }
+                        }
+                    })
+                ]
+            }).data('Tag', Tag);
+
+            setTagElCss(tagEl);
+
+            return tagEl;
         },
 
         _buildTags: function () {
@@ -116,27 +191,27 @@ define([
                     });
                 });
 
-            function createTagEl (Tag, selected) {
-                let tagEl = $('<div>', {
-                    'class': 'tag_el ' + (selected ? 'selected' : ''),
-                    text: Tag.getName(),
-                    css: {
-                        'border-color': '#' + ((TagsManager.getTagCategoryById(Tag.getCategory()) || {}).color || '000')
-                    },
-                    on: {
-                        click: that._onTagClick
-                    }
-                }).data('Tag', Tag);
-
-                return tagEl;
-            }
-
             selectedTags.forEach(function (Tag) {
-                selectedTagsCtn.append(createTagEl(Tag, true));
+                selectedTagsCtn.append(that._createTagEl(that, Tag, true));
             });
 
+            availableTagsCtn.append(
+                $('<div>', {
+                    'class': 'tag_el add_tag_el btn',
+                    html: $('<div>', {
+                        'class': 'text',
+                        text: '+'
+                    }),
+                    on: {
+                        click: function () {
+                            that._onEditTagClick({ isNew: true });
+                        }
+                    }
+                }).button()
+            );
+
             allTagsWithoutSelected.forEach(function (Tag) {
-                availableTagsCtn.append(createTagEl(Tag, false));
+                availableTagsCtn.append(that._createTagEl(that, Tag, false));
             });
         },
 
@@ -146,26 +221,55 @@ define([
             function createTagEl (TagCategory) {
                 let tagEl = $('<div>', {
                     'class': 'tag_el tag_category_el',
-                    text: TagCategory.getName(),
+                    html: [
+                            $('<div>', {
+                                'class': 'text',
+                                text: TagCategory.getName(),
+                                on: {
+                                    click: that._onTagCategoryClick.bind(that)
+                                }
+                            }),
+                            $('<div>', {
+                            'class': 'edit_btn',
+                            text: 'o',
+                            on: {
+                                click: function () {
+                                    curl('App/Modals/EditTagCategoryModal', function (EditTagModal) {
+                                        EditTagModal.ask({
+                                            tag: TagCategory,
+                                            onClose: function () {
+                                            },
+                                            onOpen: function () {
+                                            },
+                                            onEnd: function (TagCategory) {
+                                                tagEl.find('.text').text(TagCategory.getName());
+                                                tagEl.css({
+                                                    'border-color': '#' + ((TagsManager.getTagCategoryById(TagCategory.getCategory()) || {}).color || '000')
+                                                });
+                                                tagEl.data('TagCategory', TagCategory);
+                                            }
+                                        });
+                                    });
+                                }
+                            }
+                        })
+                    ],
                     css: {
                         'border-color': '#' + (TagCategory.color || '000')
-                    },
-                    on: {
-                        click: that._onTagCategoryClick.bind(that)
                     }
                 }).data('TagCategory', TagCategory);
 
                 return tagEl;
             }
 
-            that._allCategories.forEach(function (TagCategory) {
+            that._allTagCategories.forEach(function (TagCategory) {
                 that.els.tagCategoriesCtn.append(createTagEl(TagCategory));
             });
         },
 
         _onFilterAvailableTags: function () {
 
-            let tags, els, availableTagsCtn, searchFilter, categoryFilter,
+            let tags, els, availableTagsCtn, searchFilter, categoryFilter, tagToHighlight,
                 that = this,
                 filters = that._getFilters();
 
@@ -180,7 +284,7 @@ define([
             searchFilter = filters.search ? filters.search.toLowerCase() : '';
             categoryFilter = filters.category || '';
 
-            tags = availableTagsCtn.find('.tag_el');
+            tags = availableTagsCtn.find('.tag_el').slice(1);
 
             showEl(tags);
             unHighlightEl(tags);
@@ -198,8 +302,14 @@ define([
             });
 
             // Highlight the first tag in filtered list.
-            tags = availableTagsCtn.find('.tag_el:not(.hide):first');
-            tags.length && highlightEl(tags);
+            tagToHighlight = availableTagsCtn.find('.tag_el:not(.hide)');
+            if (tags.length) {
+                highlightEl(
+                    tagToHighlight.first().hasClass('add_tag_el')
+                        ? $(tagToHighlight[1])
+                        : tagToHighlight
+                );
+            }
         },
 
         _onFilterSelectedTags: function () {
@@ -262,7 +372,8 @@ define([
 
         _clearFilterAvailableTags: function () {
             let els = this.els,
-                tags = els.availableTagsCtn.find('.tag_el');
+                tags = els.availableTagsCtn.find('.tag_el'),
+                tagToHighlight;
 
             els.searchAvailableInput.val('').focus();
 
@@ -272,7 +383,12 @@ define([
                 showEl(el);
             });
 
-            highlightEl($(tags[0]));
+            tagToHighlight = $(tags[0]);
+            tagToHighlight = tagToHighlight.hasClass('add_tag_el')
+                ? $(tags[1])
+                : tagToHighlight;
+
+            highlightEl(tagToHighlight);
         },
 
         _clearFilterSelectedTags: function () {
@@ -322,9 +438,9 @@ define([
                 els = this.els;
 
             randomTagEl = Utils.getRandomElement(
-                els.availableTagsCtn.find('.tag_el:not(.selected):not(.hide)')
+                els.availableTagsCtn.find('.tag_el:not(.selected):not(.hide)').slice(1)
             );
-            randomTagEl && randomTagEl.click();
+            randomTagEl && $(randomTagEl).find('.text').click();
 
             els.searchAvailableInput.focus();
         },
@@ -340,7 +456,7 @@ define([
         _highlightTag: function (way) {
             let tags,
                 els = this.els,
-                fn = way === 'previous'
+                highlight = way === 'previous'
                     ? (tags, i) => {
                         highlightEl(
                             $(tags[
@@ -360,14 +476,15 @@ define([
                         );
                     };
 
-            tags = els.availableTagsCtn.find('.tag_el:not(.hide)');
+            tags = els.availableTagsCtn.find('.tag_el:not(.hide)').slice(1);
+            // tags.shift();
 
             for (let i = 0; i < tags.length; i++) {
                 let tag = $(tags[i]);
 
                 if (tag.hasClass('highlighted')) {
                     unHighlightEl(tag);
-                    fn(tags, i);
+                    highlight(tags, i);
                     break;
                 }
             }
@@ -379,12 +496,13 @@ define([
         build: function () {
             let ctn, selectedTagsCtn, availableTagsCtn, searchAvailableCtn,
                 searchAvailableInput, selectRandomTagCtn, tagCategoriesCtn,
+                editBtnCtn,
                 that = this,
                 els = that.els;
 
             function builds () {
                 that._allTags = TagsManager.getTags();
-                that._allCategories = TagsManager.getTagCategories();
+                that._allTagCategories = TagsManager.getTagCategories();
 
                 that._buildTags();
                 that._buildTagCategories();
@@ -473,15 +591,35 @@ define([
 
             selectRandomTagCtn = els.selectRandomTagCtn = $('<div>', {
                 'class': 'select_random_tag_ctn',
-                html: els.selectRandomTagBtn = $('<input>', {
-                    'class': 'btn',
-                    value: 'Select random',
-                    type: 'button',
-                    tabIndex: -1,
-                    on: {
-                        click: that._selectRandomTag.bind(that)
-                    }
-                }).button()
+                html: els.selectRandomTagBtn = that.options.randomBtn
+                    ? $('<input>', {
+                        'class': 'btn',
+                        value: 'Select random',
+                        type: 'button',
+                        tabIndex: -1,
+                        on: {
+                            click: that._selectRandomTag.bind(that)
+                        }
+                    }).button()
+                    : null
+            });
+
+            editBtnCtn = els.editBtnCtn = $('<div>', {
+                'class': 'edit_btn_ctn',
+                html: els.editBtn = that.options.editBtn
+                    ? $('<input>', {
+                        'class': 'btn',
+                        value: 'Edit',
+                        type: 'button',
+                        tabIndex: -1,
+                        on: {
+                            click: function () {
+                                ctn.toggleClass('edit_mode');
+                                searchAvailableInput.focus();
+                            }
+                        }
+                    }).button()
+                    : null
             });
 
             tagCategoriesCtn = els.tagCategoriesCtn = $('<div>', {
@@ -491,7 +629,8 @@ define([
             ctn.append(
                 selectedTagsCtn,
                 searchAvailableCtn,
-                that.options.randomBtn ? selectRandomTagCtn : null,
+                selectRandomTagCtn,
+                editBtnCtn,
                 tagCategoriesCtn,
                 availableTagsCtn
             );

@@ -185,7 +185,7 @@ body {
   text-align: center;
   padding: 8px;
   padding-right: 25px;
-  z-index: 1000;
+  z-index: 10000;
   top: 0;
   border-bottom: 1px solid #333;
   border-radius: 0 0 3px 3px;
@@ -269,27 +269,71 @@ body {
   display: inline-block;
   box-shadow: 2px 2px 5px #ccc;
   cursor: pointer;
-  transition: all .4s;
+  transition: color .4s, background-color .4s;
+  position: relative;
 }
-/* line 22, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 23, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .tag_el.selected, .tagschooser_cmp .tag_el.highlighted, .tagschooser_cmp .tag_el.selected.highlighted {
   box-shadow: 2px 2px 5px #999;
   color: #fff;
 }
-/* line 29, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 30, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .tag_el.selected {
   background-color: #666;
 }
-/* line 33, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 34, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .tag_el.highlighted {
   background-color: #ccc;
   color: #333;
 }
-/* line 38, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 39, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .tag_el.selected.highlighted {
   background-color: #888;
 }
 /* line 43, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .tag_el.add_tag_el {
+  display: none;
+  height: 28px;
+  padding: 0;
+}
+/* line 49, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .tag_el .edit_btn {
+  display: none;
+  position: absolute;
+  opacity: .5;
+  top: 0;
+  right: 0px;
+  width: 20px;
+  height: 100%;
+  line-height: 28px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #FCF3E5;
+  border-left: 1px solid #d3d3d3;
+}
+/* line 63, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .tag_el .edit_btn:hover {
+  border-left: 1px solid #aaa;
+  background-color: #FDECD0;
+  opacity: 1;
+}
+/* line 73, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp.edit_mode .tag_el .text {
+  padding-right: 20px;
+}
+/* line 77, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp.edit_mode .tag_el .edit_btn {
+  display: block;
+}
+/* line 82, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp.edit_mode .add_tag_el {
+  display: inline-block;
+}
+/* line 85, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp.edit_mode .add_tag_el .text {
+  padding: 0;
+}
+/* line 91, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .selected_tags_ctn,
 .tagschooser_cmp .available_tags_ctn {
   border: 1px solid #aaa;
@@ -297,21 +341,22 @@ body {
   padding: 5px;
   margin-bottom: 5px;
 }
-/* line 51, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 99, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn {
   margin-bottom: 4px;
   width: 50%;
   display: inline-block;
 }
-/* line 56, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 104, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .search_input {
   line-height: 25px;
   border-radius: 4px;
   border: 1px solid #aaa;
   padding-left: 5px;
   font-size: 16px;
+  outline-width: 3px;
 }
-/* line 64, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 113, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .clear_search_btn {
   cursor: pointer;
   display: inline-block;
@@ -322,13 +367,14 @@ body {
   margin-left: 10px;
   opacity: 0.5;
 }
-/* line 74, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 123, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .clear_search_btn:hover {
   opacity: 1;
 }
-/* line 80, ../../sass/App/Cmp/_TagsChooser.scss */
-.tagschooser_cmp .select_random_tag_ctn {
-  width: 50%;
+/* line 129, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .select_random_tag_ctn,
+.tagschooser_cmp .edit_btn_ctn {
+  width: 25%;
   display: inline-block;
 }
 
@@ -1064,4 +1110,40 @@ body {
 /* line 41, ../../sass/App/Modals/_TagsModal.scss */
 .tags_modal .ui-widget-content {
   background: none;
+}
+
+/* line 5, ../../sass/App/Modals/_EditTagModal.scss */
+.edit_tag_modal {
+  z-index: 2100;
+}
+/* line 8, ../../sass/App/Modals/_EditTagModal.scss */
+.edit_tag_modal .section {
+  padding: 5px 0;
+}
+/* line 12, ../../sass/App/Modals/_EditTagModal.scss */
+.edit_tag_modal .title {
+  width: 70px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 10px;
+}
+/* line 19, ../../sass/App/Modals/_EditTagModal.scss */
+.edit_tag_modal .input_text {
+  line-height: 25px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  padding-left: 5px;
+  font-size: 16px;
+  width: calc(100% - 100px);
+  outline-width: 3px;
+}
+/* line 28, ../../sass/App/Modals/_EditTagModal.scss */
+.edit_tag_modal .input_text:disabled {
+  background-color: #eee;
+  opacity: 0.5;
+}
+/* line 34, ../../sass/App/Modals/_EditTagModal.scss */
+.edit_tag_modal .input_select {
+  outline-width: 3px;
+  font-size: 16px;
 }

@@ -25,7 +25,8 @@ function ($, TagsChooser) {
 
         _tagChooser = new TagsChooser({
             selected: _options.selectedTags ? _options.selectedTags : [],
-            randomBtn: _options.randomBtn
+            randomBtn: _options.randomBtn,
+            editBtn: _options.editBtn
         });
 
         tagsChooserCtn = $('<div>', {

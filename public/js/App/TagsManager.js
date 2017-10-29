@@ -20,7 +20,7 @@ function ($, API, TagClass, TagCategoryClass) {
         _tagCategories = [];
 
 
-    let _fetchAllTags, _fetchAllTagCategories;
+    let _fetchAllTags, _fetchAllTagCategories, _sortTags;
 
     _fetchAllTags = () => {
         return new Promise (function (resolve, reject) {
@@ -53,6 +53,12 @@ function ($, API, TagClass, TagCategoryClass) {
                 },
                 onFailure: reject
             });
+        });
+    };
+
+    _sortTags = () => {
+        _tags.sort(function (a, b) {
+            return a.getName().localeCompare(b.getName());
         });
     };
 
@@ -130,6 +136,32 @@ function ($, API, TagClass, TagCategoryClass) {
             return _tagCategories.find(function (TagCategory) {
                 return TagCategory.getId() === categoryId;
             });
+        },
+
+        existTagById: (id = '') => {
+            let tag = _tags.find(function (tag) {
+                    return tag.id === id;
+                });
+
+            return !!tag;
+        },
+
+        addTag: (Tag) => {
+            Tag && _tags.push(Tag);
+
+            setTimeout(_sortTags, 0);
+        },
+
+        removeTag: (Tag) => {
+            let i,
+                tagId = Tag.getId();
+
+            for (i = _tags.length - 1; i > 0; i--) {
+                if (tagId === _tags[i].getId()) {
+                    _tags.splice(i, 1);
+                    break;
+                }
+            }
         }
     };
 

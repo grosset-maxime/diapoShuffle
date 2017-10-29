@@ -45,6 +45,8 @@ function (
             that.id = options.id;
             that.name = options.name;
             that.color = options.color;
+
+            delete that.options;
         },
 
         getId: function () {

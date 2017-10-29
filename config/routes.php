@@ -44,6 +44,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/setTags_json.php',
     ),
+    'editTag_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/editTag_json.php',
+    ),
     'getAllTags_s' => array(
         'isScript' => true,
         'path' => '/api/script/getAllTags_json.php',

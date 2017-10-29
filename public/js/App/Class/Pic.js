@@ -112,6 +112,8 @@ function (
             that.nbResult = options.nbResult || 0;
 
             that.setTags(options.tags || []);
+
+            delete that.options;
         },
 
         getFullPath: function () {

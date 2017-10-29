@@ -597,6 +597,7 @@ function (
         TagsModal.ask({
             selectedTags: _selectedTags,
             randomBtn: true,
+            editBtn: true,
             onClose: function () {
                 PlayerAction.enable();
             },
