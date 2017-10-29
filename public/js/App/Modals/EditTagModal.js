@@ -30,6 +30,12 @@ function ($, Notify, API, TagsManager, TagClass) {
             isNew = options.isNew,
             Tag = !isNew && options.Tag;
 
+        function onCategoryChange () {
+            _els.colorCategory.css({
+                'background-color': '#' + TagsManager.getTagCategoryById(_els.inputCategory.val()).color
+            });
+        }
+
         body = $('<div>', {
             html: [
                 $('<div>', {
@@ -76,12 +82,20 @@ function ($, Notify, API, TagsManager, TagClass) {
                                     text: TagCategory.getName(),
                                     selected: !isNew && Tag.getCategory() === TagCategory.getId() ? true : false
                                 });
-                            })
+                            }),
+                            on: {
+                                change: onCategoryChange
+                            }
+                        }),
+                        _els.colorCategory = $('<div>', {
+                            'class': 'category_color'
                         })
                     ]
                 })
             ]
         });
+
+        onCategoryChange();
 
         return body;
     };
