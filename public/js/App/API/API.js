@@ -230,6 +230,52 @@ function ($, PM) {
         },
 
         /**
+         * @param {Object}   options  - Options.
+         * @param {Boolean}  isNew    - Is a new tag category.
+         * @param {Boolean}  isDelete - Should delete tag category.
+         * @param {String}   id       - Tag category id.
+         * @param {String}   name     - Tag category name.
+         * @param {String}   color    - Tag category color.
+         * @param {Function} [onSuccess] - Success callback.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        editTagCategory: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (
+                (!options.isDelete && !options.name)
+                || ((options.isDelete || !options.isNew) && !options.id)
+            ) {
+                onFailure('Missing id or name tag category information to edit tag category.');
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=editTagCategory_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    isNew: options.isNew,
+                    isDelete: options.isDelete,
+                    id: options.id,
+                    name: options.name,
+                    color: options.color
+                }
+            });
+
+            xhr.done((json) => {
+                _onDone(json, onSuccess, onFailure);
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.editTagCategory()', onFailure);
+            });
+        },
+
+        /**
          * @param {Object} options - Options.
          * @param {Array}  [options.Tags] - Tags.
          * @param {Array}  [options.types] - Types (JPG, GIF, PNG).

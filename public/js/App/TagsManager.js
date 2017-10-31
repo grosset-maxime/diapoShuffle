@@ -20,7 +20,7 @@ function ($, API, TagClass, TagCategoryClass) {
         _tagCategories = [];
 
 
-    let _fetchAllTags, _fetchAllTagCategories, _sortTags;
+    let _fetchAllTags, _fetchAllTagCategories, _sortTags, _sortTagCategories;
 
     _fetchAllTags = () => {
         return new Promise (function (resolve, reject) {
@@ -61,6 +61,13 @@ function ($, API, TagClass, TagCategoryClass) {
             return a.getName().localeCompare(b.getName());
         });
     };
+
+    _sortTagCategories = () => {
+        _tagCategories.sort(function (a, b) {
+            return a.getName().localeCompare(b.getName());
+        });
+    };
+
 
     Manager = {
 
@@ -159,6 +166,24 @@ function ($, API, TagClass, TagCategoryClass) {
             for (i = _tags.length - 1; i > 0; i--) {
                 if (tagId === _tags[i].getId()) {
                     _tags.splice(i, 1);
+                    break;
+                }
+            }
+        },
+
+        addTagCategory: (TagCategory) => {
+            TagCategory && _tagCategories.push(TagCategory);
+
+            setTimeout(_sortTagCategories, 0);
+        },
+
+        removeTagCategory: (TagCategory) => {
+            let i,
+                tagCategoryId = TagCategory.getId();
+
+            for (i = _tagCategories.length - 1; i > 0; i--) {
+                if (tagCategoryId === _tagCategories[i].getId()) {
+                    _tagCategories.splice(i, 1);
                     break;
                 }
             }

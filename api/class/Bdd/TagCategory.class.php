@@ -154,42 +154,56 @@ class TagCategory extends Root
     {
         $bdd = $this->bdd;
 
-        if (!empty($this->id)) {
-            return $this->update();
-        }
-
         try {
-            $query = 'INSERT INTO tags (id, name, color) VALUES (:id, :name, :color) ON DUPLICATE KEY UPDATE name = :name, color = :color';
+
+            $query = 'INSERT INTO tagCategories (name, color) VALUES (:name, :color)';
             $req = $bdd->prepare($query);
 
             $success = $req->execute(array(
-                'id' => $this->id,
                 'name' => !empty($this->name) ? $this->name : $this->id,
                 'color' => $this->color
             ));
+
         } catch (Exception $e) {
-            $data = $this->fetch(array('shouldNotHydrate' => true));
-
-            if ($data === false) {
-                throw $e;
-            }
-
-            $this->setId($data['id']);
-            return $this->update();
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'Error on add TagCategory into bdd.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
         }
 
-        if (
-            $success === false &&
-            (empty($options['shouldNotUpdate']) || $options['shouldNotUpdate'] !== true)
-        ) {
+        if ($success === false) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'Error on add TagCategory into bdd.',
+                    'message' => 'Success false.',
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
 
-            $success = $this->update();
+        try {
 
+            $query = 'SELECT LAST_INSERT_ID() AS LAST_ID;';
+            $req = $bdd->prepare($query);
+            $req->execute();
+            $data = $req->fetch(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => 'Error get last insert id on add TagCategory into bdd.',
+                    'message' => $e->getMessage(),
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
         }
 
         $req->closeCursor();
 
-        return $success;
+        return $data['LAST_ID'];
     }
 
     public function delete(Array $options = array())

@@ -61,6 +61,16 @@ define([
         return tagEl;
     }
 
+    function setTagCategoryElCss (tagEl) {
+        let TagCategory = tagEl.data('TagCategory');
+
+        tagEl.css({
+            'border-color': '#' + (TagCategory.color || '000')
+        });
+
+        return tagEl;
+    }
+
     TagsChooser = $.inherit(Abstract, {
 
         /**
@@ -101,18 +111,19 @@ define([
         },
 
         _onTagCategoryClick: function (e) {
-            let tagCategoryEl = $(e.target.parentElement),
-                els = this.els,
+            let that = this,
+                tagCategoryEl = $(e.target.parentElement),
+                els = that.els,
                 selectedCategoryEl = els.tagCategoriesCtn.find('.tag_category_el.selected');
 
             selectedCategoryEl[0] && unSelectEl(selectedCategoryEl);
 
             tagCategoryEl[0] !== selectedCategoryEl[0] && toggleSelectEl(tagCategoryEl);
 
-            this._onFilterAvailableTags();
-            this._onFilterSelectedTags();
+            that._onFilterAvailableTags();
+            that._onFilterSelectedTags();
 
-            els.searchAvailableInput.focus();
+            that._setSearchInputFocus();
         },
 
         _onEditTagClick: function (options) {
@@ -125,8 +136,7 @@ define([
                     isNew: isNew,
                     Tag: !isNew && tagEl.data('Tag'),
                     onClose: function () {
-                    },
-                    onOpen: function () {
+                        that._setSearchInputFocus();
                     },
                     onEnd: function (Tag) {
                         if (Tag.deleted) { // Delete tag.
@@ -142,6 +152,52 @@ define([
                         } else { // Add tag.
                             tagEl = that._createTagEl(that, Tag, false);
                             that.els.availableTagsCtn.append(tagEl);
+                        }
+                    }
+                });
+            });
+        },
+
+        _onEditTagCategoryClick: function (options) {
+            let that = this,
+                tagCategoryEl = options.tagCategoryEl,
+                isNew = options.isNew;
+
+            curl('App/Modals/EditTagCategoryModal', function (EditTagCategoryModal) {
+                function updateTagsCss () {
+                    that.els.selectedTagsCtn.find('.tag_el').each(function(index, tagEl) {
+                        setTagElCss($(tagEl));
+                    });
+
+                    that.els.availableTagsCtn.find('.tag_el:not(.add_tag_el)').each(function(index, tagEl) {
+                        setTagElCss($(tagEl));
+                    });
+                }
+
+                EditTagCategoryModal.ask({
+                    isNew: isNew,
+                    TagCategory: !isNew && tagCategoryEl.data('TagCategory'),
+                    onClose: function () {
+                        that._setSearchInputFocus();
+                    },
+                    onEnd: function (TagCategory) {
+                        if (TagCategory.deleted) { // Delete tag category.
+
+                            tagCategoryEl.remove();
+                            updateTagsCss();
+
+                        } else if (!isNew) { // Update tag category.
+
+                            tagCategoryEl.find('.text').text(TagCategory.getName());
+                            setTagCategoryElCss(tagCategoryEl);
+                            tagCategoryEl.data('TagCategory', TagCategory);
+
+                            updateTagsCss();
+
+                        } else { // Add tag category.
+                            that.els.tagCategoriesCtn.append(
+                                that._createTagCategoryEl(that, TagCategory)
+                            );
                         }
                     }
                 });
@@ -170,12 +226,54 @@ define([
                             }
                         }
                     })
-                ]
+                ],
+                on: {
+                    click: function (e) {
+                        $(e.target).find('.text').click();
+                        e.stopPropagation();
+                    }
+                }
             }).data('Tag', Tag);
 
             setTagElCss(tagEl);
 
             return tagEl;
+        },
+
+        _createTagCategoryEl: (scope, TagCategory) => {
+            let tagCategoryEl = $('<div>', {
+                'class': 'tag_el tag_category_el',
+                html: [
+                        $('<div>', {
+                            'class': 'text',
+                            text: TagCategory.getName(),
+                            on: {
+                                click: scope._onTagCategoryClick.bind(scope)
+                            }
+                        }),
+                        $('<div>', {
+                        'class': 'edit_btn',
+                        text: 'o',
+                        on: {
+                            click: function () {
+                                scope._onEditTagCategoryClick({
+                                    tagCategoryEl: tagCategoryEl
+                                });
+                            }
+                        }
+                    })
+                ],
+                on: {
+                    click: function (e) {
+                        $(e.target).find('.text').click();
+                        e.stopPropagation();
+                    }
+                }
+            }).data('TagCategory', TagCategory);
+
+            setTagCategoryElCss(tagCategoryEl);
+
+            return tagCategoryEl;
         },
 
         _buildTags: function () {
@@ -216,54 +314,28 @@ define([
         },
 
         _buildTagCategories: function () {
-            let that = this;
+            let that = this,
+                tagCategoriesCtn = that.els.tagCategoriesCtn;
 
-            function createTagEl (TagCategory) {
-                let tagEl = $('<div>', {
-                    'class': 'tag_el tag_category_el',
-                    html: [
-                            $('<div>', {
-                                'class': 'text',
-                                text: TagCategory.getName(),
-                                on: {
-                                    click: that._onTagCategoryClick.bind(that)
-                                }
-                            }),
-                            $('<div>', {
-                            'class': 'edit_btn',
-                            text: 'o',
-                            on: {
-                                click: function () {
-                                    curl('App/Modals/EditTagCategoryModal', function (EditTagModal) {
-                                        EditTagModal.ask({
-                                            tag: TagCategory,
-                                            onClose: function () {
-                                            },
-                                            onOpen: function () {
-                                            },
-                                            onEnd: function (TagCategory) {
-                                                tagEl.find('.text').text(TagCategory.getName());
-                                                tagEl.css({
-                                                    'border-color': '#' + ((TagsManager.getTagCategoryById(TagCategory.getCategory()) || {}).color || '000')
-                                                });
-                                                tagEl.data('TagCategory', TagCategory);
-                                            }
-                                        });
-                                    });
-                                }
-                            }
-                        })
-                    ],
-                    css: {
-                        'border-color': '#' + (TagCategory.color || '000')
+            tagCategoriesCtn.append(
+                $('<div>', {
+                    'class': 'tag_el add_tag_el btn',
+                    html: $('<div>', {
+                        'class': 'text',
+                        text: '+'
+                    }),
+                    on: {
+                        click: function () {
+                            that._onEditTagCategoryClick({ isNew: true });
+                        }
                     }
-                }).data('TagCategory', TagCategory);
-
-                return tagEl;
-            }
+                }).button()
+            );
 
             that._allTagCategories.forEach(function (TagCategory) {
-                that.els.tagCategoriesCtn.append(createTagEl(TagCategory));
+                tagCategoriesCtn.append(
+                    that._createTagCategoryEl(that, TagCategory)
+                );
             });
         },
 
@@ -375,7 +447,8 @@ define([
                 tags = els.availableTagsCtn.find('.tag_el'),
                 tagToHighlight;
 
-            els.searchAvailableInput.val('').focus();
+            els.searchAvailableInput.val('');
+            this._setSearchInputFocus();
 
             tags.each(function(index, tagEl) {
                 let el = $(tagEl);
@@ -442,7 +515,7 @@ define([
             );
             randomTagEl && $(randomTagEl).find('.text').click();
 
-            els.searchAvailableInput.focus();
+            this._setSearchInputFocus();
         },
 
         _toggleSelectHighlightedTag: function () {
@@ -490,6 +563,10 @@ define([
             }
         },
 
+        _setSearchInputFocus: function () {
+            this.els.searchAvailableInput.focus();
+        },
+
         /**
          * Build the DOM of the Cmp.
          */
@@ -519,7 +596,7 @@ define([
                 'class': 'selected_tags_ctn',
                 on: {
                     click: function () {
-                        searchAvailableInput.focus();
+                        that._setSearchInputFocus()
                     }
                 }
             });
@@ -528,7 +605,7 @@ define([
                 'class': 'available_tags_ctn',
                 on: {
                     click: function () {
-                        searchAvailableInput.focus();
+                        that._setSearchInputFocus();
                     }
                 }
             });
@@ -615,7 +692,7 @@ define([
                         on: {
                             click: function () {
                                 ctn.toggleClass('edit_mode');
-                                searchAvailableInput.focus();
+                                that._setSearchInputFocus();
                             }
                         }
                     }).button()

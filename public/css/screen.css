@@ -342,12 +342,16 @@ body {
   margin-bottom: 5px;
 }
 /* line 99, ../../sass/App/Cmp/_TagsChooser.scss */
+.tagschooser_cmp .tag_categories_ctn {
+  margin: 7px 0;
+}
+/* line 103, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn {
   margin-bottom: 4px;
   width: 50%;
   display: inline-block;
 }
-/* line 104, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 108, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .search_input {
   line-height: 25px;
   border-radius: 4px;
@@ -356,7 +360,7 @@ body {
   font-size: 16px;
   outline-width: 3px;
 }
-/* line 113, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 117, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .clear_search_btn {
   cursor: pointer;
   display: inline-block;
@@ -367,11 +371,11 @@ body {
   margin-left: 10px;
   opacity: 0.5;
 }
-/* line 123, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 127, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .search_available_tags_ctn .clear_search_btn:hover {
   opacity: 1;
 }
-/* line 129, ../../sass/App/Cmp/_TagsChooser.scss */
+/* line 133, ../../sass/App/Cmp/_TagsChooser.scss */
 .tagschooser_cmp .select_random_tag_ctn,
 .tagschooser_cmp .edit_btn_ctn {
   width: 25%;
@@ -1156,4 +1160,47 @@ body {
   border-radius: 11px;
   margin-left: 6px;
   position: absolute;
+}
+
+/* line 5, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal {
+  z-index: 2100;
+}
+/* line 8, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal .section {
+  padding: 5px 0;
+  position: relative;
+}
+/* line 13, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal .title {
+  width: 70px;
+  display: inline-block;
+  text-align: right;
+  padding-right: 10px;
+}
+/* line 20, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal .input_text {
+  line-height: 25px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+  padding-left: 5px;
+  font-size: 16px;
+  width: calc(100% - 100px);
+  outline-width: 3px;
+}
+/* line 29, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal .input_text:disabled {
+  background-color: #eee;
+  opacity: 0.5;
+}
+/* line 34, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal .input_text.color_input {
+  width: 20px;
+  padding: 1px 3px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+/* line 41, ../../sass/App/Modals/_EditTagCategoryModal.scss */
+.edit_tag_category_modal .input_text.color_input_text {
+  width: 64px;
 }

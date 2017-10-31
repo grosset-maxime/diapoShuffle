@@ -12,12 +12,12 @@ define(
 
     'App/TagsManager',
 
-    'App/Class/Tag',
+    'App/Class/TagCategory',
 
     // Non AMD
     'js!jquery-ui'
 ],
-function ($, Notify, API, TagsManager, TagClass) {
+function ($, Notify, API, TagsManager, TagCategoryClass) {
     'use strict';
 
     let _els = {},
@@ -28,12 +28,18 @@ function ($, Notify, API, TagsManager, TagClass) {
     _buildSkeleton = (options) => {
         let body,
             isNew = options.isNew,
-            Tag = !isNew && options.Tag;
+            TagCategory = !isNew && options.TagCategory;
 
-        function onCategoryChange () {
-            _els.colorCategory.css({
-                'background-color': '#' + TagsManager.getTagCategoryById(_els.inputCategory.val()).color
-            });
+        function onTextColorChange () {
+            _els.inputColor.val(
+                '#' + _els.inputTextColor.val().trim()
+            );
+        }
+
+        function onColorChange () {
+            _els.inputTextColor.val(
+                _els.inputColor.val().substring(1)
+            );
         }
 
         body = $('<div>', {
@@ -48,8 +54,8 @@ function ($, Notify, API, TagsManager, TagClass) {
                         _els.inputId = $('<input>', {
                             'class': 'input_text',
                             type: 'text',
-                            value: !isNew ? Tag.getId() : '',
-                            disabled: !isNew
+                            value: !isNew ? TagCategory.getId() : '',
+                            disabled: true
                         })
                     ]
                 }),
@@ -63,7 +69,7 @@ function ($, Notify, API, TagsManager, TagClass) {
                         _els.inputName = $('<input>', {
                             'class': 'input_text',
                             type: 'text',
-                            value: !isNew ? Tag.getName() : ''
+                            value: !isNew ? TagCategory.getName() : ''
                         })
                     ]
                 }),
@@ -72,30 +78,33 @@ function ($, Notify, API, TagsManager, TagClass) {
                     html: [
                         $('<span>', {
                             'class': 'title',
-                            text: 'Category'
+                            text: 'Color #'
                         }),
-                        _els.inputCategory = $('<select>', {
-                            'class': 'input_select',
-                            html: TagsManager.getTagCategories().map(function (TagCategory) {
-                                return $('<option>', {
-                                    value: TagCategory.getId(),
-                                    text: TagCategory.getName(),
-                                    selected: !isNew && Tag.getCategory() === TagCategory.getId() ? true : false
-                                });
-                            }),
+                        _els.inputTextColor = $('<input>', {
+                            'class': 'input_text color_input_text',
+                            type: 'text',
+                            maxlength: 6,
+                            value: !isNew ? TagCategory.getColor() : '',
                             on: {
-                                change: onCategoryChange
+                                change: onTextColorChange,
+                                keyup: onTextColorChange
                             }
                         }),
-                        _els.colorCategory = $('<div>', {
-                            'class': 'category_color'
+                        _els.inputColor = $('<input>', {
+                            'class': 'input_text color_input',
+                            type: 'color',
+                            value: !isNew ? TagCategory.getColor() : '',
+                            on: {
+                                change: onColorChange,
+                                keyup: onColorChange
+                            }
                         })
                     ]
                 })
             ]
         });
 
-        onCategoryChange();
+        onTextColorChange();
 
         return body;
     };
@@ -116,7 +125,7 @@ function ($, Notify, API, TagsManager, TagClass) {
                 _options,
                 {
                     isNew: false,
-                    Tag: null,
+                    TagCategory: null,
                     onOpen: () => {},
                     onCancel: () => {},
                     onClose: () => {},
@@ -131,14 +140,14 @@ function ($, Notify, API, TagsManager, TagClass) {
                 buttons.push({
                     text: 'Delete',
                     click: () => {
-                        let response = window.confirm('Are you sure to delete this tag ?');
+                        let response = window.confirm('Are you sure to delete this tag category ?');
 
                         if (response) {
-                            API.editTag({
+                            API.editTagCategory({
                                 isDelete: true,
-                                id: options.Tag.getId(),
+                                id: options.TagCategory.getId(),
                                 onSuccess: function () {
-                                    TagsManager.removeTag(options.Tag);
+                                    TagsManager.removeTagCategory(options.TagCategory);
                                     _options.onEnd({ deleted: true });
                                     modal.dialog('close');
                                 },
@@ -162,39 +171,34 @@ function ($, Notify, API, TagsManager, TagClass) {
             }, {
                 text: isNew ? 'Add': 'Update',
                 click: () => {
-                    let id = _els.inputId.val().trim(),
+                    let id = _els.inputId.val(),
                         name = _els.inputName.val().trim(),
-                        category = _els.inputCategory.val();
+                        color = _els.inputColor.val().substring(1);
 
-                    if (isNew && TagsManager.existTagById(id)) {
-                        Notify.error({ message: 'Tag with same id already exist.' });
-                        return;
-                    }
-
-                    API.editTag({
+                    API.editTagCategory({
                         isNew: isNew,
                         id: id,
                         name: name,
-                        category: category,
-                        onSuccess: function () {
-                            let Tag;
+                        color: color,
+                        onSuccess: function (response) {
+                            let TagCategory;
 
                             if (isNew) {
-                                Tag = new TagClass({
-                                    id: id,
+                                TagCategory = new TagCategoryClass({
+                                    id: response.tagCategoryId,
                                     name: name,
-                                    category: category
+                                    color: color
                                 });
 
-                                TagsManager.addTag(Tag);
+                                TagsManager.addTagCategory(TagCategory);
                             } else {
-                                Tag = options.Tag;
+                                TagCategory = options.TagCategory;
 
-                                Tag.name = name;
-                                Tag.category = category;
+                                TagCategory.name = name;
+                                TagCategory.color = color;
                             }
 
-                            _options.onEnd(Tag);
+                            _options.onEnd(TagCategory);
                             modal.dialog('close');
                         },
                         onFailure: function (error) {
@@ -206,7 +210,7 @@ function ($, Notify, API, TagsManager, TagClass) {
             }]);
 
             modalOptions = {
-                dialogClass: 'edit_tag_modal',
+                dialogClass: 'edit_tag_category_modal',
                 resizable: false,
                 modal: true,
                 close: (event) => {

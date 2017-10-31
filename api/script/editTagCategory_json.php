@@ -1,6 +1,6 @@
 <?php
 /**
- * Description : Edit tag on bdd.
+ * Description : Edit TagCategory on bdd.
  * Return : JSON
  *
  * PHP version 5
@@ -18,14 +18,14 @@
 
 require_once ROOT_DIR . '/api/class/ExceptionExtended.class.php';
 
-require_once ROOT_DIR . '/api/class/Bdd/Tag.class.php';
+require_once ROOT_DIR . '/api/class/Bdd/TagCategory.class.php';
 
 
 // DS
 use DS\ExceptionExtended;
 
 // Bdd
-use Bdd\Tag;
+use Bdd\TagCategory;
 
 
 $isNew = !empty($_POST['isNew']) && $_POST['isNew'] === 'true' ? true : false;
@@ -33,18 +33,18 @@ $isDelete = !empty($_POST['isDelete']) && $_POST['isDelete'] === 'true' ? true :
 
 $id = trim($_POST['id']) ? trim($_POST['id']) : '';
 $name = trim($_POST['name']) ? trim($_POST['name']) : '';
-$category = !empty($_POST['category']) ? $_POST['category'] : '';
+$color = !empty($_POST['color']) ? $_POST['color'] : '';
 
 
 $logError = array(
     'mandatory_fields' => array(
-        'id' => '= ' . $id,
-        'name' => '= ' . $name,
-        'category' => '= ' . $category,
-        'isNew' => '= ' . $isNew ? 'true' : 'false',
-        'isDelete' => '= ' . $isDelete ? 'true' : 'false'
+        'id' => '= ' . $id
     ),
     'optional_fields' => array(
+        'name' => '= ' . $name,
+        'color' => '= ' . $color,
+        'isNew' => '= ' . $isNew ? 'true' : 'false',
+        'isDelete' => '= ' . $isDelete ? 'true' : 'false'
     ),
 );
 
@@ -52,7 +52,7 @@ $jsonResult = array(
     'success' => false
 );
 
-if (!$isDelete && (empty($id) || empty($name))) {
+if (($isDelete || !$isNew) && empty($id)) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['mandatoryFields'] = true;
     $jsonResult['error']['message'] = 'Mandatory fields missing.';
@@ -64,19 +64,25 @@ $success = false;
 
 try {
 
-    $Tag = new Tag(array(
+    $TagCategory = new TagCategory(array(
         'id' => $id,
         'name' => $name,
-        'category' => $category,
+        'color' => $color,
         'shouldFetch' => false
     ));
 
     if ($isNew) {
-        $success = $Tag->add(array('shouldNotUpdate' => true));
+        $tagCategoryId = $TagCategory->add(array('shouldNotUpdate' => true));
+
+        if ($tagCategoryId) {
+            $jsonResult['tagCategoryId'] = $tagCategoryId;
+            $success = true;
+        }
+
     } else if ($isDelete) {
-        $success = $Tag->delete();
+        $success = $TagCategory->delete();
     } else {
-        $success = $Tag->update();
+        $success = $TagCategory->update();
     }
 
 } catch (ExceptionExtended $e) {
