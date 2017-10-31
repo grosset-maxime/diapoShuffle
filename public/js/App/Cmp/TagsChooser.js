@@ -431,7 +431,7 @@ define([
 
             searchFilter = filters.search ? filters.search.toLowerCase() : '';
 
-            categories = els.tagCategoriesCtn.find('.tag_el');
+            categories = els.tagCategoriesCtn.find('.tag_el:not(.add_tag_el)');
 
             categories.each(function(index, categoryEl) {
                 let category = $(categoryEl);
