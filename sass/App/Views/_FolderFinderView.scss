@@ -108,7 +108,8 @@ $FOOTER_HEIGHT: 50px;
             line-height: $FOOTER_HEIGHT;
         }
 
-        .btn_unselectall {
+        .btn_unselectall,
+        .btn_fetch_tags {
             margin-right: 15px;
         }
     } // End .footer_ctn

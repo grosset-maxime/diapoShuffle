@@ -945,7 +945,8 @@ body {
   line-height: 50px;
 }
 /* line 111, ../../sass/App/Views/_FolderFinderView.scss */
-.diapo_shuffle .ds_folder_finder .footer_ctn .btn_unselectall {
+.diapo_shuffle .ds_folder_finder .footer_ctn .btn_unselectall,
+.diapo_shuffle .ds_folder_finder .footer_ctn .btn_fetch_tags {
   margin-right: 15px;
 }
 /* line 5, ../../sass/App/Views/_ShortcutsView.scss */

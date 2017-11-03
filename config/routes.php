@@ -48,6 +48,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/editTag_json.php',
     ),
+    'fetchTags_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/fetchTags_json.php',
+    ),
     'editTagCategory_s' => array(
         'isScript' => true,
         'path' => '/api/script/editTagCategory_json.php',

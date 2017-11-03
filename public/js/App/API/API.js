@@ -231,6 +231,41 @@ function ($, PM) {
 
         /**
          * @param {Object}   options  - Options.
+         * @param {String[]} folders  - Folders to fetch tags to fill pics bdd table.
+         * @param {Function} [onSuccess] - Success callback.
+         * @param {Function} [onFailure] - Failure callback.
+         */
+        fetchTags: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (!options.folders || !options.folders.length) {
+                onFailure('Missing folders information to fetch tags.');
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=fetchTags_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    folders: options.folders,
+                }
+            });
+
+            xhr.done((json) => {
+                _onDone(json, onSuccess, onFailure);
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.fetchTags()', onFailure);
+            });
+        },
+
+        /**
+         * @param {Object}   options  - Options.
          * @param {Boolean}  isNew    - Is a new tag category.
          * @param {Boolean}  isDelete - Should delete tag category.
          * @param {String}   id       - Tag category id.

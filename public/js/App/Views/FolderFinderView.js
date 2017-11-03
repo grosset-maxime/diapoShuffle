@@ -40,7 +40,7 @@ function ($, API, Notify) {
 
     _buildSkeleton = () => {
         let mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn,
-            nbSelectedCtn;
+            nbSelectedCtn, btnFetchTags;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_folder_finder',
@@ -80,10 +80,34 @@ function ($, API, Notify) {
             }
         }).button();
 
+        btnFetchTags = _els.btnFetchTags = $('<input>', {
+            'class': 'btn btn_fetch_tags',
+            type: 'button',
+            value: 'Fetch Tags',
+            on: {
+                click: () => {
+                    API.fetchTags({
+                        folders: View.getSelectedPath(),
+                        onSuccess: function (response) {
+                            Notify.info({
+                                message: 'Fetch tags success. Nb files processes: ' + response.nbFiles
+                            });
+                        },
+                        onFailure: function (error) {
+                            Notify.error({
+                                message: 'Fetch tags error: ' + (error.publicMessage || 'unknow error') + '.'
+                            });
+                        }
+                    });
+                }
+            }
+        }).button();
+
         _rootModel.childCtn = _rootModel.ctn = foldersCtn = _els.foldersCtn = $('<div>', {'class': 'folders_ctn'});
 
         footerCtn.append(
             nbSelectedCtn,
+            btnFetchTags,
             btnUnSelectAll,
             btnClose
         );
@@ -108,11 +132,13 @@ function ($, API, Notify) {
 
         let nbSelectedCtn = _els.nbSelectedCtn,
             btnUnSelectAll = _els.btnUnSelectAll,
+            btnFetchTags = _els.btnFetchTags,
             nbSelected = _selectedItems.length;
 
         if (!nbSelected) {
             nbSelectedCtn.hide();
             btnUnSelectAll.button('disable');
+            btnFetchTags.button('disable');
 
             _options.events.onNonSelected();
 
@@ -122,6 +148,7 @@ function ($, API, Notify) {
         nbSelectedCtn.text('Selected: ' + nbSelected);
         nbSelectedCtn.show();
         btnUnSelectAll.button('enable');
+        btnFetchTags.button('enable');
     };
 
     /**
