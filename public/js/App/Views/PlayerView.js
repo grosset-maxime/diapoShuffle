@@ -302,7 +302,7 @@ function (
             heightPic = picInfos.height || 0,
             widthView = _viewDimension.width,
             heightView = _viewDimension.height,
-            isGif = picInfos.name.toLowerCase().endsWith('.gif');
+            isGif = picInfos.extension === 'gif';
 
         if (!widthPic || !heightPic) {
             return;
@@ -402,6 +402,27 @@ function (
     _setPic = (Item, onSuccess, onFailure) => {
         let img = _els.img;
 
+        function applyOptionsView (Item, itemEl) {
+            if (OptionsView.isScaleOn()) {
+                _scalePic(Item, itemEl);
+            } else if (OptionsView.getZoom() > 1) {
+                _zoomPic(Item, itemEl);
+            }
+        }
+
+        function onLoadSuccess (options) {
+            applyOptionsView(options.Item, options.itemEl);
+
+            View.show();
+            onSuccess && onSuccess();
+            options.shouldPause && PlayerAction.pause();
+        }
+
+        function onLoadFailure () {
+            console.error('Cannot display ' + Item.extension + ': "' + Item.src + '"');
+            onFailure && onFailure(Item);
+        }
+
         if (img) {
             img.remove();
             _els.img = null;
@@ -418,29 +439,23 @@ function (
                 controls: true
             })
                 .on({
-                    load: () => {
-                        // TODO: call success on load.
-                        // TODO: scale video on view.
-                        // TODO: zoom video on view.
-                        // TODO: factorize scale and zoom call.
+                    canplay: () => {
+                        let videoEl;
+
+                        if (!Item.width || !Item.height) {
+                            videoEl = img[0];
+                            Item.width = videoEl.videoWidth;
+                            Item.height = videoEl.videoHeight;
+                        }
+
+                        onLoadSuccess({
+                            Item: Item,
+                            itemEl: img,
+                            shouldPause: true
+                        });
                     },
-                    error: () => {
-                        // TODO: test error callback and factorize with image one.
-                        console.error('Cannot display webm: "' + Item.src + '"');
-                        onFailure && onFailure(Item);
-                    }
+                    error: onLoadFailure
                 });
-
-            // TODO: factorize success callback with image one.
-            View.show();
-            onSuccess && onSuccess();
-            PlayerAction.pause(); // TODO: Add option to choose if video/gif should pause player.
-
-            if (OptionsView.isScaleOn()) {
-                _scalePic(Item, img);
-            } else if (OptionsView.getZoom() > 1) {
-                _zoomPic(Item, img);
-            }
         } else {
             img = _els.img = $('<img>', {
                 'class': 'random_pic',
@@ -456,26 +471,16 @@ function (
                             Item.height = imgEl.naturalHeight;
                         }
 
-                        if (OptionsView.isScaleOn()) {
-                            _scalePic(Item, img);
-                        } else if (OptionsView.getZoom() > 1) {
-                            _zoomPic(Item, img);
-                        }
-
-                        View.show();
-                        onSuccess && onSuccess();
+                        onLoadSuccess({
+                            Item: Item,
+                            itemEl: img,
+                            shouldPause: Item.extension === 'gif'
+                        });
                     },
-                    error: () => {
-                        console.error('Cannot display pic: "' + Item.src + '"');
-                        onFailure && onFailure(Item);
-                    }
+                    error: onLoadFailure
                 });
 
-            if (OptionsView.isScaleOn()) {
-                _scalePic(Item, img);
-            } else if (OptionsView.getZoom() > 1) {
-                _zoomPic(Item, img);
-            }
+            applyOptionsView(Item, img);
         }
 
         _els.playCtn.html(img);
