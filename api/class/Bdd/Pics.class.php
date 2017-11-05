@@ -97,11 +97,15 @@ class Pics extends Root
                     $typesId[] = Pic::TYPE_PNG;
                 } else if ($type === 'WEBM') {
                     $typesId[] = Pic::TYPE_WEBM;
+                } else if ($type === 'MP4') {
+                    $typesId[] = Pic::TYPE_MP4;
+                } else if ($type === 'MKV') {
+                    $typesId[] = Pic::TYPE_MKV;
                 } else {
                     throw new Exception('Type not found: ' . $type);
                 }
 
-                $typesWhere .= 'type = ? OR';
+                $typesWhere .= ' type = ? OR';
             }
 
             // Add a AND in where if needed.

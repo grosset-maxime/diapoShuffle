@@ -176,6 +176,22 @@ function (
                 on: {
                     click: _onTypesSelectBtnClick
                 }
+            }).button(),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'MP4',
+                on: {
+                    click: _onTypesSelectBtnClick
+                }
+            }).button(),
+            $('<input>', {
+                'class': 'btn',
+                type: 'button',
+                value: 'MKV',
+                on: {
+                    click: _onTypesSelectBtnClick
+                }
             }).button()
         );
 

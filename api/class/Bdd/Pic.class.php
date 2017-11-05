@@ -46,6 +46,8 @@ class Pic extends Root
     const TYPE_PNG = 2;
     const TYPE_GIF = 3;
     const TYPE_WEBM = 4;
+    const TYPE_MP4 = 5;
+    const TYPE_MKV = 6;
 
     protected $bdd = null;
 
@@ -101,6 +103,10 @@ class Pic extends Root
                 $type = 'gif';
             } else if ($type === self::TYPE_WEBM) {
                 $type = 'webm';
+            } else if ($type === self::TYPE_MP4) {
+                $type = 'mp4';
+            } else if ($type === self::TYPE_MKV) {
+                $type = 'mkv';
             } else {
                 $type = self::TYPE_JPG;
             }
@@ -112,6 +118,8 @@ class Pic extends Root
     public function setType($type = self::TYPE_JPG)
     {
         if (is_string($type)) {
+            $type = strtolower($type);
+
             switch ($type) {
                 case 'jpeg':
                 case 'jpg':
@@ -125,6 +133,12 @@ class Pic extends Root
                     break;
                 case 'webm':
                     $type = self::TYPE_WEBM;
+                    break;
+                case 'mp4':
+                    $type = self::TYPE_MP4;
+                    break;
+                case 'mkv':
+                    $type = self::TYPE_MKV;
                     break;
                 default:
                     $type = self::TYPE_JPG;

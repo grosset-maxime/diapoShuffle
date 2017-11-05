@@ -428,8 +428,11 @@ function (
             _els.img = null;
         }
 
-        // TODO: do the same with .mp4 and other compatible video formats.
-        if (Item.extension === 'webm') {
+        if (
+            Item.extension === 'webm'
+            || Item.extension === 'mkv'
+            || Item.extension === 'mp4'
+        ) {
             img = _els.img = $('<video>', {
                 'class': 'random_pic',
                 src: Item.src || '',

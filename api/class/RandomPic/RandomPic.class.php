@@ -180,7 +180,7 @@ class RandomPic extends Root
                 if ($item->isDot()
                     || preg_match('/^[\.].*/i', $fileName)
                     || preg_match('/^(thumb)(s)?[\.](db)$/i', $fileName)
-                    || (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp|.webm)$/i', $fileName))
+                    || (!$isDir && !preg_match('/(.jpeg|.jpg|.gif|.png|.bmp|.webm|.mp4|.mkv)$/i', $fileName))
                     || ($isDir && $fileName === '@eaDir')
                 ) {
                     continue;
