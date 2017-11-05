@@ -117,7 +117,7 @@ function ($, Client, OptionsView) {
     };
 
     _displayOsPicPath = () => {
-        let range,
+        let range, s,
             completePath = '',
             paths = [globals.picsRootPath || '', _currentPic.randomPublicPath, _currentPic.name];
 
@@ -141,9 +141,15 @@ function ($, Client, OptionsView) {
         _els.randomPublicPathCtn.html(completePath);
 
         // Select the path.
+        s = window.getSelection();
+
+        if (s.rangeCount > 0) {
+            s.removeAllRanges();
+        }
+
         range = document.createRange();
         range.selectNode(_els.randomPublicPathCtn[0]);
-        window.getSelection().addRange(range);
+        s.addRange(range);
     };
 
     _onTagsCtnClick = () => {

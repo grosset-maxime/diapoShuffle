@@ -95,7 +95,7 @@ function (
                 isPlaying = PlayerAction.isPlaying(),
                 isDisabled = PlayerAction.isDisabled();
 
-            console.log(keyPressed);
+            // console.log(keyPressed);
 
             if (isPlaying && !isDisabled) {
 
