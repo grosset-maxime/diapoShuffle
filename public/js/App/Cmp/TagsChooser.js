@@ -52,10 +52,14 @@ define([
     }
 
     function setTagElCss (tagEl) {
-        let Tag = tagEl.data('Tag');
+        let Tag = tagEl.data('Tag'),
+            categoryId = Tag.getCategory();
 
         tagEl.css({
-            'border-color': '#' + ((TagsManager.getTagCategoryById(Tag.getCategory()) || {}).color || '000')
+            'border-color': '#' + ((TagsManager.getTagCategoryById(Tag.getCategory()) || {}).color || '000'),
+            'border-style': categoryId === '0'
+                ? 'dashed'
+                : 'solid'
         });
 
         return tagEl;
@@ -329,7 +333,23 @@ define([
                             that._onEditTagCategoryClick({ isNew: true });
                         }
                     }
-                }).button()
+                }).button(),
+                $('<div>', {
+                    'class': 'tag_el tag_category_el none_tagcategory_el',
+                    html: $('<div>', {
+                        'class': 'text',
+                        text: 'None',
+                        on: {
+                            click: that._onTagCategoryClick.bind(that)
+                        }
+                    }),
+                    on: {
+                        click: function (e) {
+                            $(e.target).find('.text').click();
+                            e.stopPropagation();
+                        }
+                    }
+                })
             );
 
             that._allTagCategories.forEach(function (TagCategory) {
@@ -491,15 +511,21 @@ define([
         },
 
         _getFilters: function () {
-            let selectedCategory,
+            let selectedCategory, TagCategory,
                 filters = {};
 
             filters.search = this.els.searchAvailableInput.val();
 
             selectedCategory = this.els.tagCategoriesCtn.find('.tag_category_el.selected');
-            filters.category = selectedCategory[0]
-                ? selectedCategory.data('TagCategory').getId()
-                : null;
+
+            if (selectedCategory[0]) {
+                TagCategory = selectedCategory.data('TagCategory');
+                filters.category = TagCategory
+                    ? TagCategory.getId()
+                    : '0';
+            } else {
+                filters.category = null;
+            }
 
             return filters.search || filters.category
                 ? filters

@@ -31,8 +31,19 @@ function ($, Notify, API, TagsManager, TagClass) {
             Tag = !isNew && options.Tag;
 
         function onCategoryChange () {
+            let inputCategoryVal = _els.inputCategory.val(),
+                color = 'fff';
+
+            if (inputCategoryVal === '0') {
+                _els.colorCategory.hide();
+                return;
+            }
+
+            color = (TagsManager.getTagCategoryById(inputCategoryVal) || {}).color || color;
+
             _els.colorCategory.css({
-                'background-color': '#' + TagsManager.getTagCategoryById(_els.inputCategory.val()).color
+                'background-color': '#' + color,
+                display: 'inline-block'
             });
         }
 
@@ -76,13 +87,25 @@ function ($, Notify, API, TagsManager, TagClass) {
                         }),
                         _els.inputCategory = $('<select>', {
                             'class': 'input_select',
-                            html: TagsManager.getTagCategories().map(function (TagCategory) {
-                                return $('<option>', {
-                                    value: TagCategory.getId(),
-                                    text: TagCategory.getName(),
-                                    selected: !isNew && Tag.getCategory() === TagCategory.getId() ? true : false
-                                });
-                            }),
+                            html: [
+                                $('<option>', {
+                                    value: '0',
+                                    text: 'None',
+                                    selected: isNew || !Tag.getCategory()
+                                        ? true
+                                        : false
+                                })
+                            ].concat(TagsManager.getTagCategories().map(
+                                function (TagCategory) {
+                                    return $('<option>', {
+                                        value: TagCategory.getId(),
+                                        text: TagCategory.getName(),
+                                        selected: !isNew && Tag.getCategory() === TagCategory.getId()
+                                            ? true
+                                            : false
+                                    });
+                                }
+                            )),
                             on: {
                                 change: onCategoryChange
                             }
