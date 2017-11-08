@@ -680,7 +680,7 @@ body {
 }
 /* line 59, ../../sass/App/Views/_InfosView.scss */
 .diapo_shuffle .ds_infos_view .tags_ctn .tag {
-  border-left: 1px solid #333;
+  border-left: 3px solid #333;
   padding: 5px;
   margin: 8px 4px;
 }

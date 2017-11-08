@@ -10,9 +10,11 @@ define(
     'PM/Utils/Client',
 
     // App View
-    'App/Views/OptionsView'
+    'App/Views/OptionsView',
+
+    'App/TagsManager',
 ],
-function ($, Client, OptionsView) {
+function ($, Client, OptionsView, TagsManager) {
     'use strict';
 
     let View,
@@ -107,10 +109,26 @@ function ($, Client, OptionsView) {
         }
 
         tags.forEach(function (Tag) {
+            let tagCategoryId = Tag.getCategory(),
+                TagCategory = TagsManager.getTagCategoryById(tagCategoryId);
+
             tagsCtn.append(
                 $('<div>', {
                     'class': 'tag',
-                    text: Tag.getName()
+                    text: Tag.getName(),
+                    title: TagCategory
+                        ? TagCategory.name
+                        : !tagCategoryId
+                            ? 'Unknow tag'
+                            : 'No category',
+                    css: {
+                        'border-color': '#' + (TagCategory ? TagCategory.color : '333'),
+                        'border-style': !tagCategoryId
+                            ? 'dotted'
+                            : tagCategoryId === '0'
+                                ? 'double'
+                                : 'solid'
+                    }
                 })
             );
         });
