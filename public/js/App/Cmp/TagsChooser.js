@@ -57,7 +57,7 @@ define([
 
         tagEl.css({
             'border-color': '#' + ((TagsManager.getTagCategoryById(categoryId) || {}).color || '000'),
-            'border-style': categoryId === '0'
+            'border-style': !categoryId || categoryId === '0'
                 ? 'dashed'
                 : 'solid'
         });
