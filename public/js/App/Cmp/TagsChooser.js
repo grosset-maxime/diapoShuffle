@@ -112,6 +112,8 @@ define([
             let tag = $(e.target.parentElement);
 
             toggleSelectEl(tag);
+
+            this._setSearchInputFocus();
         },
 
         _onTagCategoryClick: function (e) {
@@ -216,7 +218,7 @@ define([
                             'class': 'text',
                             text: Tag.getName(),
                             on: {
-                                click: scope._onTagClick
+                                click: scope._onTagClick.bind(scope)
                             }
                         }),
                         $('<div>', {
