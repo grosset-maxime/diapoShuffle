@@ -153,6 +153,7 @@ function ($, Notify, API, TagsManager, TagClass) {
             if (!isNew) {
                 buttons.push({
                     text: 'Delete',
+                    tabIndex: -1,
                     click: () => {
                         let response = window.confirm('Are you sure to delete this tag ?');
 
