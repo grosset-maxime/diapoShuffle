@@ -456,9 +456,10 @@ define([
             categories = els.tagCategoriesCtn.find('.tag_el:not(.add_tag_el)');
 
             categories.each(function(index, categoryEl) {
-                let category = $(categoryEl);
+                let category = $(categoryEl),
+                    TagCategory = category.data('TagCategory');
 
-                category.data('TagCategory').getName().toLowerCase().indexOf(searchFilter) === -1
+                !TagCategory || TagCategory.getName().toLowerCase().indexOf(searchFilter) === -1
                     ? hideEl(category)
                     : showEl(category);
             });
@@ -666,7 +667,7 @@ define([
                                     break;
 
                                 case 27: // ESC
-                                    that._clearFilterAvailableTags();
+                                    that._clearFilters();
                                     stopEvent = true; // Prevent closing modal.
                                     break;
 
