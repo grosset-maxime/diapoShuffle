@@ -69,7 +69,7 @@ class Tag extends Root
 
     public function getId()
     {
-        return $this->Id;
+        return $this->id;
     }
 
     public function setName($name = '')
@@ -151,12 +151,9 @@ class Tag extends Root
     {
         $bdd = $this->bdd;
 
-        if (!empty($this->id)) {
-            return $this->update();
-        }
-
         try {
             $query = 'INSERT INTO tags (id, name, category) VALUES (:id, :name, :category) ON DUPLICATE KEY UPDATE name = :name, category = :category';
+
             $req = $bdd->prepare($query);
 
             $success = $req->execute(array(
