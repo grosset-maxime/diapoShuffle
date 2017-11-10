@@ -745,6 +745,7 @@ function (
 
             TagsModal.ask({
                 selectedTags: Pic.getTags(),
+                editBtn: true,
                 onClose: function () {
                     PlayerAction.enable();
                 },
