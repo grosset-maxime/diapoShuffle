@@ -67,7 +67,7 @@ function (
         _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick, _buildTagsFilter, _buildFolderFilter,
         _buildInsideOption, _buildIntervalOption, _keyUpInput, _buildZoomOption, _buildScaleOption,
         _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect, _buildTypesFilter,
-        _onTypesSelectBtnClick, _removeTagFromSelected;
+        _onTypesSelectBtnClick, _removeTagFromSelected, _buildMuteVideoOption;
 
 
     _keyUpInput = (e) => {
@@ -483,6 +483,34 @@ function (
         _els.mainCtn.append(displayTagsCtn);
     };
 
+    _buildMuteVideoOption = () => {
+        let inputMuteVideo, muteVideoCtn;
+
+        inputMuteVideo = _els.inputMuteVideo = $('<input>', {
+            'class': 'input_text',
+            type: 'checkbox',
+            checked: true
+        });
+
+        // Ctn display tags
+        muteVideoCtn = $('<div>', {
+            'class': 'el_ctn'
+        }).append(
+            inputMuteVideo,
+            $('<span>', {
+                'class': 'title label',
+                text: 'Mute video',
+                on: {
+                    click: function () {
+                        inputMuteVideo[0].checked = !inputMuteVideo[0].checked;
+                    }
+                }
+            })
+        );
+
+        _els.mainCtn.append(muteVideoCtn);
+    };
+
     _buildFooter = () => {
         let footerCtn, btnClearCache, btnStart;
 
@@ -557,6 +585,8 @@ function (
         _buildPinOption();
 
         _buildTagsOption();
+
+        _buildMuteVideoOption();
 
         _buildFooter();
 
@@ -750,6 +780,8 @@ function (
         },
 
         isScaleOn: () => !!_els.inputScale[0].checked,
+
+        isMuteVideo: () => !!_els.inputMuteVideo[0].checked,
 
         isPublicPathOn: () => !!_els.inputPathPic[0].checked,
 

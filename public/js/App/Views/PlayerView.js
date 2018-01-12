@@ -438,7 +438,7 @@ function (
                 src: Item.src || '',
                 autoplay: true,
                 loop: true,
-                muted: true,
+                muted: OptionsView.isMuteVideo() ? true : null,
                 controls: true
             })
                 .on({
