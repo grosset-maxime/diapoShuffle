@@ -610,6 +610,8 @@ function (
     };
 
     _onTagsSelectBtnClick = () => {
+        PlayerAction.setInsideFolder(); // Reset inside folder.
+
         TagsModal.ask({
             selectedTags: _selectedTags,
             randomBtn: true,
@@ -625,6 +627,8 @@ function (
     };
 
     _onTypesSelectBtnClick = (e) => {
+        PlayerAction.setInsideFolder(); // Reset inside folder.
+
         $(e.target).toggleClass('selected');
         BddEngine.clear();
     };
@@ -668,6 +672,8 @@ function (
     _updateNbCustomFolderSelected = () => {
         var nbCustomFolderSelected = View.getCustomFolders().length,
             nbSelectedCtn = _els.nbSelectedCtn;
+
+        PlayerAction.setInsideFolder(); // Reset inside folder.
 
         if (!nbCustomFolderSelected) {
             nbSelectedCtn.hide();
@@ -824,10 +830,6 @@ function (
         },
 
         setInsideFolder: (path) => {
-            let css = {
-                opacity: 0.3
-            };
-
             _isInsideFolder = true;
 
             _els.insideFolder.html(
@@ -843,9 +845,6 @@ function (
             );
 
             _els.insideFolderCtn.show();
-
-            _els.selectedCustomFolderCtn.css(css);
-            _els.customFolderCtn.css(css);
         }
     };
 
