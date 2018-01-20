@@ -16,15 +16,15 @@ function ($, Utils, HistoryEngine) {
     let Engine,
         _options = {},
         _currentIndex = -1,
-        _pined = [];
+        _items = [];
 
 
     // Private functions
     let _getNextRandomly, _getNextAfter, _getPreviousAfter, _getItem;
 
     _getItem = (index) => {
-        let nbItems = _pined.length,
-            item = _pined[index || _currentIndex];
+        let nbItems = _items.length,
+            item = _items[index || _currentIndex];
 
         item.index = _currentIndex + 1;
         item.nbResult = nbItems;
@@ -33,23 +33,28 @@ function ($, Utils, HistoryEngine) {
     };
 
     _getNextRandomly = () => {
-        _currentIndex = Utils.getRandomNum(_pined.length - 1);
+        _currentIndex = Utils.getRandomNum(_items.length - 1);
 
         return _getItem();
     };
 
     _getNextAfter = () => {
         _currentIndex++;
-        _currentIndex = _currentIndex >= _pined.length ? 0 : _currentIndex;
+        _currentIndex = _currentIndex >= _items.length ? 0 : _currentIndex;
 
         return _getItem();
     };
 
     _getPreviousAfter = () => {
-        _currentIndex--;
-        _currentIndex = _currentIndex < 0 ? _pined.length - 1 : _currentIndex;
+        var item;
 
-        return _getItem();
+        _currentIndex--;
+        _currentIndex = _currentIndex < 0 ? _items.length - 1 : _currentIndex;
+
+        item = _getItem();
+        HistoryEngine.add(item);
+
+        return item;
     };
 
     Engine = {
@@ -77,7 +82,7 @@ function ($, Utils, HistoryEngine) {
 
         add: (item) => {
             let nbItem,
-                result = _pined.find(function (aItem) {
+                result = _items.find(function (aItem) {
                     return aItem.src === item.src;
                 });
 
@@ -85,12 +90,12 @@ function ($, Utils, HistoryEngine) {
                 return;
             }
 
-            _pined.push(item);
-            nbItem = _pined.length;
+            _items.push(item);
+            nbItem = _items.length;
             _currentIndex = nbItem - 1;
             item.index = nbItem;
 
-            _pined.forEach(function (item) {
+            _items.forEach(function (item) {
                 item.nbResult = nbItem;
             });
 
@@ -98,13 +103,13 @@ function ($, Utils, HistoryEngine) {
         },
 
         remove: () => {
-            let nbItem = _pined.length;
+            let nbItem = _items.length;
 
             if (!nbItem) {
                 return;
             }
 
-            _pined.splice(_currentIndex, 1);
+            _items.splice(_currentIndex, 1);
             _currentIndex--;
 
             _options.events.onRemove();
@@ -112,7 +117,7 @@ function ($, Utils, HistoryEngine) {
 
         clear: () => {
             _currentIndex = -1;
-            _pined = [];
+            _items = [];
 
             _options.events.onClear();
         },
@@ -144,11 +149,11 @@ function ($, Utils, HistoryEngine) {
         },
 
         isLast: () => {
-            return _currentIndex >= (_pined.length - 1);
+            return _currentIndex >= (_items.length - 1);
         },
 
         getNbPined: () => {
-            return _pined.length;
+            return _items.length;
         }
     };
 

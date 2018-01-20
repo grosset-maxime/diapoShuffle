@@ -63,10 +63,15 @@ function ($, Utils, API, Pic, HistoryEngine) {
     };
 
     _getPreviousAfter = () => {
+        var item;
+
         _currentIndex--;
         _currentIndex = _currentIndex < 0 ? _items.length - 1 : _currentIndex;
 
-        return _getItem();
+        item = _getItem();
+        HistoryEngine.add(item);
+
+        return item;
     };
 
 
