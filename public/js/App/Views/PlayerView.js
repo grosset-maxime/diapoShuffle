@@ -438,15 +438,17 @@ function (
                 src: Item.src || '',
                 autoplay: true,
                 loop: true,
-                muted: OptionsView.isMuteVideo() ? true : null,
                 controls: true
             })
                 .on({
                     canplay: () => {
-                        let videoEl;
+                        let videoEl = img[0];
+
+                        if (OptionsView.isMuteVideo()) {
+                            videoEl.muted = true;
+                        }
 
                         if (!Item.width || !Item.height) {
-                            videoEl = img[0];
                             Item.width = videoEl.videoWidth;
                             Item.height = videoEl.videoHeight;
                         }
