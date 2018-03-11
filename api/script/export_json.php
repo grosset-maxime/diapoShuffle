@@ -75,7 +75,16 @@ if (!empty($results)) {
 
     try {
         if (!is_dir($exportFolderPath)) {
-            mkdir($exportFolderPath, 0755, true);
+            if (!mkdir($exportFolderPath, 0755, true)) {
+                $message = 'Impossible to create export folder: ' . $exportFolderPath;
+                throw new ExceptionExtended(
+                    array(
+                        'publicMessage' => $message,
+                        'message' => $message,
+                        'severity' => ExceptionExtended::SEVERITY_ERROR
+                    )
+                );
+            }
         }
 
         $date = new DateTime();
