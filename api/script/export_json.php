@@ -75,7 +75,7 @@ if (!empty($results)) {
 
     try {
         if (!is_dir($exportFolderPath)) {
-            mkdir($exportFolderPath, 0777, true);
+            mkdir($exportFolderPath, 0755, true);
         }
 
         $date = new DateTime();
