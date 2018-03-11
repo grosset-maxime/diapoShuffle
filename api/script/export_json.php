@@ -75,7 +75,7 @@ if (!empty($results)) {
 
     try {
         if (!is_dir($exportFolderPath)) {
-            if (!mkdir($exportFolderPath, 0755, true)) {
+            if (!mkdir($exportFolderPath)) {
                 $message = 'Impossible to create export folder: ' . $exportFolderPath;
                 throw new ExceptionExtended(
                     array(
