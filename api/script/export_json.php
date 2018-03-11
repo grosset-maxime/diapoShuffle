@@ -90,7 +90,16 @@ if (!empty($results)) {
         $date = new DateTime();
         $exportFolder = $exportFolderPath . '/' . $date->getTimestamp();
 
-        mkdir($exportFolder);
+        if (!mkdir($exportFolder);) {
+            $message = 'Impossible to create timestamp export folder: ' . $exportFolder;
+            throw new ExceptionExtended(
+                array(
+                    'publicMessage' => $message,
+                    'message' => $message,
+                    'severity' => ExceptionExtended::SEVERITY_ERROR
+                )
+            );
+        }
 
         $nbCopiedFiles = 0;
         $baseItemPath = substr($_BASE_PIC_PATH, 0, -strlen('/' . $_BASE_PIC_FOLDER_NAME));
