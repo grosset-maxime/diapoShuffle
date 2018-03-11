@@ -90,7 +90,7 @@ if (!empty($results)) {
         $date = new DateTime();
         $exportFolder = $exportFolderPath . '/' . $date->getTimestamp();
 
-        if (!mkdir($exportFolder);) {
+        if (!mkdir($exportFolder)) {
             $message = 'Impossible to create timestamp export folder: ' . $exportFolder;
             throw new ExceptionExtended(
                 array(
