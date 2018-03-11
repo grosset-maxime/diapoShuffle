@@ -625,7 +625,7 @@ define([
                 'class': 'selected_tags_ctn',
                 on: {
                     click: function () {
-                        that._setSearchInputFocus()
+                        that._setSearchInputFocus();
                     }
                 }
             });

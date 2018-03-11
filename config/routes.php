@@ -80,6 +80,10 @@ $_routes += array(
         'isScript' => true,
         'path' => '/api/script/getPicsList_json.php',
     ),
+    'export_s' => array(
+        'isScript' => true,
+        'path' => '/api/script/export_json.php',
+    ),
 );
 
 // Static - Views - Errors

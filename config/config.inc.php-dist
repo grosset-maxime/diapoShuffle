@@ -24,8 +24,10 @@ $_config = array(
     ),
 
     'globalsJs' => array(
-        'picsRootPath' => '' //
+        'picsRootPath' => '' // Root items path.
     ),
 
-    'deleteEmptyFolder' => false // Should delete empty folder.
+    'deleteEmptyFolder' => false, // Should delete empty folder.
+
+    'exportFolderPath' => '' // Folde path where to export items.
 );

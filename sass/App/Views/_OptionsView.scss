@@ -116,12 +116,25 @@
         font-size: 0.8em;
     }
 
-    .clear_cache_btn {
+    .clear_cache_btn,
+    .export_btn {
         color: #f1f1f1;
         position: absolute;
+        font-size: 0.8em;
+
+        &:hover {
+            color: #aaa;
+        }
+    }
+
+    .clear_cache_btn {
         bottom: 6px;
         right: 20px;
-        font-size: 0.8em;
+    }
+
+    .export_btn {
+        bottom: 6px;
+        left: 20px;
     }
 
     .selected_custom_folder_ctn {

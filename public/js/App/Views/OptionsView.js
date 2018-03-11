@@ -67,7 +67,7 @@ function (
         _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick, _buildTagsFilter, _buildFolderFilter,
         _buildInsideOption, _buildIntervalOption, _keyUpInput, _buildZoomOption, _buildScaleOption,
         _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect, _buildTypesFilter,
-        _onTypesSelectBtnClick, _removeTagFromSelected, _buildMuteVideoOption;
+        _onTypesSelectBtnClick, _removeTagFromSelected, _buildMuteVideoOption, _export;
 
 
     _keyUpInput = (e) => {
@@ -512,10 +512,20 @@ function (
     };
 
     _buildFooter = () => {
-        let footerCtn, btnClearCache, btnStart;
+        let footerCtn, btnClearCache, btnStart, btnExport;
 
         footerCtn = _els.footerCtn = $('<div>', {
             'class': 'footer_ctn flex'
+        });
+
+        // Export btn
+        // ----------
+        btnExport = $('<div>', {
+            'class': 'export_btn text_btn',
+            text: 'Export',
+            on: {
+                click: _export
+            }
         });
 
         // Clear Pic cache
@@ -541,6 +551,7 @@ function (
 
         footerCtn.append(
             btnStart,
+            btnExport,
             btnClearCache
         );
 
@@ -681,6 +692,26 @@ function (
             },
             onFailure: (error) => {
                 Notify.error({ message: error });
+            }
+        });
+    };
+
+    _export = () => {
+        API.export({
+            tags: View.getSelectedTags(),
+            tagsOperator: View.getTagsOperator(),
+            types: View.getSelectedTypes(),
+            onSuccess: function (response) {
+                response = response || {};
+
+                Notify.info({
+                    message: 'Copied file: ' + (response.nbCopiedFiles || 0)
+                });
+            },
+            onFailure: function (e) {
+                Notify.error({
+                    message: e
+                });
             }
         });
     };

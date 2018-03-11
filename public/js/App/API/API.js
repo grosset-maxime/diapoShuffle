@@ -476,7 +476,48 @@ function ($, PM) {
             xhr.fail((jqXHR, textStatus, errorThrown) => {
                 _onFail(jqXHR, textStatus, errorThrown, 'API.clearCache()', onFailure);
             });
-        }
+        },
+
+        /**
+         * @param {Object}   options                - Options.
+         * @param {Tag[]}    tags                   - tags selection to export.
+         * @param {Array}    [options.types]        - Types (JPG, GIF, PNG).
+         * @param {String}   [options.tagsOperator] - Operator for tags filtering ('AND' or 'OR').
+         * @param {Function} [onSuccess]            - Success callback.
+         * @param {Function} [onFailure]            - Failure callback.
+         */
+        export: (options = {}) => {
+            let xhr,
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (!options.tags || !options.tags.length) {
+                onFailure('Export failed: No tags selected.');
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=export_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    tags: options.tags.map(function (tag) {
+                        return tag.id;
+                    }),
+                    types: options.types,
+                    tagsOperator: options.tagsOperator
+                }
+            });
+
+            xhr.done((json) => {
+                _onDone(json, onSuccess, onFailure);
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.export()', onFailure);
+            });
+        },
     };
 
     return API;
