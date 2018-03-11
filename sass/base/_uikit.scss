@@ -50,3 +50,32 @@ $BLUE_LIGHT: #e5ecfc;
         color: #666;
     }
 }
+
+.ctn_loading {
+    text-align: center;
+    width: 38px;
+    height: 20px;
+
+    .el_loading {
+        width: 4px;
+        height: 4px;
+        margin: 10px auto;
+        background: #aaa;
+        border: 1px solid #555;
+        animation: ds_loading_anim 1.3s infinite alternate;
+        @include inline-block();
+        border-radius: 20px;
+    }
+
+    .el_loading_1 {
+        animation-delay: 0s;
+    }
+
+    .el_loading_2 {
+        animation-delay: 0.39s;
+    }
+
+    .el_loading_3 {
+        animation-delay: 0.78s;
+    }
+}

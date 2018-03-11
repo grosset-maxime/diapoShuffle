@@ -67,7 +67,8 @@ function (
         _onTagsSelectBtnClick, _onUnSelectAllTagsBtnClick, _buildTagsFilter, _buildFolderFilter,
         _buildInsideOption, _buildIntervalOption, _keyUpInput, _buildZoomOption, _buildScaleOption,
         _buildPathOption, _buildPinOption, _buildTagsOption, _buildFooter, _onTagsSelect, _buildTypesFilter,
-        _onTypesSelectBtnClick, _removeTagFromSelected, _buildMuteVideoOption, _export;
+        _onTypesSelectBtnClick, _removeTagFromSelected, _buildMuteVideoOption, _export, _showLoading,
+        _hideLoading;
 
 
     _keyUpInput = (e) => {
@@ -559,7 +560,7 @@ function (
     };
 
     _buildSkeleton = () => {
-        let mainCtn;
+        let mainCtn, loadingCtn;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_options_view flex',
@@ -576,6 +577,24 @@ function (
                 }
             })]
         });
+
+        // Loading
+        // -------
+        loadingCtn = _els.loadingCtn = $('<div>', {
+            'class': 'ctn_loading'
+        }).append(
+            $('<span>', {
+                'class': 'el_loading_1 el_loading'
+            }),
+            $('<span>', {
+                'class': 'el_loading_2 el_loading'
+            }),
+            $('<span>', {
+                    'class': 'el_loading_3 el_loading'
+                })
+        );
+
+        mainCtn.append(loadingCtn);
 
         _buildFolderFilter();
 
@@ -602,6 +621,14 @@ function (
         _buildFooter();
 
         _options.root.append(mainCtn);
+    };
+
+    _showLoading = () => {
+        _els.loadingCtn.show();
+    };
+
+    _hideLoading = () => {
+        _els.loadingCtn.hide();
     };
 
     _removeTagFromSelected = (tagId) => {
@@ -697,11 +724,15 @@ function (
     };
 
     _export = () => {
+        _showLoading();
+
         API.export({
             tags: View.getSelectedTags(),
             tagsOperator: View.getTagsOperator(),
             types: View.getSelectedTypes(),
             onSuccess: function (response) {
+                _hideLoading();
+
                 response = response || {};
 
                 Notify.info({
@@ -709,6 +740,8 @@ function (
                 });
             },
             onFailure: function (e) {
+                _hideLoading();
+
                 Notify.error({
                     message: e
                 });

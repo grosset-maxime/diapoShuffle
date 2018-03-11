@@ -184,4 +184,13 @@
             background-color: $ORANGE_LIGHT;
         }
     }
+
+    .ctn_loading {
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 550;
+        text-align: center;
+    }
 } // End .ds_options_view
