@@ -161,6 +161,7 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
                         // Ensure that the Description value exists and save it.
                         if  ( ( array_key_exists( 'children', $Item ) ) &&
                               ( $Item['children'][0]['tag'] == "rdf:Alt" ) &&
+                              ( !empty($Item['children'][0]['children'][0]) ) &&
                               ( array_key_exists( 'value', $Item['children'][0]['children'][0] ) ) )
                         {
                                 $outputarray = add_to_field( $outputarray, 'caption' , HTML_UTF8_Escape( $Item['children'][0]['children'][0]['value'] ), "\n" );
@@ -178,7 +179,8 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
                 {
                         // Ensure that the Creator value exists and save it.
                         if  ( ( array_key_exists( 'children', $Item ) ) &&
-                              ( $Item['children'][0]['tag'] =="rdf:Seq" ) &&
+                              ( $Item['children'][0]['tag'] == "rdf:Seq" ) &&
+                              ( !empty($Item['children'][0]['children'][0]) ) &&
                               ( array_key_exists( 'value', $Item['children'][0]['children'][0] ) ) )
                         {
                                 $outputarray = add_to_field( $outputarray, 'author' , HTML_UTF8_Escape( $Item['children'][0]['children'][0]['value'] ), "\n" );
@@ -197,6 +199,7 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
                         // Ensure that the Title value exists and save it.
                         if  ( ( array_key_exists( 'children', $Item ) ) &&
                               ( $Item['children'][0]['tag'] =="rdf:Alt" ) &&
+                              ( !empty($Item['children'][0]['children'][0]) ) &&
                               ( array_key_exists( 'value', $Item['children'][0]['children'][0] ) ) )
                         {
 
@@ -216,6 +219,7 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
                         // Ensure that the Rights value exists and save it.
                         if  ( ( array_key_exists( 'children', $Item ) ) &&
                               ( $Item['children'][0]['tag'] =="rdf:Alt" ) &&
+                              ( !empty($Item['children'][0]['children'][0]) ) &&
                               ( array_key_exists( 'value', $Item['children'][0]['children'][0] ) ) )
                         {
 
@@ -243,8 +247,10 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
                                 {
                                         if ( ! in_array ( HTML_UTF8_Escape( $keywords['value'] ), $outputarray['keywords']))
                                         {
-                                                if  ( array_key_exists( 'value', $keywords ) )
-                                                {
+                                                if (
+                                                    !empty($keywords) &&
+                                                    array_key_exists( 'value', $keywords )
+                                                ) {
                                                         $outputarray['keywords'][] = HTML_UTF8_Escape( $keywords['value'] );
                                                 }
                                         }
