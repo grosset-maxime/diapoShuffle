@@ -21,6 +21,7 @@ define('ROOT_DIR', dirname(dirname(__FILE__)));
 define('HTTP_HOST', $_SERVER['HTTP_HOST']);
 
 ini_set('log_errors', 'on');
+ini_set('display_errors', 'off');
 ini_set('error_log', ROOT_DIR . '/log/php/php_error.log');
 
 /**
