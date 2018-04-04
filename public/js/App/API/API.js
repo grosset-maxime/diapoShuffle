@@ -149,10 +149,10 @@ function ($, PM) {
         },
 
         /**
-         * @param {Object} options - Options.
-         * @param {Pic} Pic - Pic to set tags.
-         * @param {Function} [onSuccess] - Success callback.
-         * @param {Function} [onFailure] - Failure callback.
+         * @param {Object}   options             - Options.
+         * @param {Pic}      options.Pic         - Pic to set tags.
+         * @param {Function} [options.onSuccess] - Success callback.
+         * @param {Function} [options.onFailure] - Failure callback.
          */
         setTags: (options = {}) => {
             let xhr,
@@ -187,14 +187,54 @@ function ($, PM) {
         },
 
         /**
-         * @param {Object}   options  - Options.
-         * @param {Boolean}  isNew    - Is a new tag.
-         * @param {Boolean}  isDelete - Should delete tag.
-         * @param {String}   id       - Tag id.
-         * @param {String}   name     - Tag name.
-         * @param {Integer}  category - Tag category id.
-         * @param {Function} [onSuccess] - Success callback.
-         * @param {Function} [onFailure] - Failure callback.
+         * Set tags to all items in provided folders (recursively).
+         * @param {Object}   options             - Options.
+         * @param {String[]} options.folders     - List of folders.
+         * @param {String[]} options.tags        - List of tags id.
+         * @param {Function} [options.onSuccess] - Success callback.
+         * @param {Function} [options.onFailure] - Failure callback.
+         */
+        setTagsFolders: (options = {}) => {
+            let xhr,
+                folders = options.folders || [],
+                tags = options.tags || [],
+                onSuccess = options.onSuccess || (() => {}),
+                onFailure = options.onFailure || (() => {});
+
+            if (!folders.length || !tags.length) {
+                onFailure('Missing folders or tags information to set tags.');
+                return;
+            }
+
+            xhr = $.ajax({
+                url: '/?r=setTagsFolders_s',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+                data: {
+                    folders: folders,
+                    tags: tags
+                }
+            });
+
+            xhr.done((json) => {
+                _onDone(json, onSuccess, onFailure);
+            });
+
+            xhr.fail(function (jqXHR, textStatus, errorThrown) {
+                _onFail(jqXHR, textStatus, errorThrown, 'API.setTagsFolders()', onFailure);
+            });
+        },
+
+        /**
+         * @param {Object}   options          - Options.
+         * @param {Boolean}  options.isNew    - Is a new tag.
+         * @param {Boolean}  options.isDelete - Should delete tag.
+         * @param {String}   options.id       - Tag id.
+         * @param {String}   options.name     - Tag name.
+         * @param {Integer}  options.category - Tag category id.
+         * @param {Function} options.[onSuccess] - Success callback.
+         * @param {Function} options.[onFailure] - Failure callback.
          */
         editTag: (options = {}) => {
             let xhr,

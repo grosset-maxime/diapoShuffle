@@ -109,7 +109,9 @@ $FOOTER_HEIGHT: 50px;
         }
 
         .btn_unselectall,
-        .btn_fetch_tags {
+        .btn_fetch_tags,
+        .btn_set_tags,
+        .btn_unset_tags {
             margin-right: 15px;
         }
     } // End .footer_ctn

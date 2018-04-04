@@ -66,7 +66,7 @@ if ($firstCharPicPAth !== '/') {
 
 $absolutePath = $_BASE_PIC_PATH . $path;
 
-$Pic = new Item(array(
+$Item = new Item(array(
     'path' => $absolutePath,
     'name' => $name,
     'type' => Item::TYPE_FILE,
@@ -75,8 +75,7 @@ $Pic = new Item(array(
 ));
 
 try {
-
-    $success = $Pic->setTags($tags, empty($tags));
+    $success = $Item->setTags($tags, empty($tags));
 
 } catch (ExceptionExtended $e) {
     $jsonResult['error'] = $logError;

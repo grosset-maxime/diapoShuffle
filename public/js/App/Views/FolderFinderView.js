@@ -6,11 +6,25 @@ define(
 [
     'jquery',
 
-    // App API
+    // App
     'App/API/API',
-    'App/Notify'
+    'App/Notify',
+
+    // Actions
+    'App/Actions/PlayerAction',
+
+    // Modals
+    'App/Modals/TagsModal',
 ],
-function ($, API, Notify) {
+function (
+    $,
+    API,
+    Notify,
+
+    PlayerAction,
+
+    TagsModal
+) {
     'use strict';
 
     let View,
@@ -36,12 +50,12 @@ function ($, API, Notify) {
 
     // Private functions.
     let _buildSkeleton, _updateNbSelected, _fillFolderCtn, _onCheckItem,
-        _onUncheckItem, _getFolderList, _getBtnText, _setBtnText;
+        _onUncheckItem, _getFolderList, _getBtnText, _setBtnText, _onSetOrUnsetTags;
 
 
     _buildSkeleton = () => {
         let mainCtn, btnUnSelectAll, btnClose, footerCtn, foldersCtn,
-            nbSelectedCtn, btnFetchTags;
+            nbSelectedCtn, btnFetchTags, btnSetTags, btnUnsetTags;
 
         mainCtn = _els.mainCtn = $('<div>', {
             'class': 'window ds_folder_finder',
@@ -87,19 +101,45 @@ function ($, API, Notify) {
             value: 'Fetch Tags',
             on: {
                 click: () => {
+                    _options.showLoading();
+
                     API.fetchTags({
                         folders: View.getSelectedPath(),
                         onSuccess: function (response) {
                             Notify.info({
                                 message: 'Fetch tags success. Nb files processes: ' + response.nbFiles
                             });
+                            _options.hideLoading();
                         },
                         onFailure: function (error) {
                             Notify.error({
                                 message: 'Fetch tags error: ' + (error.publicMessage || 'unknow error') + '.'
                             });
+                            _options.hideLoading();
                         }
                     });
+                }
+            }
+        }).button();
+
+        btnSetTags = _els.btnSetTags = $('<input>', {
+            'class': 'btn btn_set_tags',
+            type: 'button',
+            value: 'Set Tags',
+            on: {
+                click: () => {
+                    _onSetOrUnsetTags('set');
+                }
+            }
+        }).button();
+
+        btnUnsetTags = _els.btnUnsetTags = $('<input>', {
+            'class': 'btn btn_unset_tags',
+            type: 'button',
+            value: 'Unset Tags',
+            on: {
+                click: () => {
+                    _onSetOrUnsetTags('unset');
                 }
             }
         }).button();
@@ -108,6 +148,8 @@ function ($, API, Notify) {
 
         footerCtn.append(
             nbSelectedCtn,
+            btnUnsetTags,
+            btnSetTags,
             btnFetchTags,
             btnUnSelectAll,
             btnClose
@@ -126,6 +168,49 @@ function ($, API, Notify) {
         _updateNbSelected();
     };
 
+    _onSetOrUnsetTags = (action) => {
+        TagsModal.ask({
+            editBtn: true,
+            onClose: function () {
+                PlayerAction.enable();
+            },
+            onOpen: function () {
+                PlayerAction.disable();
+            },
+            onEnd: function (selectedTags) {
+                _options.showLoading();
+
+                // TODO: manage unset tags.
+
+                API[action === 'unset' ? 'setTagsFolders' : 'setTagsFolders']({
+                    folders: View.getSelectedPath(),
+                    tags: selectedTags.map(function (tag) {
+                        return tag.getId();
+                    }),
+                    onSuccess: function (response) {
+                        response = response || {};
+
+                        let warnings = response.warning || {};
+
+                        Notify[response.hasWarning ? 'warning' : 'info']({
+                            message: 'Success'
+                                + (response.hasWarning ? '<br>' : '')
+                                + (warnings.foldersError ? '<br><b>Folders not done:</b> ' + warnings.foldersError.join(' - ') : '')
+                                + (warnings.itemsError ? '<br><b>Items not done:</b> ' + warnings.itemsError.join(' - ') : ''),
+                            autoHide: !response.hasWarning
+                        });
+
+                        _options.hideLoading();
+                    },
+                    onFailure: function (error) {
+                        Notify.error({ message: error });
+                        _options.hideLoading();
+                    }
+                });
+            }
+        });
+    };
+
     _updateNbSelected = () => {
         if (!_isBuilt) {
             return;
@@ -134,12 +219,16 @@ function ($, API, Notify) {
         let nbSelectedCtn = _els.nbSelectedCtn,
             btnUnSelectAll = _els.btnUnSelectAll,
             btnFetchTags = _els.btnFetchTags,
+            btnSetTags = _els.btnSetTags,
+            btnUnsetTags = _els.btnUnsetTags,
             nbSelected = _selectedItems.length;
 
         if (!nbSelected) {
             nbSelectedCtn.hide();
             btnUnSelectAll.button('disable');
             btnFetchTags.button('disable');
+            btnSetTags.button('disable');
+            btnUnsetTags.button('disable');
 
             _options.events.onNonSelected();
 
@@ -150,6 +239,8 @@ function ($, API, Notify) {
         nbSelectedCtn.show();
         btnUnSelectAll.button('enable');
         btnFetchTags.button('enable');
+        btnSetTags.button('enable');
+        btnUnsetTags.button('enable');
     };
 
     /**
@@ -422,6 +513,8 @@ function ($, API, Notify) {
                 {
                     root: null,
                     selectedFolderCtn: null,
+                    showLoading: null,
+                    hideLoading: null,
                     events: {
                         onClose: null,
                         onNonSelected: null,

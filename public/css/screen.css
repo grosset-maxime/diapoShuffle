@@ -80,17 +80,22 @@ div {
 }
 
 /* line 15, ../../sass/base/_base.scss */
+b {
+  font-weight: bold;
+}
+
+/* line 19, ../../sass/base/_base.scss */
 .flex {
   display: flex;
   align-items: center;
 }
 
-/* line 24, ../../sass/base/_base.scss */
+/* line 28, ../../sass/base/_base.scss */
 .ui-widget-overlay {
   z-index: 750;
 }
 
-/* line 27, ../../sass/base/_base.scss */
+/* line 31, ../../sass/base/_base.scss */
 .ui-dialog {
   z-index: 2000;
 }
@@ -975,7 +980,9 @@ body {
 }
 /* line 111, ../../sass/App/Views/_FolderFinderView.scss */
 .diapo_shuffle .ds_folder_finder .footer_ctn .btn_unselectall,
-.diapo_shuffle .ds_folder_finder .footer_ctn .btn_fetch_tags {
+.diapo_shuffle .ds_folder_finder .footer_ctn .btn_fetch_tags,
+.diapo_shuffle .ds_folder_finder .footer_ctn .btn_set_tags,
+.diapo_shuffle .ds_folder_finder .footer_ctn .btn_unset_tags {
   margin-right: 15px;
 }
 /* line 5, ../../sass/App/Views/_ShortcutsView.scss */

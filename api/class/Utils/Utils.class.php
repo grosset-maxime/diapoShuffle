@@ -84,4 +84,16 @@ class Utils extends root
         return $p;
     }
 
+    /**
+     * Is supported file type.
+     *
+     * @param {String} $fileName : File name to check if type is supported.
+     *
+     * @return {Boolean} Is type supported.
+     */
+    public function isSupportedFileType ($fileName)
+    {
+        return preg_match('/(.jpeg|.jpg|.gif|.png|.bmp|.webm|.mp4|.mkv)$/i', $fileName);
+    }
+
 }

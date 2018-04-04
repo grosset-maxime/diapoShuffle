@@ -802,6 +802,8 @@ function (
             FolderFinderView.init({
                 root: opts.root,
                 selectedFolderCtn: _els.selectedCustomFolderCtn,
+                showLoading: _showLoading,
+                hideLoading: _hideLoading,
                 events: {
                     onClose: _onCloseFolderFinder,
                     onNonSelected: _onCloseFolderFinder,
