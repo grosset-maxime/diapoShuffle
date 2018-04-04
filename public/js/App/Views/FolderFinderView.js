@@ -30,7 +30,8 @@ function ($, API, Notify) {
         _rootModel = $.extend(true, {}, _defaultModel),
         _selectedPaths = [],
         _selectedItems = [],
-        _selectedFolderCtn = null;
+        _selectedFolderCtn = null,
+        _guid = 1;
 
 
     // Private functions.
@@ -163,13 +164,14 @@ function ($, API, Notify) {
         /**
          * @private
          */
-        buildItem = (el) => {
+        buildItem = (itemText) => {
             let item, expand, label, checkbox, newModel, childCtn,
                 btnSelectAllChild,
                 currentLevel = model.level + 1,
-                completePathTemp = (modelPath ? '/' : '') + modelPath + '/' + el + '/',
+                completePathTemp = (modelPath ? '/' : '') + modelPath + '/' + itemText + '/',
                 completePath = completePathTemp.replace(new RegExp('//', 'g'), '/'),
-                isSelected = _selectedPaths.indexOf(completePath) >= 0;
+                isSelected = _selectedPaths.indexOf(completePath) >= 0,
+                guid = _guid++;
 
             expand = $('<div>', {
                 'class': 'expand_btn btn small',
@@ -194,7 +196,7 @@ function ($, API, Notify) {
             checkbox = $('<input>', {
                 'class': 'checkbox',
                 type: 'checkbox',
-                id: 'folder_' + el + '_' + currentLevel,
+                id: 'folder_' + currentLevel + '_' + guid,
                 checked: isSelected,
                 on: {
                     change: () => {
@@ -209,8 +211,8 @@ function ($, API, Notify) {
 
             label = $('<label>', {
                 'class': 'label',
-                text: el,
-                for: 'folder_' + el + '_' + currentLevel
+                text: itemText,
+                for: 'folder_' + currentLevel + '_' + guid
             });
 
             btnSelectAllChild = $('<input>', {
@@ -226,7 +228,7 @@ function ($, API, Notify) {
                         }
 
                         if (_getBtnText(btnSelectAllChild) === 'Select all') {
-                            children.forEach ((child) =>{
+                            children.forEach ((child) => {
                                 _onCheckItem(child);
                             });
                             _setBtnText(btnSelectAllChild, 'Unselect all');
@@ -268,7 +270,7 @@ function ($, API, Notify) {
 
             newModel = {
                 level: currentLevel,
-                name: el,
+                name: itemText,
                 parent: model,
                 child: [],
                 childCtn: childCtn,
@@ -326,6 +328,10 @@ function ($, API, Notify) {
             onSelect = _options.events.onSelect,
             thumb = model.thumb,
             modelCtn = model.ctn;
+
+        if ($.inArray(model.path, _selectedPaths) > -1) {
+            return;
+        }
 
         _selectedItems.push(model);
         _selectedPaths.push(model.path);
