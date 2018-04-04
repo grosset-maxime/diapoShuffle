@@ -535,19 +535,20 @@ body {
   margin: 8px;
   line-height: 1em;
   width: 100%;
+  overflow: auto;
 }
-/* line 59, ../../sass/App/Views/_OptionsView.scss */
+/* line 60, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title_custom_folder {
   width: 5.5em;
 }
-/* line 63, ../../sass/App/Views/_OptionsView.scss */
+/* line 64, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_custom_folder {
   min-width: 100px;
   max-width: 500px;
   width: 100%;
   border-radius: 4px;
 }
-/* line 70, ../../sass/App/Views/_OptionsView.scss */
+/* line 71, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_custom_folder {
   margin-left: 5px;
   padding: 0 8px;
@@ -555,16 +556,16 @@ body {
   opacity: 0.5;
   transition: opacity 0.3s;
 }
-/* line 77, ../../sass/App/Views/_OptionsView.scss */
+/* line 78, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_custom_folder:hover {
   opacity: 1;
 }
-/* line 82, ../../sass/App/Views/_OptionsView.scss */
+/* line 83, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .input_interval,
 .diapo_shuffle .ds_options_view .input_zoom {
   width: 20px;
 }
-/* line 87, ../../sass/App/Views/_OptionsView.scss */
+/* line 88, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title {
   margin-right: 4px;
   display: inline-block;
@@ -573,104 +574,104 @@ body {
   *zoom: 1;
   *display: inline;
 }
-/* line 91, ../../sass/App/Views/_OptionsView.scss */
+/* line 92, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .title.label {
   cursor: pointer;
 }
-/* line 96, ../../sass/App/Views/_OptionsView.scss */
+/* line 97, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .disabled .title.label {
   cursor: auto;
 }
-/* line 100, ../../sass/App/Views/_OptionsView.scss */
+/* line 101, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .start_btn {
   width: 80%;
   font-size: 1.5em;
   text-align: center;
   margin: auto;
 }
-/* line 107, ../../sass/App/Views/_OptionsView.scss */
+/* line 108, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .btn_unselectall {
   display: none;
   margin-left: 30px;
 }
-/* line 112, ../../sass/App/Views/_OptionsView.scss */
+/* line 113, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .nb_selected {
   display: none;
   margin-left: 15px;
   color: #ccc;
   font-size: 0.8em;
 }
-/* line 119, ../../sass/App/Views/_OptionsView.scss */
+/* line 120, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_cache_btn,
 .diapo_shuffle .ds_options_view .export_btn {
   color: #f1f1f1;
   position: absolute;
   font-size: 0.8em;
 }
-/* line 125, ../../sass/App/Views/_OptionsView.scss */
+/* line 126, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_cache_btn:hover,
 .diapo_shuffle .ds_options_view .export_btn:hover {
   color: #aaa;
 }
-/* line 130, ../../sass/App/Views/_OptionsView.scss */
+/* line 131, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .clear_cache_btn {
   bottom: 6px;
   right: 20px;
 }
-/* line 135, ../../sass/App/Views/_OptionsView.scss */
+/* line 136, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .export_btn {
   bottom: 6px;
   left: 20px;
 }
-/* line 140, ../../sass/App/Views/_OptionsView.scss */
+/* line 141, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn {
   font-size: 0.8em;
   overflow: auto;
   margin: 0;
 }
-/* line 145, ../../sass/App/Views/_OptionsView.scss */
+/* line 146, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn.not_empty {
   margin: 8px;
 }
-/* line 149, ../../sass/App/Views/_OptionsView.scss */
+/* line 150, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_custom_folder_ctn .thumb {
   margin: 0 6px 6px 0;
 }
-/* line 154, ../../sass/App/Views/_OptionsView.scss */
+/* line 155, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_tags_ctn {
   display: none;
   font-size: 0.8em;
 }
-/* line 158, ../../sass/App/Views/_OptionsView.scss */
+/* line 159, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .selected_tags_ctn .thumb {
   margin: 0 6px 6px 0;
 }
-/* line 163, ../../sass/App/Views/_OptionsView.scss */
+/* line 164, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .inside_folder_ctn {
   display: none;
 }
-/* line 166, ../../sass/App/Views/_OptionsView.scss */
+/* line 167, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .inside_folder_ctn .inside_folder {
   display: inline-block;
   margin-left: 11px;
   font-size: 0.8em;
   word-break: break-all;
 }
-/* line 174, ../../sass/App/Views/_OptionsView.scss */
+/* line 175, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .btn_tag_operator {
   display: none;
   margin-left: 10px;
 }
-/* line 179, ../../sass/App/Views/_OptionsView.scss */
+/* line 180, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .type_filter_ctn .btn {
   margin-right: 8px;
   background-color: initial;
 }
-/* line 183, ../../sass/App/Views/_OptionsView.scss */
+/* line 184, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .type_filter_ctn .btn.selected {
   background-color: #FCF3E5;
 }
-/* line 188, ../../sass/App/Views/_OptionsView.scss */
+/* line 189, ../../sass/App/Views/_OptionsView.scss */
 .diapo_shuffle .ds_options_view .ctn_loading {
   display: none;
   position: fixed;
