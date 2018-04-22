@@ -111,7 +111,8 @@ function setTagsToFolder ($folder, array $tags = array()) {
         $itemTags = $Item->getTags();
         $newTags = array_merge($tags, $itemTags);
 
-        // TODO: Remove doublon tags.
+        // Remove doublon tags.
+        $newTags = array_unique($newTags);
 
         // TODO: Manage unset tags.
 
