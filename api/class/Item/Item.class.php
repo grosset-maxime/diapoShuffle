@@ -277,6 +277,11 @@ class Item extends Root
             return false;
         }
 
+        // Remove doublon tags.
+        if (!$clearTags) {
+            $tags = array_unique($tags);
+        }
+
         if ($this->isJpgFormat()) {
             try {
                 $this->setJpgTags($tags);

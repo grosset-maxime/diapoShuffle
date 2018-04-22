@@ -1,6 +1,6 @@
 <?php
 /**
- * Description : Set tags on all items in provided folders (recursively).
+ * Description : Set or unset tags on all items in provided folders (recursively).
  * Return : JSON
  *
  * PHP version 5
@@ -39,11 +39,13 @@ $Utils = new Utils();
 
 $folders = !empty($_POST['folders']) ? $_POST['folders'] : array();
 $tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
+$method = !empty($_POST['method']) ? $_POST['method'] : 'set';
 
 $logError = array(
     'mandatory_fields' => array(
         'folders' => '= ' . print_r($folders, true),
-        'tags' => '= ' . print_r($tags, true)
+        'tags' => '= ' . print_r($tags, true),
+        'method' => '= ' . print_r($method, true),
     ),
     'optional_fields' => array(
     ),
@@ -55,7 +57,7 @@ $jsonResult = array(
     'warning' => array()
 );
 
-if (!count($folders) || !count($tags)) {
+if (!count($folders) || !count($tags) || empty($method)) {
     $jsonResult['error'] = $logError;
     $jsonResult['error']['mandatoryFields'] = true;
     $jsonResult['error']['message'] = 'Mandatory fields missing.';
@@ -72,8 +74,10 @@ function setTagsToFolder ($folder, array $tags = array()) {
     global $itemsError;
     global $foldersError;
     global $Utils;
+    global $method;
 
     $subFolders = array();
+    $clearTags = false;
 
     $dir = new DirectoryIterator($folder);
 
@@ -109,18 +113,23 @@ function setTagsToFolder ($folder, array $tags = array()) {
         ));
 
         $itemTags = $Item->getTags();
-        $newTags = array_merge($tags, $itemTags);
 
-        // Remove doublon tags.
-        $newTags = array_unique($newTags);
+        if ($method === 'set') {
+            $newTags = array_merge($tags, $itemTags);
 
-        // TODO: Manage unset tags.
+        // Else unset tags.
+        } else {
+            $newTags = array_filter($itemTags, function ($tag) {
+                global $tags;
+                return !in_array($tag, $tags);
+            });
 
-        // error_log(print_r($newTags, true));
-        // error_log('----------------------');
+            if (!count($newTags)) {
+                $clearTags = true;
+            }
+        }
 
-        $success = $Item->setTags($newTags);
-        // $success = $Item->setTags(array(), true);
+        $success = $Item->setTags($newTags, $clearTags);
 
         if (!$success) {
             $itemsError[] = $pathName;

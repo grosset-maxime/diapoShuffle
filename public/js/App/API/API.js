@@ -187,17 +187,19 @@ function ($, PM) {
         },
 
         /**
-         * Set tags to all items in provided folders (recursively).
-         * @param {Object}   options             - Options.
-         * @param {String[]} options.folders     - List of folders.
-         * @param {String[]} options.tags        - List of tags id.
-         * @param {Function} [options.onSuccess] - Success callback.
-         * @param {Function} [options.onFailure] - Failure callback.
+         * Set or unset tags to all items in provided folders (recursively).
+         * @param {Object}   options                - Options.
+         * @param {String[]} options.folders        - List of folders.
+         * @param {String[]} options.tags           - List of tags id.
+         * @param {String}   [options.method='set'] - Method, 'set' or 'unset'.
+         * @param {Function} [options.onSuccess]    - Success callback.
+         * @param {Function} [options.onFailure]    - Failure callback.
          */
         setTagsFolders: (options = {}) => {
             let xhr,
                 folders = options.folders || [],
                 tags = options.tags || [],
+                method = options.method || 'set',
                 onSuccess = options.onSuccess || (() => {}),
                 onFailure = options.onFailure || (() => {});
 
@@ -213,7 +215,8 @@ function ($, PM) {
                 async: true,
                 data: {
                     folders: folders,
-                    tags: tags
+                    tags: tags,
+                    method: method
                 }
             });
 

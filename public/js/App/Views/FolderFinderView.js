@@ -180,13 +180,12 @@ function (
             onEnd: function (selectedTags) {
                 _options.showLoading();
 
-                // TODO: manage unset tags.
-
-                API[action === 'unset' ? 'setTagsFolders' : 'setTagsFolders']({
+                API.setTagsFolders({
                     folders: View.getSelectedPath(),
                     tags: selectedTags.map(function (tag) {
                         return tag.getId();
                     }),
+                    method: action || 'set',
                     onSuccess: function (response) {
                         response = response || {};
 
