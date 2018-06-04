@@ -213,6 +213,7 @@ function ($, PM) {
                 type: 'POST',
                 dataType: 'json',
                 async: true,
+                timeout: 0,
                 data: {
                     folders: folders,
                     tags: tags,
