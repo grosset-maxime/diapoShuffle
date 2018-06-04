@@ -77,7 +77,8 @@ function (
         _viewDimension = {
             width: 0,
             height: 0
-        };
+        },
+        _hasZoomApplied = false;
 
     // Private functions.
     let _buildSkeleton, _getViewDimension, _scalePic, _onStop, _onBeforeStart,
@@ -302,7 +303,7 @@ function (
             heightPic = picInfos.height || 0,
             widthView = _viewDimension.width,
             heightView = _viewDimension.height,
-            isGif = picInfos.extension === 'gif';
+            isVideo = ['gif', 'webm', 'mp4', 'mkv'].indexOf(picInfos.extension) >= 0;
 
         if (!widthPic || !heightPic) {
             return;
@@ -313,13 +314,13 @@ function (
 
         if (dh >= dw) {
             cssObj = {
-                'min-width': isGif && widthPic * zoomGif < widthView && !force
+                'min-width': isVideo && widthPic * zoomGif < widthView && !force
                     ? widthPic * zoomGif
                     : widthView
             };
         } else {
             cssObj = {
-                'min-height': isGif && heightPic * zoomGif < heightView && !force
+                'min-height': isVideo && heightPic * zoomGif < heightView && !force
                     ? heightPic * zoomGif
                     : heightView
             };
@@ -392,6 +393,8 @@ function (
             'min-height': '',
             'min-width': ''
         });
+
+        _hasZoomApplied = true;
     };
 
     /**
@@ -403,6 +406,10 @@ function (
         let img = _els.img;
 
         function applyOptionsView (Item, itemEl) {
+            if (_hasZoomApplied) {
+                return;
+            }
+
             if (OptionsView.isScaleOn()) {
                 _scalePic(Item, itemEl);
             } else if (OptionsView.getZoom() > 1) {
@@ -428,11 +435,9 @@ function (
             _els.img = null;
         }
 
-        if (
-            Item.extension === 'webm'
-            || Item.extension === 'mkv'
-            || Item.extension === 'mp4'
-        ) {
+        _hasZoomApplied = false;
+
+        if (['webm', 'mkv', 'mp4'].indexOf(Item.extension) >= 0) {
             img = _els.img = $('<video>', {
                 'class': 'random_pic',
                 src: Item.src || '',
