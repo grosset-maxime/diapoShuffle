@@ -50,7 +50,8 @@ function (
 
     // Private functions.
     let _buildSkeleton, _updateNbSelected, _fillFolderCtn, _onCheckItem,
-        _onUncheckItem, _getFolderList, _getBtnText, _setBtnText, _onSetOrUnsetTags;
+        _onUncheckItem, _getFolderList, _getBtnText, _setBtnText, _onSetOrUnsetTags,
+        _enableBtn, _disableBtn;
 
 
     _buildSkeleton = () => {
@@ -101,7 +102,19 @@ function (
             value: 'Fetch Tags',
             on: {
                 click: () => {
+                    var onFinish = () => {
+                            _enableBtn(_els.btnFetchTags);
+                            _enableBtn(_els.btnSetTags);
+                            _enableBtn(_els.btnUnsetTags);
+
+                            _options.hideLoading();
+                        };
+
                     _options.showLoading();
+
+                    _disableBtn(_els.btnFetchTags);
+                    _disableBtn(_els.btnSetTags);
+                    _disableBtn(_els.btnUnsetTags);
 
                     API.fetchTags({
                         folders: View.getSelectedPath(),
@@ -109,13 +122,15 @@ function (
                             Notify.info({
                                 message: 'Fetch tags success. Nb files processes: ' + response.nbFiles
                             });
-                            _options.hideLoading();
+
+                            onFinish();
                         },
                         onFailure: function (error) {
                             Notify.error({
                                 message: 'Fetch tags error: ' + (error.publicMessage || 'unknow error') + '.'
                             });
-                            _options.hideLoading();
+
+                            onFinish();
                         }
                     });
                 }
@@ -178,7 +193,19 @@ function (
                 PlayerAction.disable();
             },
             onEnd: function (selectedTags) {
+                var onFinish = () => {
+                        _enableBtn(_els.btnFetchTags);
+                        _enableBtn(_els.btnSetTags);
+                        _enableBtn(_els.btnUnsetTags);
+
+                        _options.hideLoading();
+                    };
+
                 _options.showLoading();
+
+                _disableBtn(_els.btnFetchTags);
+                _disableBtn(_els.btnSetTags);
+                _disableBtn(_els.btnUnsetTags);
 
                 API.setTagsFolders({
                     folders: View.getSelectedPath(),
@@ -199,11 +226,11 @@ function (
                             autoHide: !response.hasWarning
                         });
 
-                        _options.hideLoading();
+                        onFinish();
                     },
                     onFailure: function (error) {
                         Notify.error({ message: error });
-                        _options.hideLoading();
+                        onFinish();
                     }
                 });
             }
@@ -224,10 +251,11 @@ function (
 
         if (!nbSelected) {
             nbSelectedCtn.hide();
-            btnUnSelectAll.button('disable');
-            btnFetchTags.button('disable');
-            btnSetTags.button('disable');
-            btnUnsetTags.button('disable');
+
+            _disableBtn(btnUnSelectAll);
+            _disableBtn(btnFetchTags);
+            _disableBtn(btnSetTags);
+            _disableBtn(btnUnsetTags);
 
             _options.events.onNonSelected();
 
@@ -236,10 +264,19 @@ function (
 
         nbSelectedCtn.text('Selected: ' + nbSelected);
         nbSelectedCtn.show();
-        btnUnSelectAll.button('enable');
-        btnFetchTags.button('enable');
-        btnSetTags.button('enable');
-        btnUnsetTags.button('enable');
+
+        _enableBtn(btnUnSelectAll);
+        _enableBtn(btnFetchTags);
+        _enableBtn(btnSetTags);
+        _enableBtn(btnUnsetTags);
+    };
+
+    _disableBtn = (btn) => {
+        btn.button('disable');
+    };
+
+    _enableBtn = (btn) => {
+        btn.button('enable');
     };
 
     /**
