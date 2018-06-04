@@ -16,3 +16,13 @@ git reset --hard origin/master
 ```
 synoservicecfg --restart nginx
 ```
+
+## nginx log
+
+```
+sudo tail -f /var/log/nginx/error.log
+```
+
+```
+sudo tail -f /var/log/httpd/user-error_log
+```
