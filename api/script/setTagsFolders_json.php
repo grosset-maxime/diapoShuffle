@@ -137,6 +137,8 @@ function setTagsToFolder ($folder, array $tags = array()) {
     }
 
     foreach ($subFolders as $subFolder) {
+        set_time_limit(30);
+
         if (!file_exists($subFolder)) {
             $foldersError[] = $subFolder;
             continue;
@@ -149,6 +151,7 @@ function setTagsToFolder ($folder, array $tags = array()) {
 
 foreach ($folders as $folder) {
     try {
+        set_time_limit(30);
 
         $absolutePath = $_BASE_PIC_PATH . $folder;
 
