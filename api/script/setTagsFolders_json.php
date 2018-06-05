@@ -78,6 +78,7 @@ function setTagsToFolder ($folder, array $tags = array()) {
 
     $subFolders = array();
     $clearTags = false;
+    $HUGE_EXIF_ERROR = 'Error: huge number of EXIF entries - EXIF is probably Corrupted';
 
     $dir = new DirectoryIterator($folder);
 
@@ -112,7 +113,24 @@ function setTagsToFolder ($folder, array $tags = array()) {
             'shouldFetch' => true
         ));
 
-        $itemTags = $Item->getTags();
+        try {
+            $itemTags = $Item->getTags();
+        } catch (ExceptionExtended $e) {
+            if ($e->getMessage() === $HUGE_EXIF_ERROR) {
+                $itemsError[] = $pathName;
+                continue;
+            } else {
+                throw $e;
+            }
+        } catch (Exception $e) {
+            if ($e->getMessage() === $HUGE_EXIF_ERROR) {
+                $itemsError[] = $pathName;
+                continue;
+            } else {
+                throw $e;
+            }
+        }
+
 
         if ($method === 'set') {
             $newTags = array_merge($tags, $itemTags);
@@ -129,7 +147,23 @@ function setTagsToFolder ($folder, array $tags = array()) {
             }
         }
 
-        $success = $Item->setTags($newTags, $clearTags);
+        try {
+            $success = $Item->setTags($newTags, $clearTags);
+        } catch (ExceptionExtended $e) {
+            if ($e->getMessage() === $HUGE_EXIF_ERROR) {
+                $itemsError[] = $pathName;
+                continue;
+            } else {
+                throw $e;
+            }
+        } catch (Exception $e) {
+            if ($e->getMessage() === $HUGE_EXIF_ERROR) {
+                $itemsError[] = $pathName;
+                continue;
+            } else {
+                throw $e;
+            }
+        }
 
         if (!$success) {
             $itemsError[] = $pathName;
