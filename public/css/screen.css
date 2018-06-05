@@ -229,20 +229,27 @@ body {
   border-bottom: 1px solid #333;
   border-radius: 0 0 3px 3px;
   width: 100%;
+  overflow: hidden;
+  max-height: 99vh;
 }
-/* line 18, ../../sass/App/Cmp/_Notify.scss */
+/* line 20, ../../sass/App/Cmp/_Notify.scss */
+.pm_notify_cmp .message-ctn {
+  height: 100%;
+  overflow: auto;
+}
+/* line 25, ../../sass/App/Cmp/_Notify.scss */
 .pm_notify_cmp.error {
   background-color: rgba(232, 152, 152, 0.9);
 }
-/* line 22, ../../sass/App/Cmp/_Notify.scss */
+/* line 29, ../../sass/App/Cmp/_Notify.scss */
 .pm_notify_cmp.info {
   background-color: rgba(152, 201, 232, 0.9);
 }
-/* line 26, ../../sass/App/Cmp/_Notify.scss */
+/* line 33, ../../sass/App/Cmp/_Notify.scss */
 .pm_notify_cmp.warning {
   background-color: rgba(232, 208, 152, 0.9);
 }
-/* line 30, ../../sass/App/Cmp/_Notify.scss */
+/* line 37, ../../sass/App/Cmp/_Notify.scss */
 .pm_notify_cmp .close {
   position: absolute;
   cursor: pointer;
@@ -255,7 +262,7 @@ body {
   transition: opacity 0.3s;
   font-size: 1.5em;
 }
-/* line 42, ../../sass/App/Cmp/_Notify.scss */
+/* line 49, ../../sass/App/Cmp/_Notify.scss */
 .pm_notify_cmp .close:hover {
   opacity: 1;
 }
