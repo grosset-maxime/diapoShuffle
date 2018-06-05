@@ -80,7 +80,8 @@ function setTagsToFolder ($folder, array $tags = array()) {
     $clearTags = false;
     $HUGE_EXIF_ERRORS = array(
         'Error: huge number of EXIF entries - EXIF is probably Corrupted',
-        'Error: huge EXIF data count - EXIF is probably Corrupted'
+        'Error: huge EXIF data count - EXIF is probably Corrupted',
+        'Error: Corrupted EXIF'
     );
 
     $dir = new DirectoryIterator($folder);
