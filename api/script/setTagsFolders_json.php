@@ -120,8 +120,10 @@ function setTagsToFolder ($folder, array $tags = array()) {
         try {
             $itemTags = $Item->getTags();
         } catch (ExceptionExtended $e) {
+            $itemsError[] = $pathName;
             continue;
         } catch (Exception $e) {
+            $itemsError[] = $pathName;
             continue;
         }
 
@@ -144,8 +146,10 @@ function setTagsToFolder ($folder, array $tags = array()) {
         try {
             $success = $Item->setTags($newTags, $clearTags);
         } catch (ExceptionExtended $e) {
+            $itemsError[] = $pathName;
             continue;
         } catch (Exception $e) {
+            $itemsError[] = $pathName;
             continue;
         }
 
