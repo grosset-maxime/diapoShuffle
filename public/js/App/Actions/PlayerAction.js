@@ -284,7 +284,8 @@ function (
             onFailure: (error) => {
                 if (error === '##empty##') {
                     Notify.info({
-                        message: 'No more pic for current filter criterias'
+                        message: 'No more pic for current filter criterias',
+                        autoHide: true
                     });
 
                     _stop();
@@ -326,7 +327,8 @@ function (
             onFailure: (error) => {
                 if (error === '##empty##') {
                     Notify.info({
-                        message: 'No more pic into: "' + Action.getInsideFolder() + '"'
+                        message: 'No more pic into: "' + Action.getInsideFolder() + '"',
+                        autoHide: true
                     });
 
                     // Remove inside folder.
@@ -348,8 +350,7 @@ function (
                     if (warning) {
                         _pause();
                         Notify.warning({
-                            message: warning,
-                            autoHide: false
+                            message: warning
                         });
                     } else {
 
@@ -391,7 +392,8 @@ function (
                     if (Action.isInside()) {
 
                         Notify.info({
-                            message: 'No more pic into: "' + Action.getInsideFolder() + '"'
+                            message: 'No more pic into: "' + Action.getInsideFolder() + '"',
+                            autoHide: true
                         });
 
                         // Remove inside folder.
@@ -410,8 +412,7 @@ function (
         _stop();
 
         Notify.error({
-            message: error,
-            autoHide: false
+            message: error
         });
     };
 

@@ -120,7 +120,8 @@ function (
                         folders: View.getSelectedPath(),
                         onSuccess: function (response) {
                             Notify.info({
-                                message: 'Fetch tags success. Nb files processes: ' + response.nbFiles
+                                message: 'Fetch tags success. Nb files processes: ' + response.nbFiles,
+                                autoHide: true
                             });
 
                             onFinish();

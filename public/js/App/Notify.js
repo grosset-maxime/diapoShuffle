@@ -16,11 +16,11 @@ function ($, Notify) {
     exports = {
 
         /**
-         * @param {Object} options - Options.
-         * @param {String}  message - Message to display.
-         * @param {Boolean} [autoHide=true] - Auto hide.
-         * @param {Integer} [duration=5] - Display duration in seconde.
-         * @param {String}  [type="error"] - Type of notify ("error", "info", "warning").
+         * @param {Object}  options          - Options.
+         * @param {String}  message          - Message to display.
+         * @param {Boolean} [autoHide=false] - Auto hide.
+         * @param {Integer} [duration=8]     - Display duration in seconde.
+         * @param {String}  [type="error"]   - Type of notify ("error", "info", "warning").
          */
         notify: (options = {}) => {
             let opts = {};
@@ -29,10 +29,10 @@ function ($, Notify) {
                 true,
                 opts,
                 {
-                    message: '',
+                    message: 'Unknow error.',
                     type: Notify.TYPE_ERROR,
-                    autoHide: true,
-                    duration: 5
+                    autoHide: false,
+                    duration: 8
                 },
                 options || {}
             );

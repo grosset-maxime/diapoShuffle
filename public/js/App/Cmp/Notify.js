@@ -37,7 +37,7 @@ define('App/Cmp/Notify', [
             className: '',
             container: null,
             autoHide: false,
-            duration: 3
+            duration: 5
         },
 
         /**

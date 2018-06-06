@@ -714,7 +714,9 @@ function (
             onSuccess: () => {
                 FolderFinderView.clear();
                 Notify.info({
-                    message: 'Cache has been cleared successfully.'
+                    message: 'Cache has been cleared successfully.',
+                    autoHide: true,
+                    duration: 3
                 });
             },
             onFailure: (error) => {
@@ -736,7 +738,8 @@ function (
                 response = response || {};
 
                 Notify.info({
-                    message: 'Copied file: ' + (response.nbCopiedFiles || 0)
+                    message: 'Copied file: ' + (response.nbCopiedFiles || 0),
+                    autoHide: true
                 });
             },
             onFailure: function (e) {
