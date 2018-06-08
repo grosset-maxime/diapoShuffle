@@ -323,6 +323,7 @@ class Item extends Root
     public function getSize()
     {
         try {
+            set_time_limit(60);
 
             $size = getimagesize($this->getPathWithName());
 
