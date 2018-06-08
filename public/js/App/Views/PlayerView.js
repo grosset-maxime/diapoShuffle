@@ -403,7 +403,8 @@ function (
      * @param {Function} onFailure -
      */
     _setPic = (Item, onSuccess, onFailure) => {
-        let img = _els.img;
+        let img = _els.img,
+            isFirstCanPlay = true;
 
         function applyOptionsView (Item, itemEl) {
             if (_hasZoomApplied) {
@@ -443,13 +444,13 @@ function (
                 src: Item.src || '',
                 autoplay: true,
                 loop: true,
-                controls: true
+                controls: true,
             })
                 .on({
                     canplay: () => {
                         let videoEl = img[0];
 
-                        if (OptionsView.isMuteVideo()) {
+                        if (isFirstCanPlay && OptionsView.isMuteVideo()) {
                             videoEl.muted = true;
                         }
 
@@ -463,6 +464,8 @@ function (
                             itemEl: img,
                             shouldPause: true
                         });
+
+                        isFirstCanPlay = false;
                     },
                     error: onLoadFailure
                 });
