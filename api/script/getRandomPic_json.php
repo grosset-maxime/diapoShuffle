@@ -32,8 +32,13 @@ $logError;
 $jsonResult;
 $RandomPic; // Instance of RandomPic class.
 
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body);
+$customFolders = !empty($data->customFolders) ? trim($data->customFolders) : array();
 
-$customFolders = !empty($_POST['customFolders']) ? $_POST['customFolders'] : array();
+if (empty($customFolders)) {
+    $customFolders = !empty($_POST['customFolders']) ? $_POST['customFolders'] : array();
+}
 
 $logError = array(
     'mandatory_fields' => array(
@@ -75,5 +80,9 @@ try {
 }
 
 $jsonResult['success'] = true;
+
+header('Content-type: application/json');
+header('Accept: application/json');
 print json_encode($jsonResult);
+
 exit;
