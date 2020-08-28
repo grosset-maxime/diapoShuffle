@@ -4,6 +4,8 @@ define('ROOT_DIR', dirname(dirname(__FILE__)));
 ini_set('log_errors', 'on');
 ini_set('error_log', ROOT_DIR . '/log/php/php_error.log');
 
+include_once ROOT_DIR . '/api/globals.php';
+
 $_r = $_SERVER['REQUEST_URI'];
 
 $_routes = array();

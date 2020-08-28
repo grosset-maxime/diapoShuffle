@@ -40,9 +40,17 @@ use Bdd\Pic;
 // Start of the script.
 // ====================
 
-$picPath = trim($_POST['picPath']) ? trim($_POST['picPath']) : '';
-$continueIfNotExist = !empty($_POST['continueIfNotExist']) ? !!$_POST['continueIfNotExist'] : false;
-$deleteOnlyFromBdd = !empty($_POST['deleteOnlyFromBdd']) ? !!$_POST['deleteOnlyFromBdd'] : false;
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body);
+$picPath = !empty($data->picPath) ? trim($data->picPath) : '';
+$continueIfNotExist = !empty($data->continueIfNotExist) ? trim($data->continueIfNotExist) : false;
+$deleteOnlyFromBdd = !empty($data->deleteOnlyFromBdd) ? trim($data->deleteOnlyFromBdd) : false;
+
+if (empty($picPath)) {
+    $picPath = trim($_POST['picPath']) ? trim($_POST['picPath']) : '';
+    $continueIfNotExist = !empty($_POST['continueIfNotExist']) ? !!$_POST['continueIfNotExist'] : false;
+    $deleteOnlyFromBdd = !empty($_POST['deleteOnlyFromBdd']) ? !!$_POST['deleteOnlyFromBdd'] : false;
+}
 
 $logError = array(
     'mandatory_fields' => array(
@@ -128,5 +136,7 @@ try {
 
 
 $jsonResult['success'] = $success;
+header('Content-type: application/json');
+header('Accept: application/json');
 print json_encode($jsonResult);
 exit;
