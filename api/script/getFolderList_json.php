@@ -29,20 +29,24 @@ use DS\ExceptionExtended;
 // FolderList
 use FolderList\FolderList;
 
-
 // Init vars.
 $folder;
 $folderList;
 $listFolder = array();
 
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body);
 
-$folder = trim($_POST['folder']) ? trim($_POST['folder']) : '';
+$customFolder = !empty($data->folder) ? trim($data->folder) : '';
+
+if (empty($customFolder)) {
+    $customFolder = trim($_POST['folder']) ? trim($_POST['folder']) : '';
+}
 
 $logError = array(
-    'mandatory_fields' => array(
-        'folder' => '= ' . $folder
-    ),
+    'mandatory_fields' => array(),
     'optional_fields' => array(
+        'customFolder' => '= ' . $customFolder
     ),
 );
 
@@ -51,12 +55,10 @@ $jsonResult = array(
     'folderList' => array(),
 );
 
-
-
 try {
 
     $folderList = new FolderList(
-        array('customFolder' => $folder)
+        array('customFolder' => $customFolder)
     );
 
     $listFolder = $folderList->getFolderList();

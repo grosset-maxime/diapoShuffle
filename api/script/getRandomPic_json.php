@@ -34,10 +34,15 @@ $RandomPic; // Instance of RandomPic class.
 
 $request_body = file_get_contents('php://input');
 $data = json_decode($request_body);
-$customFolders = !empty($data->customFolders) ? trim($data->customFolders) : array();
+
+$customFolders = !empty($data->customFolders)
+    ? trim($data->customFolders)
+    : array();
 
 if (empty($customFolders)) {
-    $customFolders = !empty($_POST['customFolders']) ? $_POST['customFolders'] : array();
+    $customFolders = !empty($_POST['customFolders'])
+        ? $_POST['customFolders']
+        : array();
 }
 
 $logError = array(
