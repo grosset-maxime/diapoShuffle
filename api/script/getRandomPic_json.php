@@ -36,7 +36,7 @@ $request_body = file_get_contents('php://input');
 $data = json_decode($request_body);
 
 $customFolders = !empty($data->customFolders)
-    ? trim($data->customFolders)
+    ? $data->customFolders
     : array();
 
 if (empty($customFolders)) {
@@ -57,7 +57,6 @@ $jsonResult = array(
     'success' => false,
     'pic' => array(),
 );
-
 
 try {
 
