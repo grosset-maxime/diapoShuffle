@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le :  lun. 19 avr. 2021 à 22:22
+-- Généré le :  lun. 19 avr. 2021 à 22:13
 -- Version du serveur :  5.5.68-MariaDB
 -- Version de PHP :  7.2.29
 
@@ -25,13 +25,13 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structure de la table `tags`
+-- Structure de la table `tagCategories`
 --
 
-CREATE TABLE `tags` (
-  `id` varchar(200) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `category` tinyint(3) UNSIGNED NOT NULL DEFAULT '0'
+CREATE TABLE `tagCategories` (
+  `id` tinyint(3) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `color` char(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -39,11 +39,20 @@ CREATE TABLE `tags` (
 --
 
 --
--- Index pour la table `tags`
+-- Index pour la table `tagCategories`
 --
-ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
+ALTER TABLE `tagCategories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `tagCategories`
+--
+ALTER TABLE `tagCategories`
+  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
