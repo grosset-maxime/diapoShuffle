@@ -27,14 +27,46 @@ use DS\ExceptionExtended;
 // Bdd
 use Bdd\TagCategory;
 
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body);
 
-$isNew = !empty($_POST['isNew']) && $_POST['isNew'] === 'true' ? true : false;
-$isDelete = !empty($_POST['isDelete']) && $_POST['isDelete'] === 'true' ? true : false;
+$isNew = !empty($data->isNew)
+    ? $data->isNew
+    : false;
 
-$id = trim($_POST['id']) ? trim($_POST['id']) : '';
-$name = trim($_POST['name']) ? trim($_POST['name']) : '';
-$color = !empty($_POST['color']) ? $_POST['color'] : '';
+$isDelete = !empty($data->isDelete)
+    ? $data->isDelete
+    : false;
 
+$id = !empty($data->id)
+    ? trim($data->id)
+    : '';
+
+$name = !empty($data->name)
+    ? trim($data->name)
+    : '';
+
+$color = !empty($data->color)
+    ? $data->color
+    : '';
+
+// Manage legacy code.
+if (empty($id) && empty($name) && empty($color)) {
+    $id = !empty($_POST['id'])
+        ? $_POST['id']
+        : '';
+        
+    $name = !empty($_POST['name'])
+        ? $_POST['name']
+        : '';
+
+    $color = !empty($_POST['color'])
+        ? $_POST['color']
+        : '';
+
+    $isNew = !empty($_POST['isNew']) && $_POST['isNew'] === 'true' ? true : false;
+    $isDelete = !empty($_POST['isDelete']) && $_POST['isDelete'] === 'true' ? true : false;
+}
 
 $logError = array(
     'mandatory_fields' => array(

@@ -60,7 +60,7 @@ if (empty($id)) {
         ? $_POST['name']
         : '';
 
-    $name = !empty($_POST['category'])
+    $category = !empty($_POST['category'])
         ? $_POST['category']
         : '';
 
