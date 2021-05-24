@@ -105,6 +105,7 @@ try {
             $message .= ' and for types: ' . implode(' OR ', $types);
         }
         $jsonResult['error']['publicMessage'] = $message;
+        $jsonResult['error']['severity'] = ExceptionExtended::SEVERITY_INFO;
     }
 
 } catch (ExceptionExtended $e) {
