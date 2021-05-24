@@ -28,10 +28,35 @@ use DS\ExceptionExtended;
 // Bdd
 use Bdd\Pics;
 
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body);
 
-$tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
-$tagsOperator = !empty($_POST['tagsOperator']) ? $_POST['tagsOperator'] : 'AND';
-$types = !empty($_POST['types']) ? $_POST['types'] : array();
+$tags = !empty($data->tags)
+    ? $data->tags
+    : array();
+
+$tagsOperator = !empty($data->tagsOperator)
+    ? $data->tagsOperator
+    : 'AND';
+
+$types = !empty($data->types)
+    ? trim($data->types)
+    : array();
+
+// Manage legacy code.
+if (empty($tags) && empty($types)) {
+    $tags = !empty($_POST['tags'])
+        ? $_POST['tags']
+        : array();
+
+    $tagsOperator = !empty($_POST['tagsOperator'])
+        ? $_POST['tagsOperator']
+        : 'AND';
+
+    $types = !empty($_POST['types'])
+        ? $_POST['types']
+        : array();
+}
 
 $logError = array();
 $jsonResult = array(
