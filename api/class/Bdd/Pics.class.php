@@ -46,6 +46,24 @@ class Pics extends Root
 {
     protected $bdd = null;
 
+    protected $typeToExtensionMap = array(
+        Pic::TYPE_JPG => 'JPG',
+        Pic::TYPE_GIF => 'GIF',
+        Pic::TYPE_PNG => 'PNG',
+        Pic::TYPE_WEBM => 'WEBM',
+        Pic::TYPE_MP4 => 'MP4',
+        Pic::TYPE_MKV => 'MKV',
+    );
+
+    protected $extensionToTypeMap = array(
+        'JPG' => Pic::TYPE_JPG,
+        'GIF' => Pic::TYPE_GIF,
+        'PNG' => Pic::TYPE_PNG,
+        'WEBM' => Pic::TYPE_WEBM,
+        'MP4' => Pic::TYPE_MP4,
+        'MKV' => Pic::TYPE_MKV,
+    );
+
     /**
      * Pics constructor.
      */
@@ -89,21 +107,18 @@ class Pics extends Root
         // Types filter.
         if (!empty($types)) {
             foreach ($types as $type) {
-                if ($type === 'JPG') {
-                    $typesId[] = Pic::TYPE_JPG;
-                } else if ($type === 'GIF') {
-                    $typesId[] = Pic::TYPE_GIF;
-                } else if ($type === 'PNG') {
-                    $typesId[] = Pic::TYPE_PNG;
-                } else if ($type === 'WEBM') {
-                    $typesId[] = Pic::TYPE_WEBM;
-                } else if ($type === 'MP4') {
-                    $typesId[] = Pic::TYPE_MP4;
-                } else if ($type === 'MKV') {
-                    $typesId[] = Pic::TYPE_MKV;
-                } else {
-                    throw new Exception('Type not found: ' . $type);
+
+                if (!array_key_exists($type, $this->extensionToTypeMap)) {
+                    throw new ExceptionExtended(
+                        array(
+                            'publicMessage' => 'Type not found: ' . $type,
+                            'message' => 'Type not found: ' . $type,
+                            'severity' => ExceptionExtended::SEVERITY_ERROR
+                        )
+                    );
                 }
+
+                $typesId[] = $this->extensionToTypeMap[$type];
 
                 $typesWhere .= ' type = ? OR';
             }
@@ -124,9 +139,8 @@ class Pics extends Root
         $req->execute(array_merge($tags, $typesId));
 
         while ($data = $req->fetch(PDO::FETCH_ASSOC)) {
-
+            $data['extension'] = $this->typeToExtensionMap[intval($data['type'], 10)];
             $pics[] = $data;
-
         }
 
         $req->closeCursor();

@@ -40,7 +40,7 @@ $tagsOperator = !empty($data->tagsOperator)
     : 'AND';
 
 $types = !empty($data->types)
-    ? trim($data->types)
+    ? $data->types
     : array();
 
 // Manage legacy code.
