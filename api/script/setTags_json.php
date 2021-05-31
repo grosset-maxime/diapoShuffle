@@ -29,9 +29,18 @@ use DS\ExceptionExtended;
 use Item\Item;
 
 
-$name = trim($_POST['name']) ? trim($_POST['name']) : '';
-$path = trim($_POST['path']) ? trim($_POST['path']) : '';
-$tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
+$request_body = file_get_contents('php://input');
+$data = json_decode($request_body);
+
+$name = !empty($data->name) ? trim($data->name) : '';
+$path = !empty($data->path) ? trim($data->path) : '';
+$tags = !empty($data->tags) ? $data->tags : array();
+
+if (empty($name)) {
+    $name = trim($_POST['name']) ? trim($_POST['name']) : '';
+    $path = trim($_POST['path']) ? trim($_POST['path']) : '';
+    $tags = !empty($_POST['tags']) ? $_POST['tags'] : array();
+}
 
 $logError = array(
     'mandatory_fields' => array(

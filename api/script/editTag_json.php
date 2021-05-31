@@ -47,7 +47,7 @@ $name = !empty($data->name)
     : '';
 
 $category = !empty($data->category)
-    ? $data->category
+    ? trim($data->category)
     : '';
 
 // Manage legacy code.

@@ -47,7 +47,7 @@ $name = !empty($data->name)
     : '';
 
 $color = !empty($data->color)
-    ? $data->color
+    ? trim($data->color)
     : '';
 
 // Manage legacy code.
