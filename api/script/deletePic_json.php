@@ -44,8 +44,8 @@ $request_body = file_get_contents('php://input');
 $data = json_decode($request_body);
 
 $picPath = !empty($data->picPath) ? trim($data->picPath) : '';
-$continueIfNotExist = !empty($data->continueIfNotExist) ? !!$data->continueIfNotExist) : false;
-$deleteOnlyFromBdd = !empty($data->deleteOnlyFromBdd) ? !!$data->deleteOnlyFromBdd) : false;
+$continueIfNotExist = !empty($data->continueIfNotExist) ? !!$data->continueIfNotExist : false;
+$deleteOnlyFromBdd = !empty($data->deleteOnlyFromBdd) ? !!$data->deleteOnlyFromBdd : false;
 
 if (empty($picPath)) {
     $picPath = trim($_POST['picPath']) ? trim($_POST['picPath']) : '';
