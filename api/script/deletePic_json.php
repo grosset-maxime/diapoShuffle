@@ -23,7 +23,7 @@ require_once ROOT_DIR . '/api/class/CacheManager.class.php';
 require_once ROOT_DIR . '/api/class/DeleteItem/DeleteItem.class.php';
 
 // Bdd
-require_once ROOT_DIR . '/api/class/Bdd/Pics.class.php';
+require_once ROOT_DIR . '/api/class/Bdd/Pic.class.php';
 
 // DS
 use DS\ExceptionExtended;
@@ -76,12 +76,19 @@ if (!$picPath) {
 }
 
 $success = false;
+
+$firstCharPicPAth = $picPath[0];
+// Begin of picPath
+if ($firstCharPicPAth !== '/') {
+    $picPath = '/' . $picPath;
+}
+
 $path = substr($picPath, strlen('/' . $_BASE_PIC_FOLDER_NAME));
 
 $path = str_replace('\\', '/', $path);
 $firstCharPicPAth = $path[0];
 
-// Begin of picPath
+// Begin of path
 if ($firstCharPicPAth !== '/') {
     $path = '/' . $path;
 }
@@ -93,30 +100,37 @@ $cacheManager = new CacheManager();
 try {
     $result = null;
 
-    if (!$deleteOnlyFromBdd) {
-        $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder(), $continueIfNotExist);
-    }
-
-
-    if ($deleteOnlyFromBdd || is_array($result) && $result['success'] === true) {
+    try {
         if (!$deleteOnlyFromBdd) {
-            // Remove pic from cache.
-            $cacheManager->setCacheFolder($result['cacheFolder']);
+            $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder(), $continueIfNotExist);
         }
-
-        try {
-
-            // Remove pic from bdd.
-            ( new Pic( array('path' => $picPath) ) )->delete();
-
-        } catch (ExceptionExtended $e) {
-            if ($e->getSeverity() !== ExceptionExtended::SEVERITY_INFO) {
-                throw $e;
-            }
-        }
-
-        $success = true;
+    } catch (ExceptionExtended $e) {
+        error_log($e);
+    } catch (Exception $e) {
+        error_log($e);
     }
+
+    if (!$deleteOnlyFromBdd) {
+        // Remove pic from cache.
+        $cacheManager->setCacheFolder($result['cacheFolder']);
+    }
+
+    try {
+
+        // Remove pic from bdd.
+        ( new Pic( array('path' => $picPath) ) )->delete();
+
+    } catch (ExceptionExtended $e) {
+        if ($e->getSeverity() !== ExceptionExtended::SEVERITY_INFO) {
+            error_log($e);
+            throw $e;
+        }
+    } catch (Exception $e) {
+        error_log($e);
+        throw $e
+    }
+
+    $success = true;
 
 } catch (ExceptionExtended $e) {
     $jsonResult['error'] = $logError;
