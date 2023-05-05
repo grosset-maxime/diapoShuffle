@@ -127,7 +127,7 @@ try {
         }
     } catch (Exception $e) {
         error_log($e);
-        throw $e
+        throw $e;
     }
 
     $success = true;
