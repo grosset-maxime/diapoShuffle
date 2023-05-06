@@ -226,27 +226,18 @@ class DeleteItem extends Root
      * @param {String}   $path        : Pic path to remove.
      * @param {String[]} $cacheFolder : Folder cache where to remove the pic.
      *
-     * @return {Object}.
+     * @return {Object} response.
+     *        {Boolean} response.success
+     *       {String[]} response.cacheFolder
      */
-    public function deletePic($path = '', array $cacheFolder = array(), $continueIfNotExist = false)
+    public function deletePic($path = '', array $cacheFolder = array())
     {
-
         // Init vars
         $picName;
         $explodedPath;
         $folderPath;
         $success;
         $isFileExist = file_exists($path);
-
-        if (!$isFileExist && !$continueIfNotExist) {
-            throw new ExceptionExtended(
-                array(
-                    'publicMessage' => 'Pic doesn\'t exist: ' . $path,
-                    'message' => 'Pic doesn\'t exist: ' . $path,
-                    'severity' => ExceptionExtended::SEVERITY_WARNING
-                )
-            );
-        }
 
         try {
 

@@ -365,7 +365,12 @@ class RandomPic extends Root
             );
         }
 
-        list($width, $height) = $randomPic->getSize();
+        try {
+            list($width, $height) = $randomPic->getSize();
+        } catch (Exception $e) {
+            error_log($e);
+            throw $e;
+        }
 
         try {
             $tags = $randomPic->getTags();
@@ -373,6 +378,7 @@ class RandomPic extends Root
             $tags = array();
             $warningMessage = $e->getPublicMessage() . ' - ' . $e->getMessage();
         } catch (Exception $e) {
+            error_log($e);
             throw $e;
         }
 

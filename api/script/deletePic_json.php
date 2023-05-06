@@ -44,23 +44,15 @@ $request_body = file_get_contents('php://input');
 $data = json_decode($request_body);
 
 $picPath = !empty($data->picPath) ? trim($data->picPath) : '';
-$continueIfNotExist = !empty($data->continueIfNotExist) ? !!$data->continueIfNotExist : false;
-$deleteOnlyFromBdd = !empty($data->deleteOnlyFromBdd) ? !!$data->deleteOnlyFromBdd : false;
 
 if (empty($picPath)) {
     $picPath = trim($_POST['picPath']) ? trim($_POST['picPath']) : '';
-    $continueIfNotExist = !empty($_POST['continueIfNotExist']) ? !!$_POST['continueIfNotExist'] : false;
-    $deleteOnlyFromBdd = !empty($_POST['deleteOnlyFromBdd']) ? !!$_POST['deleteOnlyFromBdd'] : false;
 }
 
 $logError = array(
     'mandatory_fields' => array(
         'picPath' => '= ' . $picPath
-    ),
-    'optional_fields' => array(
-        'continueIfNotExist' => '= ' . ($continueIfNotExist ? 'true' : 'false'),
-        'deleteOnlyFromBdd' => '= ' . ($deleteOnlyFromBdd ? 'true' : 'false')
-    ),
+    )
 );
 
 $jsonResult = array(
@@ -77,57 +69,94 @@ if (!$picPath) {
 
 $success = false;
 
-$firstCharPicPAth = $picPath[0];
 // Begin of picPath
-if ($firstCharPicPAth !== '/') {
+if ($picPath[0] !== '/') {
     $picPath = '/' . $picPath;
 }
-
-$path = substr($picPath, strlen('/' . $_BASE_PIC_FOLDER_NAME));
-
-$path = str_replace('\\', '/', $path);
-$firstCharPicPAth = $path[0];
-
-// Begin of path
-if ($firstCharPicPAth !== '/') {
-    $path = '/' . $path;
-}
-
-$absolutePicPath = $_BASE_PIC_PATH . $path;
 
 $cacheManager = new CacheManager();
 
 try {
     $result = null;
+    $isDeletePicDBSuccess = false;
+    $isDeletePicFSSuccess = false;
 
-    try {
-        if (!$deleteOnlyFromBdd) {
-            $result = (new DeleteItem())->deletePic($absolutePicPath, $cacheManager->getCacheFolder(), $continueIfNotExist);
-        }
-    } catch (ExceptionExtended $e) {
-        error_log($e);
-    } catch (Exception $e) {
-        error_log($e);
-    }
-
-    if (!$deleteOnlyFromBdd) {
-        // Remove pic from cache.
-        $cacheManager->setCacheFolder($result['cacheFolder']);
-    }
-
+    // Remove pic from DB.
+    // ===================
     try {
 
-        // Remove pic from bdd.
         ( new Pic( array('path' => $picPath) ) )->delete();
+        $isDeletePicDBSuccess = true;
 
     } catch (ExceptionExtended $e) {
-        if ($e->getSeverity() !== ExceptionExtended::SEVERITY_INFO) {
+        if ($e->getSeverity() === ExceptionExtended::SEVERITY_INFO) {
+            // Pic not found on DB, considere that is a success.
+            $isDeletePicDBSuccess = true;
+        } else {
             error_log($e);
             throw $e;
         }
     } catch (Exception $e) {
         error_log($e);
         throw $e;
+    }
+
+    // Delete pic from FS.
+    // ===================
+    try {
+
+        $path = substr($picPath, strlen('/' . $_BASE_PIC_FOLDER_NAME));
+        $path = str_replace('\\', '/', $path);
+
+        // Begin of path
+        if ($path[0] !== '/') {
+            $path = '/' . $path;
+        }
+
+        $absolutePicPath = $_BASE_PIC_PATH . $path;
+        
+        $result = (new DeleteItem())->deletePic(
+            $absolutePicPath,
+            $cacheManager->getCacheFolder()
+        );
+        $isDeletePicFSSuccess = $result['success'];
+
+    } catch (ExceptionExtended $e) {
+        if ($e->getSeverity() === ExceptionExtended::SEVERITY_INFO) {
+            // Pic not found on FS, considere that is a success.
+            $isDeletePicFSSuccess = true;
+        } else {
+            error_log($e);
+            throw $e;
+        }
+    } catch (Exception $e) {
+        error_log($e);
+        throw $e;
+    }
+
+    // Remove pic from cache.
+    // ======================
+    $cacheManager->setCacheFolder($result['cacheFolder']);
+
+    // Throw error if at least one of both fail
+    if (!$isDeletePicDBSuccess || !$isDeletePicFSSuccess) {
+        $errorMsg = 'Unknow error.';
+
+        if (!$isDeletePicDBSuccess && !$isDeletePicFSSuccess) {
+            $errorMsg = 'Fail to remove pic from DB and FS: ' . $picPath;
+        } else if (!$isDeletePicDBSuccess) {
+            $errorMsg = 'Fail to remove pic from DB: ' . $picPath;
+        } else if (!$isDeletePicFSSuccess) {
+            $errorMsg = 'Fail to remove pic from FS: ' . $picPath;
+        }
+
+        throw new ExceptionExtended(
+            array(
+                'publicMessage' => $errorMsg,
+                'message' => $errorMsg,
+                'severity' => ExceptionExtended::SEVERITY_ERROR
+            )
+        );
     }
 
     $success = true;
