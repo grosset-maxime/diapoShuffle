@@ -341,27 +341,27 @@ function Interpret_IPTC_to_HTML( $IPTC_info )
 
                                         case "2:130":   // Application Record:Image Type
                                                 // Lookup Number of Components
-                                                if ( $IPTC_Record['RecData']{0} == "0" )
+                                                if ( $IPTC_Record['RecData'][0] == "0" )
                                                 {
                                                         $output_str .= "<tr class=\"IPTC_Table_Row\"><td class=\"IPTC_Caption_Cell\">$Record_Name</td><td class=\"IPTC_Value_Cell\">No Objectdata";
                                                 }
-                                                elseif ( $IPTC_Record['RecData']{0} == "9" )
+                                                elseif ( $IPTC_Record['RecData'][0] == "9" )
                                                 {
                                                         $output_str .= "<tr class=\"IPTC_Table_Row\"><td class=\"IPTC_Caption_Cell\">$Record_Name</td><td class=\"IPTC_Value_Cell\">Supplemental objects related to other objectdata";
                                                 }
                                                 else
                                                 {
-                                                        $output_str .= "<tr class=\"IPTC_Table_Row\"><td class=\"IPTC_Caption_Cell\">$Record_Name</td><td class=\"IPTC_Value_Cell\">Number of Colour Components : " . nl2br( HTML_UTF8_Escape( $IPTC_Record['RecData']{0} ) );
+                                                        $output_str .= "<tr class=\"IPTC_Table_Row\"><td class=\"IPTC_Caption_Cell\">$Record_Name</td><td class=\"IPTC_Value_Cell\">Number of Colour Components : " . nl2br( HTML_UTF8_Escape( $IPTC_Record['RecData'][0] ) );
                                                 }
 
                                                 // Lookup current objectdata colour
-                                                if ( $GLOBALS['ImageType_Names'][ $IPTC_Record['RecData']{1} ] == "" )
+                                                if ( $GLOBALS['ImageType_Names'][ $IPTC_Record['RecData'][1] ] == "" )
                                                 {
-                                                        $output_str .= ", Unknown : " . nl2br( HTML_UTF8_Escape( $IPTC_Record['RecData']{1} ) );
+                                                        $output_str .= ", Unknown : " . nl2br( HTML_UTF8_Escape( $IPTC_Record['RecData'][1] ) );
                                                 }
                                                 else
                                                 {
-                                                        $output_str .= ", " . nl2br( HTML_UTF8_Escape( $GLOBALS['ImageType_Names'][ $IPTC_Record['RecData']{1} ] ) );
+                                                        $output_str .= ", " . nl2br( HTML_UTF8_Escape( $GLOBALS['ImageType_Names'][ $IPTC_Record['RecData'][1] ] ) );
                                                 }
                                                 $output_str .= "</td></tr>\n";
                                                 break;
@@ -531,7 +531,7 @@ $GLOBALS[ "IPTC_Entry_Descriptions" ] = array(
 "1:50" => "Product ID - Max 32 characters",
 "1:60" => "Envelope Priority - 1 numeric characters",
 "1:70" => "Date Sent - 8 numeric characters CCYYMMDD",
-"1:80" => "Time Sent - 11 characters HHMMSS±HHMM",
+"1:80" => "Time Sent - 11 characters HHMMSSï¿½HHMM",
 "1:90" => "Coded Character Set - Max 32 characters",
 "1:100" => "UNO (Unique Name of Object) - 14 to 80 characters",
 "1:120" => "ARM Identifier - 2 byte binary number",
@@ -552,18 +552,18 @@ $GLOBALS[ "IPTC_Entry_Descriptions" ] = array(
 "2:26" => "Content Location Code - 3 characters",
 "2:27" => "Content Location Name - Max 64 characters",
 "2:30" => "Release Date - 8 numeric characters CCYYMMDD",
-"2:35" => "Release Time - 11 characters HHMMSS±HHMM",
+"2:35" => "Release Time - 11 characters HHMMSSï¿½HHMM",
 "2:37" => "Expiration Date - 8 numeric characters CCYYMMDD",
-"2:35" => "Expiration Time - 11 characters HHMMSS±HHMM",
+"2:35" => "Expiration Time - 11 characters HHMMSSï¿½HHMM",
 "2:40" => "Special Instructions - Max 256 Characters",
 "2:42" => "Action Advised - 2 numeric characters",
 "2:45" => "Reference Service - Max 10 characters",
 "2:47" => "Reference Date - 8 numeric characters CCYYMMDD",
 "2:50" => "Reference Number - 8 characters",
 "2:55" => "Date Created - 8 numeric characters CCYYMMDD",
-"2:60" => "Time Created - 11 characters HHMMSS±HHMM",
+"2:60" => "Time Created - 11 characters HHMMSSï¿½HHMM",
 "2:62" => "Digital Creation Date - 8 numeric characters CCYYMMDD",
-"2:63" => "Digital Creation Time - 11 characters HHMMSS±HHMM",
+"2:63" => "Digital Creation Time - 11 characters HHMMSSï¿½HHMM",
 "2:65" => "Originating Program - Max 32 characters",
 "2:70" => "Program Version - Max 10 characters",
 "2:75" => "Object Cycle - 1 character",
@@ -624,36 +624,36 @@ $GLOBALS[ "IPTC_Entry_Descriptions" ] = array(
 ******************************************************************************/
 
 $GLOBALS[ "IPTC_File Formats" ] = array(
-00 => "No ObjectData",
-01 => "IPTC-NAA Digital Newsphoto Parameter Record",
-02 => "IPTC7901 Recommended Message Format",
-03 => "Tagged Image File Format (Adobe/Aldus Image data)",
-04 => "Illustrator (Adobe Graphics data)",
-05 => "AppleSingle (Apple Computer Inc)",
-06 => "NAA 89-3 (ANPA 1312)",
-07 => "MacBinary II",
-08 => "IPTC Unstructured Character Oriented File Format (UCOFF)",
-09 => "United Press International ANPA 1312 variant",
-10 => "United Press International Down-Load Message",
-11 => "JPEG File Interchange (JFIF)",
-12 => "Photo-CD Image-Pac (Eastman Kodak)",
-13 => "Microsoft Bit Mapped Graphics File [*.BMP]",
-14 => "Digital Audio File [*.WAV] (Microsoft & Creative Labs)",
-15 => "Audio plus Moving Video [*.AVI] (Microsoft)",
-16 => "PC DOS/Windows Executable Files [*.COM][*.EXE]",
-17 => "Compressed Binary File [*.ZIP] (PKWare Inc)",
-18 => "Audio Interchange File Format AIFF (Apple Computer Inc)",
-19 => "RIFF Wave (Microsoft Corporation)",
-20 => "Freehand (Macromedia/Aldus)",
-21 => "Hypertext Markup Language - HTML (The Internet Society)",
-22 => "MPEG 2 Audio Layer 2 (Musicom), ISO/IEC",
-23 => "MPEG 2 Audio Layer 3, ISO/IEC",
-24 => "Portable Document File (*.PDF) Adobe",
-25 => "News Industry Text Format (NITF)",
-26 => "Tape Archive (*.TAR)",
-27 => "Tidningarnas Telegrambyrå NITF version (TTNITF DTD)",
-28 => "Ritzaus Bureau NITF version (RBNITF DTD)",
-29 => "Corel Draw [*.CDR]"
+// 00 => "No ObjectData",
+// 01 => "IPTC-NAA Digital Newsphoto Parameter Record",
+// 02 => "IPTC7901 Recommended Message Format",
+// 03 => "Tagged Image File Format (Adobe/Aldus Image data)",
+// 04 => "Illustrator (Adobe Graphics data)",
+// 05 => "AppleSingle (Apple Computer Inc)",
+// 06 => "NAA 89-3 (ANPA 1312)",
+// 07 => "MacBinary II",
+// // 08 => "IPTC Unstructured Character Oriented File Format",
+// 09 => "United Press International ANPA 1312 variant",
+// 10 => "United Press International Down-Load Message",
+// 11 => "JPEG File Interchange (JFIF)",
+// 12 => "Photo-CD Image-Pac (Eastman Kodak)",
+// 13 => "Microsoft Bit Mapped Graphics File [*.BMP]",
+// 14 => "Digital Audio File [*.WAV] (Microsoft & Creative Labs)",
+// 15 => "Audio plus Moving Video [*.AVI] (Microsoft)",
+// 16 => "PC DOS/Windows Executable Files [*.COM][*.EXE]",
+// 17 => "Compressed Binary File [*.ZIP] (PKWare Inc)",
+// 18 => "Audio Interchange File Format AIFF (Apple Computer Inc)",
+// 19 => "RIFF Wave (Microsoft Corporation)",
+// 20 => "Freehand (Macromedia/Aldus)",
+// 21 => "Hypertext Markup Language - HTML (The Internet Society)",
+// 22 => "MPEG 2 Audio Layer 2 (Musicom), ISO/IEC",
+// 23 => "MPEG 2 Audio Layer 3, ISO/IEC",
+// 24 => "Portable Document File (*.PDF) Adobe",
+// 25 => "News Industry Text Format (NITF)",
+// 26 => "Tape Archive (*.TAR)",
+// 27 => "Tidningarnas Telegrambyrï¿½ NITF version (TTNITF DTD)",
+// 28 => "Ritzaus Bureau NITF version (RBNITF DTD)",
+// 29 => "Corel Draw [*.CDR]"
 );
 
 

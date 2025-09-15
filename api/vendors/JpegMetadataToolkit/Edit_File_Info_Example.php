@@ -222,7 +222,7 @@ function get_next_filename( )
         }
         else
         {
-                $filename = $filename{0};
+                $filename = $filename[0];
         }
 
         // Ensure the filename letter is valid

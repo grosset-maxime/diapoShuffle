@@ -15,7 +15,7 @@
 $_localConfig = array(
 	'bdd' => array(
 		'host' => 'localhost',
-		'name' => 'promeeting',
+		'name' => 'diaposhuffle',
 		'port' => '3306',
 		'login' => 'root',
 		'pwd' => 'root'

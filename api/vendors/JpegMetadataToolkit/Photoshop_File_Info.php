@@ -797,7 +797,7 @@ function get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array )
 
         // Retreive Information from the EXIF data if it exists
 
-        if ( ( $Exif_array != FALSE ) || ( count( $Exif_array ) == 0 ) )
+        if ( ( $Exif_array != FALSE ) || ( is_array($Exif_array) && count( $Exif_array ) == 0 ) )
         {
                 // Check the Image Description Tag - it can contain the caption
                 if ( array_key_exists( 270, $Exif_array[0] ) )

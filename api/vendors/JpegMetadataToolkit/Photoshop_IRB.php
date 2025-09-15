@@ -470,7 +470,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                 case 0x0421 : // Version Info
                                         $output_str .= "<tr class=\"Photoshop_Table_Row\"><td class=\"Photoshop_Caption_Cell\">$Resource_Name</td><td class=\"Photoshop_Value_Cell\"><pre>\n";
                                         $output_str .= "Version = " . hexdec( bin2hex( substr( $IRB_Resource['ResData'], 0, 4 ) ) ) . "\n";
-                                        $output_str .= "Has Real Merged Data = " . ord( $IRB_Resource['ResData']{4} ) . "\n";
+                                        $output_str .= "Has Real Merged Data = " . ord( $IRB_Resource['ResData'][4] ) . "\n";
                                         $writer_size = hexdec( bin2hex( substr( $IRB_Resource['ResData'], 5, 4 ) ) ) * 2;
 
                                         $output_str .= "Writer Name = " . HTML_UTF16_Escape( substr( $IRB_Resource['ResData'], 9, $writer_size ), TRUE ) . "\n";
@@ -557,7 +557,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                                 $Slicepos += $AltTaglen * 2;
 
                                                 // Unpack the HTML flag
-                                                if ( ord( $IRB_Resource['ResData']{ $Slicepos } ) === 0x01 )
+                                                if ( ord( $IRB_Resource['ResData'][ $Slicepos ] ) === 0x01 )
                                                 {
                                                         $output_str .= "Cell Text is HTML<br>\n";
                                                 }
@@ -775,7 +775,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
 
                                 case 0x03F3 : // Print Flags
                                         $output_str .= "<tr class=\"Photoshop_Table_Row\"><td class=\"Photoshop_Caption_Cell\">$Resource_Name</td><td class=\"Photoshop_Value_Cell\"><pre>\n";
-                                        if ( $IRB_Resource['ResData']{0} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][0] == "\x01" )
                                         {
                                                 $output_str .= "Labels Selected\n";
                                         }
@@ -783,7 +783,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Labels Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{1} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][1] == "\x01" )
                                         {
                                                 $output_str .= "Crop Marks Selected\n";
                                         }
@@ -791,7 +791,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Crop Marks Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{2} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][2] == "\x01" )
                                         {
                                                 $output_str .= "Color Bars Selected\n";
                                         }
@@ -799,7 +799,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Color Bars Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{3} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][3] == "\x01" )
                                         {
                                                 $output_str .= "Registration Marks Selected\n";
                                         }
@@ -807,7 +807,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Registration Marks Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{4} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][4] == "\x01" )
                                         {
                                                 $output_str .= "Negative Selected\n";
                                         }
@@ -815,7 +815,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Negative Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{5} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][5] == "\x01" )
                                         {
                                                 $output_str .= "Flip Selected\n";
                                         }
@@ -823,7 +823,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Flip Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{6} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][6] == "\x01" )
                                         {
                                                 $output_str .= "Interpolate Selected\n";
                                         }
@@ -831,7 +831,7 @@ function Interpret_IRB_to_HTML( $IRB_array, $filename )
                                         {
                                                 $output_str .= "Interpolate Not Selected\n";
                                         }
-                                        if ( $IRB_Resource['ResData']{7} == "\x01" )
+                                        if ( $IRB_Resource['ResData'][7] == "\x01" )
                                         {
                                                 $output_str .= "Caption Selected";
                                         }
@@ -999,7 +999,7 @@ function unpack_Photoshop_IRB_Data( $IRB_Data )
                 $pos += 4;
 
                 // Next two characters are the record ID - denoting what type of record it is.
-                $ID = ord( $IRB_Data{ $pos } ) * 256 + ord( $IRB_Data{ $pos +1 } );
+                $ID = ord( $IRB_Data[ $pos ] ) * 256 + ord( $IRB_Data[ $pos +1 ] );
 
                 // Skip the positionover the two record ID characters
                 $pos += 2;
@@ -1019,7 +1019,7 @@ function unpack_Photoshop_IRB_Data( $IRB_Data )
 
                 // Name - process it
                 // Get the length
-                $namelen = ord ( $IRB_Data{ $namestartpos } );
+                $namelen = ord ( $IRB_Data[ $namestartpos ] );
 
                 // Total length of name and length info must be even, hence name length must be odd
                 // Check if the name length is even,
@@ -1034,8 +1034,8 @@ function unpack_Photoshop_IRB_Data( $IRB_Data )
 
 
                 // Next is a four byte size field indicating the size in bytes of the record's data  - MSB first
-                $datasize =     ord( $IRB_Data{ $pos } ) * 16777216 + ord( $IRB_Data{ $pos + 1 } ) * 65536 +
-                                ord( $IRB_Data{ $pos + 2 } ) * 256 + ord( $IRB_Data{ $pos + 3 } );
+                $datasize =     ord( $IRB_Data[ $pos ] ) * 16777216 + ord( $IRB_Data[ $pos + 1 ] ) * 65536 +
+                                ord( $IRB_Data[ $pos + 2 ] ) * 256 + ord( $IRB_Data[ $pos + 3 ] );
                 $pos += 4;
 
                 // The record is stored padded with 0x00 characters to make the size even, so we need to calculate the stored size
@@ -1237,7 +1237,7 @@ function Interpret_Transfer_Function( $Transfer_Function_Binary )
         }
         else
         {
-                $output_str .= "\nOverride: Override printer’s default transfer curve";
+                $output_str .= "\nOverride: Override printerï¿½s default transfer curve";
         }
 
         // Return the result
@@ -1337,7 +1337,7 @@ function Interpret_Halftone( $Halftone_Binary )
         // Interpret Printer Default Screens
         if ( $HalftoneInfo['Default'] == 1 )
         {
-                $output_str .= "Use printer’s default screens\n";
+                $output_str .= "Use printerï¿½s default screens\n";
         }
         else
         {
@@ -1446,9 +1446,9 @@ $GLOBALS[ "Photoshop_ID_Names" ] = array(
 ******************************************************************************/
 
 $GLOBALS[ "Photoshop_ID_Descriptions" ] = array(
-0x03E8 => "Obsolete—Photoshop 2.0 only. number of channels, rows, columns, depth, and mode.",
+0x03E8 => "Obsoleteï¿½Photoshop 2.0 only. number of channels, rows, columns, depth, and mode.",
 0x03E9 => "Optional. Macintosh print manager print info record.",
-0x03EB => "Obsolete—Photoshop 2.0 only. Contains the indexed color table.",
+0x03EB => "Obsoleteï¿½Photoshop 2.0 only. Contains the indexed color table.",
 0x03ED => "ResolutionInfo structure. See Appendix A in Photoshop SDK Guide.pdf",
 0x03EE => "Names of the alpha channels as a series of Pascal strings.",
 0x03EF => "DisplayInfo structure. See Appendix A in Photoshop SDK Guide.pdf",

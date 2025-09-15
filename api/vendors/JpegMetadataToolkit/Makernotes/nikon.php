@@ -309,7 +309,7 @@ function get_Nikon_Text_Value( $Exif_Tag, $Tag_Definitions_Name )
                         }
 
                         // Add AF mode according to the first byte
-                        switch ( ord($Exif_Tag['Data']{0}) )
+                        switch ( ord($Exif_Tag['Data'][0]) )
                         {
                                 case 0x00:
                                         $outputstr .= "Auto Focus Mode: Single Area\n";
@@ -326,7 +326,7 @@ function get_Nikon_Text_Value( $Exif_Tag, $Tag_Definitions_Name )
                         }
 
                         // Add AF area according to second byte
-                        switch ( ord($Exif_Tag['Data']{1}) )
+                        switch ( ord($Exif_Tag['Data'][1]) )
                         {
                                 case 0x00:
                                         $outputstr .= "Auto Focus Area Selected: Centre\n";
@@ -348,27 +348,27 @@ function get_Nikon_Text_Value( $Exif_Tag, $Tag_Definitions_Name )
                         // Add properly focused areas to output according to byte 3 bits
                         
                         $outputstr .= "Properly Focused Area(s): ";
-                        if ( ord($Exif_Tag['Data']{3}) == 0x00 )
+                        if ( ord($Exif_Tag['Data'][3]) == 0x00 )
                         {
                                 $outputstr .= "None";
                         }
-                        if ( ( ord($Exif_Tag['Data']{3}) & 0x01 ) == 0x01 )
+                        if ( ( ord($Exif_Tag['Data'][3]) & 0x01 ) == 0x01 )
                         {
                                 $outputstr .= "Centre ";
                         }
-                        if ( ( ord($Exif_Tag['Data']{3}) & 0x02 ) == 0x02 )
+                        if ( ( ord($Exif_Tag['Data'][3]) & 0x02 ) == 0x02 )
                         {
                                 $outputstr .= "Top ";
                         }
-                        if ( ( ord($Exif_Tag['Data']{3}) & 0x04 ) == 0x04 )
+                        if ( ( ord($Exif_Tag['Data'][3]) & 0x04 ) == 0x04 )
                         {
                                 $outputstr .= "Bottom ";
                         }
-                        if ( ( ord($Exif_Tag['Data']{3}) & 0x08 ) == 0x08 )
+                        if ( ( ord($Exif_Tag['Data'][3]) & 0x08 ) == 0x08 )
                         {
                                 $outputstr .= "Left ";
                         }
-                        if ( ( ord($Exif_Tag['Data']{3}) & 0x10 ) == 0x10 )
+                        if ( ( ord($Exif_Tag['Data'][3]) & 0x10 ) == 0x10 )
                         {
                                 $outputstr .= "Right ";
                         }

@@ -101,7 +101,7 @@ function get_jpeg_header_data( $filename )
         $data = network_safe_fread( $filehnd, 2 );
 
         // Check that the third character is 0xFF (Start of first segment header)
-        if ( $data{0} != "\xFF" )
+        if ( $data[0] != "\xFF" )
         {
                 // NO FF found - close file and return - JPEG is probably corrupted
                 fclose($filehnd);
@@ -116,11 +116,11 @@ function get_jpeg_header_data( $filename )
         //                                       2) we have hit the compressed image data (no more headers are allowed after data)
         //                                       3) or end of file is hit
 
-        while ( ( $data{1} != "\xD9" ) && (! $hit_compressed_image_data) && ( ! feof( $filehnd ) ))
+        while ( ( $data[1] != "\xD9" ) && (! $hit_compressed_image_data) && ( ! feof( $filehnd ) ))
         {
                 // Found a segment to look at.
                 // Check that the segment marker is not a Restart marker - restart markers don't have size or data after them
-                if (  ( ord($data{1}) < 0xD0 ) || ( ord($data{1}) > 0xD7 ) )
+                if (  ( ord($data[1]) < 0xD0 ) || ( ord($data[1]) > 0xD7 ) )
                 {
                         // Segment isn't a Restart marker
                         // Read the next two bytes (size)
@@ -137,15 +137,15 @@ function get_jpeg_header_data( $filename )
 
 
                         // Store the segment information in the output array
-                        $headerdata[] = array(  "SegType" => ord($data{1}),
-                                                "SegName" => $GLOBALS[ "JPEG_Segment_Names" ][ ord($data{1}) ],
-                                                "SegDesc" => $GLOBALS[ "JPEG_Segment_Descriptions" ][ ord($data{1}) ],
+                        $headerdata[] = array(  "SegType" => ord($data[1]),
+                                                "SegName" => $GLOBALS[ "JPEG_Segment_Names" ][ ord($data[1]) ],
+                                                "SegDesc" => $GLOBALS[ "JPEG_Segment_Descriptions" ][ ord($data[1]) ],
                                                 "SegDataStart" => $segdatastart,
                                                 "SegData" => $segdata );
                 }
 
                 // If this is a SOS (Start Of Scan) segment, then there is no more header data - the compressed image data follows
-                if ( $data{1} == "\xDA" )
+                if ( $data[1] == "\xDA" )
                 {
                         // Flag that we have hit the compressed image data - exit loop as no more headers available.
                         $hit_compressed_image_data = TRUE;
@@ -156,7 +156,7 @@ function get_jpeg_header_data( $filename )
                         $data = network_safe_fread( $filehnd, 2 );
 
                         // Check that the first byte of the two is 0xFF as it should be for a marker
-                        if ( $data{0} != "\xFF" )
+                        if ( $data[0] != "\xFF" )
                         {
                                 // NO FF found - close file and return - JPEG is probably corrupted
                                 fclose($filehnd);
@@ -467,24 +467,24 @@ function get_jpeg_intrinsic_values( $jpeg_header_data )
                 $data = $jpeg_header_data[$i]['SegData'];
 
                 // First byte is Bits per component
-                $Outputarray['Bits per Component'] = ord( $data{0} );
+                $Outputarray['Bits per Component'] = ord( $data[0] );
 
                 // Second and third bytes are Image Height
-                $Outputarray['Image Height'] = ord( $data{ 1 } ) * 256 + ord( $data{ 2 } );
+                $Outputarray['Image Height'] = ord( $data[1] ) * 256 + ord( $data[2] );
 
                 // Forth and fifth bytes are Image Width
-                $Outputarray['Image Width'] = ord( $data{ 3 } ) * 256 + ord( $data{ 4 } );
+                $Outputarray['Image Width'] = ord( $data[3] ) * 256 + ord( $data[4] );
 
                 // Sixth byte is number of components
-                $numcomponents = ord( $data{ 5 } );
+                $numcomponents = ord( $data[5] );
 
                 // Following this is a table containing information about the components
                 for( $i = 0; $i < $numcomponents; $i++ )
                 {
-                        $Outputarray['Components'][] = array (  'Component Identifier' => ord( $data{ 6 + $i * 3 } ),
-                                                                'Horizontal Sampling Factor' => ( ord( $data{ 7 + $i * 3 } ) & 0xF0 ) / 16,
-                                                                'Vertical Sampling Factor' => ( ord( $data{ 7 + $i * 3 } ) & 0x0F ),
-                                                                'Quantization table destination selector' => ord( $data{ 8 + $i * 3 } ) );
+                        $Outputarray['Components'][] = array (  'Component Identifier' => ord( $data[ 6 + $i * 3 ] ),
+                                                                'Horizontal Sampling Factor' => ( ord( $data[ 7 + $i * 3 ] ) & 0xF0 ) / 16,
+                                                                'Vertical Sampling Factor' => ( ord( $data[ 7 + $i * 3 ] ) & 0x0F ),
+                                                                'Quantization table destination selector' => ord( $data[ 8 + $i * 3 ] ) );
                 }
         }
         else
@@ -608,7 +608,7 @@ function get_jpeg_image_data( $filename )
         $data = network_safe_fread( $filehnd, 2 );
 
         // Check that the third character is 0xFF (Start of first segment header)
-        if ( $data{0} != "\xFF" )
+        if ( $data[0] != "\xFF" )
         {
                 // NO FF found - close file and return
                 fclose($filehnd);
@@ -623,11 +623,11 @@ function get_jpeg_image_data( $filename )
         //                                       2) we have hit the compressed image data (no more headers are allowed after data)
         //                                       3) or end of file is hit
 
-        while ( ( $data{1} != "\xD9" ) && (! $hit_compressed_image_data) && ( ! feof( $filehnd ) ))
+        while ( ( $data[1] != "\xD9" ) && (! $hit_compressed_image_data) && ( ! feof( $filehnd ) ))
         {
                 // Found a segment to look at.
                 // Check that the segment marker is not a Restart marker - restart markers don't have size or data after them
-                if (  ( ord($data{1}) < 0xD0 ) || ( ord($data{1}) > 0xD7 ) )
+                if (  ( ord($data[1]) < 0xD0 ) || ( ord($data[1]) > 0xD7 ) )
                 {
                         // Segment isn't a Restart marker
                         // Read the next two bytes (size)
@@ -641,7 +641,7 @@ function get_jpeg_image_data( $filename )
                 }
 
                 // If this is a SOS (Start Of Scan) segment, then there is no more header data - the compressed image data follows
-                if ( $data{1} == "\xDA" )
+                if ( $data[1] == "\xDA" )
                 {
                         // Flag that we have hit the compressed image data - exit loop after reading the data
                         $hit_compressed_image_data = TRUE;
@@ -667,7 +667,7 @@ function get_jpeg_image_data( $filename )
                         $data = network_safe_fread( $filehnd, 2 );
 
                         // Check that the first byte of the two is 0xFF as it should be for a marker
-                        if ( $data{0} != "\xFF" )
+                        if ( $data[0] != "\xFF" )
                         {
                                 // Problem - NO FF foundclose file and return";
                                 fclose($filehnd);

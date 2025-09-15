@@ -1,11 +1,19 @@
 diapoShuffle
 ============
 
+## Install
+
+```
+git clone https://github.com/grosset-maxime/diapoShuffle.git
+```
+
+Create and update `config/config.inc.php`.
+
+Create and update `config/local.inc.php`.
+
 ## Mise en prod:
 
 ```
-cd /var/services/web/diapoShuffle/
-
 git fetch origin
 
 git reset --hard origin/master
